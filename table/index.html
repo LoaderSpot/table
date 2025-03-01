@@ -536,6 +536,55 @@
       z-index: 2;
       /* Строка с фильтрами OS должна быть выше */
     }
+
+    /* Добавляем стили для анимации загрузки */
+    .loader-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px 0;
+      width: 100%;
+    }
+
+    .spotify-loader {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: #1db954;
+      border-left-color: #1db954;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-text {
+      color: #b3b3b3;
+      margin-left: 15px;
+      font-size: 14px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 0.6;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
   </style>
 </head>
 
@@ -587,7 +636,7 @@
               <!--блок поиска -->
               <div class="search-container">
                 <span class="search-icon">
-                  <svg xmlns="hKV Namespacettp://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
                     <path
                       d="M11.742 10.344a6.5 6.5 0 10-1.398 1.398h-.001l3.85 3.85a1 1 0 001.414-1.414l-3.85-3.85zm-5.242 0a4.5 4.5 0 110-9 4.5 4.5 0 010 9z" />
                   </svg>
@@ -606,9 +655,7 @@
         </tr>
       </thead>
       <tbody id="versions-container">
-        <tr>
-          <td colspan="5">Loading data...</td>
-        </tr>
+        <!-- контейнер для спиннера и данных таблицы-->
       </tbody>
     </table>
   </div>
@@ -624,6 +671,50 @@
         <path d="M16.306 20.306H7.694a4.167 4.167 0 01-4.162-4.163v-2.777a.694.694 0 011.388 0v2.777a2.778 2.778 0 002.774 2.775h8.612a2.778 2.778 0 002.775-2.775v-2.777a.694.694 0 011.387 0v2.777a4.167 4.167 0 01-4.162 4.163z"/>
       </svg>
     `;
+
+    // Создаем HTML для спиннера загрузки
+    function getLoaderHTML() {
+      return `
+        <tr>
+          <td colspan="5">
+            <div class="loader-container">
+              <div class="spotify-loader"></div>
+              <div class="loading-text">Loading data...</div>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+
+    // Определяем ОС из URL параметров перед загрузкой данных
+    let currentOS = (() => {
+      const urlParams = new URLSearchParams(window.location.search);
+      switch (true) {
+        case urlParams.has('mac'):
+          return 'mac';
+        case urlParams.has('linux'):
+          return 'linux';
+        default:
+          return 'win'; // Default is Windows
+      }
+    })();
+
+    // Обновляем активную вкладку в UI при загрузке страницы
+    document.addEventListener('DOMContentLoaded', () => {
+      // Отображаем начальный спиннер загрузки
+      const container = document.getElementById('versions-container');
+      if (container) {
+        container.innerHTML = getLoaderHTML();
+      }
+
+      document.querySelectorAll('.filter-button').forEach(btn => {
+        if (btn.dataset.os === currentOS) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    });
 
     // Функция отображения тоста
     function showToast(message) {
@@ -747,6 +838,9 @@
       }
     }
 
+    // Функция для генерации ключа счетчика
+    const generateCounterKey = (version, os, arch) => `${version}-${os}-${arch}`;
+
     // Глобальный кэш для всех счетчиков скачиваний, полученных из Worker
     let allDownloadCounters = {};
     // Флаг для отслеживания загрузки счетчиков
@@ -768,10 +862,11 @@
         allDownloadCounters = await response.json();
         countersLoaded = true;
 
-        // Обновляем все ожидающие элементы UI
-        pendingCounterElements.forEach((countElement, fileUrl) => {
-          const count = allDownloadCounters[fileUrl] || "0";
-          countElement.innerHTML = count === "0" ? "" : `<span class="download-counter">${count} downloads</span>`;
+        // Обновляем все ожидающие элементы UI с правильным форматированием
+        pendingCounterElements.forEach((counterInfo, counterKey) => {
+          const count = allDownloadCounters[counterKey] || "0";
+          counterInfo.element.innerHTML = count === "0" ? "" :
+            `<span class="download-counter">${formatDownloadCount(count)}</span>`;
         });
         pendingCounterElements.clear();
 
@@ -786,15 +881,58 @@
       }
     }
 
-    function updateDownloadCount(fileUrl, countElement) {
+    // Функция для форматирования текста счетчика загрузок
+    function formatDownloadCount(count) {
+      count = parseInt(count, 10);
+      if (count === 1) {
+        return "1 download";
+      } else {
+        return `${count} downloads`;
+      }
+    }
+
+    // Обновленная функция для работы с новым форматом ключей
+    function updateDownloadCount(fileUrl, countElement, version, os, arch) {
+      const counterKey = generateCounterKey(version, os, arch);
+
       if (countersLoaded) {
         // Если данные уже загружены, используем их
-        const count = allDownloadCounters[fileUrl] || "0";
-        countElement.innerHTML = count === "0" ? "" : `<span class="download-counter">${count} downloads</span>`;
+        const count = allDownloadCounters[counterKey] || "0";
+        countElement.innerHTML = count === "0" ? "" : `<span class="download-counter">${formatDownloadCount(count)}</span>`;
       } else {
         // Сохраняем элемент для отложенного обновления
-        pendingCounterElements.set(fileUrl, countElement);
+        pendingCounterElements.set(counterKey, { element: countElement, url: fileUrl });
       }
+    }
+
+    function incrementDownloadCounter(countElement) {
+      let current = parseInt(countElement.textContent) || 0;
+      current++;
+      countElement.innerHTML = `<span class="download-counter">${formatDownloadCount(current)}</span>`;
+    }
+
+    // Функция для обработки событий скачивания
+    function handleDownload(downloadLink, fileUrl, version, os, arch) {
+
+      const countElement = downloadLink.closest('.download-container').querySelector('div[title="downloads"]');
+      const counterKey = generateCounterKey(version, os, arch);
+
+      // обновление счетчика в UI
+      incrementDownloadCounter(countElement);
+
+      allDownloadCounters[counterKey] = (parseInt(allDownloadCounters[counterKey] || "0", 10) + 1).toString();
+
+      // скачивание файла не дожидаясь ответа от воркера
+      window.open(fileUrl, '_blank');
+
+      fetch(`https://broad-pine-bbc0.amd64fox1.workers.dev/?counter=${encodeURIComponent(counterKey)}`, {
+        method: 'GET',
+        cache: 'no-store', // Не кэшировать запрос
+        mode: 'cors',      // CORS режим
+        redirect: 'manual' // Не следовать редиректам
+      }).catch(err => {
+        console.error('Worker counter update error:', err);
+      });
     }
 
     // Кэш для регулярных выражений
@@ -812,14 +950,6 @@
       }
 
       return text.replace(regexCache.get(term), '<mark>$1</mark>');
-    }
-
-    // Функция для оптимистичного обновления счетчика в UI
-    function incrementDownloadCounter(countElement) {
-      // Извлекаем текущее число из элемента и увеличиваем на 1
-      let current = parseInt(countElement.textContent) || 0;
-      current++;
-      countElement.innerHTML = `<span class="download-counter">${current} downloads</span>`;
     }
 
     // Глобальная переменная для архитектурного фильтра
@@ -977,7 +1107,6 @@
         downloadLink.className = 'download-link';
         // Заменяем установку href:
         downloadLink.removeAttribute('href');
-        downloadLink.dataset.download = `https://broad-pine-bbc0.amd64fox1.workers.dev/?file=${encodeURIComponent(combo.link)}`;
 
         // Формируем тултип в зависимости от OS
         let extension = '';
@@ -992,18 +1121,13 @@
 
         downloadLink.addEventListener('click', (e) => {
           e.preventDefault();
-          // немедленно обновляем UI (оптимистично увеличиваем значение счетчика)
-          incrementDownloadCounter(downloadCountSpan);
-          // Обновляем глобальный кэш счетчиков
-          allDownloadCounters[combo.link] = (parseInt(allDownloadCounters[combo.link] || "0", 10) + 1).toString();
-          // параллельно посылаем асинхронный запрос к воркеру (fire-and-forget)
-          fetch(`https://broad-pine-bbc0.amd64fox1.workers.dev/?file=${encodeURIComponent(combo.link)}`, { redirect: 'manual' })
-            .catch(err => console.error('Worker update error:', err));
-          // запускаем скачивание файла сразу
-          window.open(combo.link, '_blank');
+          // Используем обновленную функцию обработки скачивания
+          handleDownload(downloadLink, combo.link, shortVersion, currentOS, combo.arch);
         });
+
         downloadLink.innerHTML = downloadIcon;
         downloadContainer.appendChild(downloadLink);
+
         // Отображения счетчика скачиваний
         const downloadCountSpan = document.createElement('div');
         downloadCountSpan.style.fontSize = 'small';
@@ -1014,8 +1138,8 @@
 
         // Обновляем инфу о дате и размере
         updateLinkInfo(dateCell, sizeCell, combo.link);
-        // Запрашиваем и обновляем счетчик скачиваний
-        updateDownloadCount(combo.link, downloadCountSpan);
+        // Запрашиваем и обновляем счетчик скачиваний с новым форматом ключа
+        updateDownloadCount(combo.link, downloadCountSpan, shortVersion, currentOS, combo.arch);
 
         rows.push(row);
       });
@@ -1032,7 +1156,6 @@
 
     // Глобальная переменная для хранения Linux-пакетов
     let linuxVersionsData = [];
-    let currentOS = 'win'; // По умолчанию Windows
     let currentSearchTerm = '';
     let linuxDataLoaded = false; // Флаг успешной загрузки Linux-данных
 
@@ -1126,14 +1249,14 @@
           const downloadLink = document.createElement('a');
           downloadLink.className = 'download-link';
           downloadLink.removeAttribute('href');
-          downloadLink.dataset.download = `https://broad-pine-bbc0.amd64fox1.workers.dev/?file=${encodeURIComponent(arch.link)}`;
 
           downloadLink.title = `download ${version.version.short}-${arch.arch}.deb`;
 
           downloadLink.addEventListener('click', (e) => {
             e.preventDefault();
-            handleDownload(downloadLink, arch.link);
+            handleDownload(downloadLink, arch.link, version.version.short, 'linux', arch.arch);
           });
+
           downloadLink.innerHTML = downloadIcon;
           downloadContainer.appendChild(downloadLink);
 
@@ -1146,7 +1269,7 @@
 
           // Добавляем строку в контейнер
           container.appendChild(row);
-          updateDownloadCount(arch.link, downloadCountSpan);
+          updateDownloadCount(arch.link, downloadCountSpan, version.version.short, 'linux', arch.arch);
         });
       }
 
@@ -1156,7 +1279,7 @@
       }
     }
 
-    // Функция для Windows/Mac ленивой загрузки (обновленная существующая)
+    // Функция для Windows/Mac ленивой загрузки
     function loadMoreWinMacRows() {
       const dataSource = currentSearchResults || allVersions;
       const endIndex = Math.min(currentIndex + ITEMS_PER_BATCH, dataSource.length);
@@ -1173,28 +1296,11 @@
       }
     }
 
-    // Унифицированная функция для обработки событий скачивания
-    function handleDownload(downloadLink, fileUrl) {
-      const countElement = downloadLink.closest('.download-container').querySelector('div[title="downloads"]');
-
-      // Оптимистичное обновление счетчика
-      incrementDownloadCounter(countElement);
-
-      // Обновляем глобальный кэш
-      allDownloadCounters[fileUrl] = (parseInt(allDownloadCounters[fileUrl] || "0", 10) + 1).toString();
-
-      // Отправляем запрос к воркеру (fire-and-forget)
-      fetch(`https://broad-pine-bbc0.amd64fox1.workers.dev/?file=${encodeURIComponent(fileUrl)}`, { redirect: 'manual' })
-        .catch(err => console.error('Worker update error:', err));
-
-      // Запускаем скачивание файла
-      window.open(fileUrl, '_blank');
-    }
 
     // Загрузка данных для Linux с поддержкой ленивой загрузки
     async function loadLinuxPackages() {
       try {
-        container.innerHTML = '<tr><td colspan="5">Loading...</td></tr>';
+        container.innerHTML = getLoaderHTML();
 
         const response = await fetch('versions_deb.json');
         if (!response.ok) {
@@ -1326,7 +1432,7 @@
 
         // Проверяем, загружены ли данные для Linux, если это текущая ОС
         if (currentOS === 'linux' && !linuxDataLoaded) {
-          container.innerHTML = '<tr><td colspan="5">Loading...</td></tr>';
+          container.innerHTML = getLoaderHTML();
           loadLinuxPackages();
           return;
         }
@@ -1386,28 +1492,31 @@
 
     async function initializeApp() {
       try {
-        // 1. Загружаем основные данные JSON
         const response = await fetch('versions.json');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
 
-        container.innerHTML = ''; // Очищаем "Загрузка данных..."
+        container.innerHTML = ''; // Очищаем спиннер загрузки данных
         allVersions = Object.entries(data);
 
-        // 2. Запускаем загрузку счетчиков скачиваний 
+        // Запускаем загрузку счетчиков скачиваний для всех версий
         loadAllDownloadCounters().catch(err => console.error('Counter fetch error:', err));
 
-        // 3. Устанавливаем таймер для запуска HEAD-запросов если Worker не отвечает
+        // Устанавливаем таймер для запуска HEAD-запросов если Worker не отвечает
         headRequestsTimer = setTimeout(() => {
           console.log('Starting HEAD requests after timeout');
           processPendingHeadRequests();
         }, 2000);
 
-        // 4. Отображаем первую партию данных для текущей ОС
-        startLazyLoading();
-        updateArchFilters();
+        // Отображаем первую партию данных для текущей ОС
+        if (currentOS === 'linux') {
+          loadLinuxPackages();
+        } else {
+          startLazyLoading();
+          updateArchFilters();
+        }
       } catch (err) {
         console.error('Error loading version data:', err);
         container.innerHTML = '<tr><td colspan="5">Failed to load version data.</td></tr>';
