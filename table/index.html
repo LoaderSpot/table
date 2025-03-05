@@ -195,16 +195,17 @@
       /* для корректного позиционирования tooltip */
     }
 
-    .version-text:hover {
-      color: #fff;
-    }
-
     .short-version {
       font-size: 1.2em;
       font-weight: bold;
       display: block;
       margin-bottom: 4px;
       user-select: none;
+      cursor: pointer;
+    }
+
+    .short-version:hover {
+      color: #fff;
     }
 
     .full-version {
@@ -212,6 +213,11 @@
       color: #777;
       display: block;
       user-select: none;
+      cursor: pointer;
+    }
+
+    .full-version:hover {
+      color: #aaa;
     }
 
 
@@ -404,22 +410,33 @@
       padding: 4px 0;
     }
 
-    /* Крестик очистки для WebKit */
-    .search-container input[type="search"]::-webkit-search-cancel-button {
-      -webkit-appearance: none;
-      height: 16px;
-      width: 16px;
-      margin-top: 4px;
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23e8e6e3' viewBox='0 0 20 20'%3E%3Cpath d='M14.348 5.652a1 1 0 10-1.414-1.414L10 7.172 7.066 4.238a1 1 0 10-1.414 1.414L8.586 8.586l-2.934 2.934a1 1 0 101.414 1.414L10 10l2.934 2.934a1 1 0 001.414-1.414L11.414 8.586l2.934-2.934z'/%3E%3C/svg%3E") no-repeat center;
-      cursor: pointer;
+    /* Кнопка очистки для Firefox, и Chrome */
+    .search-container {
+      position: relative;
     }
 
-    /* Стиль для иконки поиска */
-    .search-icon svg {
+    .clear-search {
+      position: absolute;
+      right: 12px;
+      top: 16.9px;
+      transform: translateY(-50%);
       width: 16px;
       height: 16px;
-      fill: #e8e6e3;
-      display: block;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23e8e6e3' viewBox='0 0 20 20'%3E%3Cpath d='M14.348 5.652a1 1 0 10-1.414-1.414L10 7.172 7.066 4.238a1 1 0 10-1.414 1.414L8.586 8.586l-2.934 2.934a1 1 0 101.414 1.414L10 10l2.934 2.934a1 1 0 001.414-1.414L11.414 8.586l2.934-2.934z'/%3E%3C/svg%3E") no-repeat center;
+      background-size: 16px 16px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .search-container.show-clear .clear-search {
+      opacity: 1;
+    }
+
+    /* отключения встроенной кнопки очистки в Chrome */
+    .search-container input[type="search"]::-webkit-search-cancel-button {
+      -webkit-appearance: none;
+      display: none;
     }
 
     /* Правило для подсветки найденного текста */
@@ -585,6 +602,137 @@
         opacity: 1;
       }
     }
+
+    /* Обновленные стили для контейнера поиска с эффектом появления */
+    .search-container {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 34px;
+      transition: all 0.3s ease;
+      overflow: hidden;
+      width: 24px;
+      /* уменьшаем начальную ширину для иконки */
+      border: none;
+      /* убираем границу в свернутом состоянии */
+      background: transparent;
+      /* убираем фон в свернутом состоянии */
+      padding: 0;
+      /* убираем отступы в свернутом состоянии */
+      position: relative;
+      /* для позиционирования эффекта свечения */
+    }
+
+    .search-container.expanded {
+      width: 220px;
+      /* ширина развернутого поиска */
+      padding: 4px 12px;
+      /* восстанавливаем отступы при развертывании */
+      border-radius: 20px;
+      /* восстанавливаем закругление углов */
+      border: 1px solid #474747;
+      /* восстанавливаем границу */
+      background: transparent;
+      /* восстанавливаем фон */
+      box-shadow: 0 0 0 rgba(29, 185, 84, 0);
+      /* начальное состояние тени */
+      animation: search-glow 0.6s ease-out;
+      /* анимация свечения при раскрытии */
+    }
+
+    /* Анимация свечения для контейнера поиска */
+    @keyframes search-glow {
+      0% {
+        box-shadow: 0 0 2px rgba(29, 185, 84, 0.3);
+      }
+
+      50% {
+        box-shadow: 0 0 8px rgba(29, 185, 84, 0.5);
+      }
+
+      100% {
+        box-shadow: 0 0 0 rgba(29, 185, 84, 0);
+      }
+    }
+
+    /* Стили для поля поиска с эффектом появления */
+    .search-container input[type="search"] {
+      border: none;
+      background: transparent;
+      outline: none;
+      color: #b3b3b3 !important;
+      width: 0;
+      /* начальная ширина 0 (скрыто) */
+      font-size: 14px;
+      padding: 4px 0;
+      transition: width 0.3s ease, opacity 0.3s ease 0.1s;
+      /* добавлено небольшое запаздывание для opacity */
+      opacity: 0;
+      transform-origin: right center;
+      /* точка трансформации справа */
+    }
+
+    .search-container.expanded input[type="search"] {
+      width: 180px;
+      /* ширина при развертывании */
+      opacity: 1;
+      animation: reveal-input 0.3s ease-in-out;
+      /* анимация появления поля ввода */
+    }
+
+    /* Анимация для постепенного появления поля ввода */
+    @keyframes reveal-input {
+      0% {
+        transform: scaleX(0.7);
+        opacity: 0;
+      }
+
+      100% {
+        transform: scaleX(1);
+        opacity: 1;
+      }
+    }
+
+    /* Стиль для иконки поиска с эффектом при нажатии */
+    .search-icon {
+      cursor: pointer;
+      min-width: 24px;
+      min-height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      /* для возможности добавления эффектов */
+      z-index: 2;
+      /* иконка должна быть над другими элементами */
+    }
+
+    .search-icon svg {
+      width: 24px;
+      height: 24px;
+      fill: #a6a7a7;
+      display: block;
+      transition: fill 0.3s ease, transform 0.2s ease;
+      /* добавлен эффект трансформации */
+    }
+
+    .search-container.expanded .search-icon svg {
+      fill: #1db954;
+    }
+
+    /* Эффект нажатия на иконку */
+    .search-icon:active svg {
+      transform: scale(0.9);
+    }
+
+    table.version-table tbody td:nth-child(2),
+    table.version-table tbody td:nth-child(3),
+    table.version-table tbody td:nth-child(4),
+    table.version-table tbody tr:not(:has(td.version-cell)) td:nth-child(1),
+    table.version-table tbody tr:not(:has(td.version-cell)) td:nth-child(2),
+    table.version-table tbody tr:not(:has(td.version-cell)) td:nth-child(3) {
+      font-size: 13px;
+    }
   </style>
 </head>
 
@@ -604,7 +752,8 @@
 
   <header>
     <h1>Official Spotify full installers</h1>
-    <p>Site is in test mode, send a <a href="https://github.com/LoaderSpot/table/issues/new" target="_blank" style="color: #1db954; text-decoration: none;">bug report</a></p>
+    <p>Site is in test mode, send a <a href="https://github.com/LoaderSpot/table/issues/new" target="_blank"
+        style="color: #1db954; text-decoration: none;">bug report</a></p>
   </header>
 
   <!-- Контейнер с таблицей -->
@@ -634,14 +783,16 @@
               <button class="filter-button" data-os="mac">Mac</button>
               <button class="filter-button" data-os="linux">Linux</button>
               <!--блок поиска -->
-              <div class="search-container">
-                <span class="search-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-                    <path
-                      d="M11.742 10.344a6.5 6.5 0 10-1.398 1.398h-.001l3.85 3.85a1 1 0 001.414-1.414l-3.85-3.85zm-5.242 0a4.5 4.5 0 110-9 4.5 4.5 0 010 9z" />
+              <div class="search-container" id="searchContainer">
+                <span class="search-icon" id="searchIcon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="2" fill="none" />
+                    <line x1="15" y1="15" x2="20" y2="20" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" />
                   </svg>
                 </span>
-                <input type="search" id="versionSearch" placeholder="Search">
+                <input type="search" id="versionSearch" placeholder="Search by version" style="font-size: 13px;">
+                <span class="clear-search"></span>
               </div>
             </div>
           </td>
@@ -881,14 +1032,23 @@
       }
     }
 
-    // Функция для форматирования текста счетчика загрузок
+    // функцию форматирования счетчика скачиваний
     function formatDownloadCount(count) {
       count = parseInt(count, 10);
-      if (count === 1) {
-        return "1 download";
-      } else {
-        return `${count} downloads`;
+
+      const suffix = count === 1 ? "download" : "downloads";
+
+      if (count < 1000) {
+        return `${count} ${suffix}`;
       }
+
+      const units = ['', 'k', 'm'];
+      const unit = count < 1000000 ? units[1] : units[2];
+      const value = count < 1000000 ? count / 1000 : count / 1000000;
+
+      const formatted = Number.isInteger(value) ? value.toFixed(0) : value.toFixed(1);
+
+      return `${formatted}${unit} ${suffix}`;
     }
 
     // Обновленная функция для работы с новым форматом ключей
@@ -914,7 +1074,7 @@
     // Функция для обработки событий скачивания
     function handleDownload(downloadLink, fileUrl, version, os, arch) {
 
-      const countElement = downloadLink.closest('.download-container').querySelector('div[title="downloads"]');
+      const countElement = downloadLink.closest('.download-container').querySelector('div');
       const counterKey = generateCounterKey(version, os, arch);
 
       // обновление счетчика в UI
@@ -1025,7 +1185,7 @@
       }, 300);
     }
 
-    // Создаем строки таблицы для одной версии
+    // Функция для создания строк таблицы для одной версии
     function createVersionRows(versionKey, data, searchTerm = '') {
       const shortVersion = versionKey;
       const archCombos = [];
@@ -1062,13 +1222,33 @@
           const displayedFull = searchTerm ? highlight(data.fullversion, searchTerm) : data.fullversion;
           const versionText = document.createElement('div');
           versionText.className = 'version-text';
-          versionText.innerHTML = `<span class="short-version">${displayedShort}</span><span class="full-version">${displayedFull}</span>`;
 
-          versionText.addEventListener('click', async () => {
+          // Создаем отдельные элементы для короткой и полной версий
+          const shortVersionElem = document.createElement('span');
+          shortVersionElem.className = 'short-version';
+          shortVersionElem.innerHTML = displayedShort;
+          shortVersionElem.addEventListener('click', async () => {
+            try {
+              if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(shortVersion);
+                showToast('Short version copied to clipboard');
+              } else {
+                fallbackCopyTextToClipboard(shortVersion);
+              }
+            } catch (err) {
+              console.error('Error while copying:', err);
+              fallbackCopyTextToClipboard(shortVersion);
+            }
+          });
+
+          const fullVersionElem = document.createElement('span');
+          fullVersionElem.className = 'full-version';
+          fullVersionElem.innerHTML = displayedFull;
+          fullVersionElem.addEventListener('click', async () => {
             try {
               if (navigator.clipboard && window.isSecureContext) {
                 await navigator.clipboard.writeText(data.fullversion);
-                showToast('Copied to clipboard');
+                showToast('Full version copied to clipboard');
               } else {
                 fallbackCopyTextToClipboard(data.fullversion);
               }
@@ -1078,6 +1258,11 @@
             }
           });
 
+          // Добавляем оба элемента в родительский контейнер
+          versionText.appendChild(shortVersionElem);
+          versionText.appendChild(fullVersionElem);
+
+          // Убираем прежний обработчик с родительского элемента
           versionCell.appendChild(versionText);
           row.appendChild(versionCell);
           isFirstVersionRow = false;
@@ -1105,7 +1290,8 @@
         downloadContainer.className = 'download-container';
         const downloadLink = document.createElement('a');
         downloadLink.className = 'download-link';
-        // Заменяем установку href:
+
+        // Заменяем href:
         downloadLink.removeAttribute('href');
 
         // Формируем тултип в зависимости от OS
@@ -1131,7 +1317,6 @@
         // Отображения счетчика скачиваний
         const downloadCountSpan = document.createElement('div');
         downloadCountSpan.style.fontSize = 'small';
-        downloadCountSpan.title = "downloads"; // добавляем системный тултип
         downloadContainer.appendChild(downloadCountSpan);
         actionCell.appendChild(downloadContainer);
         row.appendChild(actionCell);
@@ -1216,12 +1401,29 @@
         const displayedFull = currentSearchTerm ?
           highlight(version.version.full, currentSearchTerm) : version.version.full;
 
-        versionText.innerHTML = `<span class="short-version">${displayedShort}</span><span class="full-version">${displayedFull}</span>`;
-        versionText.addEventListener('click', () => {
+        // Создаем отдельные элементы для короткой и полной версий
+        const shortVersionElem = document.createElement('span');
+        shortVersionElem.className = 'short-version';
+        shortVersionElem.innerHTML = displayedShort;
+        shortVersionElem.addEventListener('click', () => {
+          navigator.clipboard.writeText(version.version.short)
+            .then(() => showToast('Short version copied to clipboard'))
+            .catch(() => fallbackCopyTextToClipboard(version.version.short));
+        });
+
+        const fullVersionElem = document.createElement('span');
+        fullVersionElem.className = 'full-version';
+        fullVersionElem.innerHTML = displayedFull;
+        fullVersionElem.addEventListener('click', () => {
           navigator.clipboard.writeText(version.version.full)
-            .then(() => showToast('Copied to clipboard'))
+            .then(() => showToast('Full version copied to clipboard'))
             .catch(() => fallbackCopyTextToClipboard(version.version.full));
         });
+
+        // Добавляем оба элемента в родительский контейнер
+        versionText.appendChild(shortVersionElem);
+        versionText.appendChild(fullVersionElem);
+
         versionCell.appendChild(versionText);
 
         version.architectures.forEach((arch, index) => {
@@ -1262,7 +1464,6 @@
 
           const downloadCountSpan = document.createElement('div');
           downloadCountSpan.style.fontSize = 'small';
-          downloadCountSpan.title = "downloads";
           downloadContainer.appendChild(downloadCountSpan);
           actionCell.appendChild(downloadContainer);
           row.appendChild(actionCell);
@@ -1352,11 +1553,11 @@
       container.innerHTML = '';
       currentIndex = 0;
 
-      // Определяем источник данных
       const dataSource = getCurrentDataSource();
 
       if (dataSource.length === 0) {
-        container.innerHTML = '<tr><td colspan="5">No results</td></tr>';
+        container.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">No results</td></tr>';
+        container.style.opacity = "1";
         return;
       }
 
@@ -1384,7 +1585,7 @@
         const fullVersionA = dataA.fullversion.toLowerCase();
         const fullVersionB = dataB.fullversion.toLowerCase();
 
-        // 1. Проверяем точное совпадение целого числа (окруженного точками или границами строки)
+        // Проверяем точное совпадение целого числа (окруженного точками или границами строки)
         const termWithBoundaries = `(^|\\.|\\ )${term}($|\\.|\\s)`;
         const reExact = new RegExp(termWithBoundaries);
 
@@ -1395,7 +1596,7 @@
         if (exactMatchA && !exactMatchB) return -1;
         if (!exactMatchA && exactMatchB) return 1;
 
-        // 2. Проверяем совпадение в первой части версии (до 'g')
+        // Проверяем совпадение в первой части версии (до 'g')
         // Разделяем версию на основную часть и хеш
         const mainPartA = fullVersionA.split('g')[0];
         const mainPartB = fullVersionB.split('g')[0];
@@ -1407,7 +1608,7 @@
         if (inMainA && !inMainB) return -1;
         if (!inMainA && inMainB) return 1;
 
-        // 3. Дальше сортируем по версии (более новые сначала)
+        // Сортируем по версии (сначала новые)
         return versionKeyB.localeCompare(versionKeyA, undefined, { numeric: true, sensitivity: 'base' });
       });
     }
@@ -1579,9 +1780,71 @@
 
     // Обработчик для поиска по версиям с ленивой загрузкой результатов
     const versionSearch = document.getElementById('versionSearch');
+    const searchContainer = document.getElementById('searchContainer');
+    const clearSearchBtn = document.querySelector('.clear-search');
+
     versionSearch.addEventListener('input', (e) => {
       const term = e.target.value.trim().toLowerCase();
+      if (e.target.value.trim() !== "") {
+        searchContainer.classList.add('show-clear');
+      } else {
+        searchContainer.classList.remove('show-clear');
+      }
       performSearch(term);
+    });
+
+    // Обработчик клика на кнопку очистки
+    clearSearchBtn.addEventListener('click', () => {
+      versionSearch.value = '';
+      searchContainer.classList.remove('show-clear');
+      performSearch('');
+      versionSearch.focus();
+    });
+
+    // Добавляем логику для сворачивания/разворачивания поиска
+    const searchIcon = document.getElementById('searchIcon');
+
+    // Функция для переключения состояния поиска
+    function toggleSearch() {
+      if (searchContainer.classList.contains('expanded')) {
+        // Если поисковый запрос пуст, сворачиваем поиск
+        if (versionSearch.value.trim() === '') {
+          searchContainer.classList.remove('expanded');
+        }
+      } else {
+        // Разворачиваем поиск
+        searchContainer.classList.add('expanded');
+        // Устанавливаем фокус на поле поиска после небольшой задержки для анимации
+        setTimeout(() => versionSearch.focus(), 300);
+      }
+    }
+
+    // Обработчик нажатия на иконку поиска
+    searchIcon.addEventListener('click', () => {
+      toggleSearch();
+    });
+
+    // Обработчик потери фокуса для сворачивания при клике вне поля поиска
+    document.addEventListener('click', (e) => {
+      // Если клик вне контейнера поиска и поле поиска пусто
+      if (!searchContainer.contains(e.target) && versionSearch.value.trim() === '') {
+        searchContainer.classList.remove('expanded');
+      }
+    });
+
+    // Отменяем всплытие события при клике на контейнер поиска,
+    // чтобы не срабатывал обработчик document.click
+    searchContainer.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+
+    // Обработчик нажатия Escape для сворачивания поля поиска
+    versionSearch.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        versionSearch.value = ''; // Очищаем поле
+        performSearch(''); // Сбрасываем поиск
+        searchContainer.classList.remove('expanded');
+      }
     });
 
     // Запускаем инициализацию приложения
