@@ -1046,12 +1046,15 @@
       const unit = count < 1000000 ? units[1] : units[2];
       const value = count < 1000000 ? count / 1000 : count / 1000000;
 
-      const formatted = Number.isInteger(value) ? value.toFixed(0) : value.toFixed(1);
+      let formatted = value.toFixed(1);
+
+      if (formatted.endsWith('.0')) {
+        formatted = formatted.slice(0, -2);
+      }
 
       return `${formatted}${unit} ${suffix}`;
     }
 
-    // Обновленная функция для работы с новым форматом ключей
     function updateDownloadCount(fileUrl, countElement, version, os, arch) {
       const counterKey = generateCounterKey(version, os, arch);
 
