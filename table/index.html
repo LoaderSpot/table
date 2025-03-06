@@ -999,37 +999,11 @@
     // Хранилище для ожидающих элементов UI, которые нужно обновить после загрузки счетчиков
     const pendingCounterElements = new Map();
 
-    // Функция для получения всех счетчиков одним запросом
-    async function loadAllDownloadCounters() {
-      try {
-        const workerUrl = 'https://broad-pine-bbc0.amd64fox1.workers.dev/?all=true';
-        // Таймаут для запроса к Worker - 3 секунды
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000);
-
-        const response = await fetch(workerUrl, { signal: controller.signal });
-        clearTimeout(timeoutId);
-
-        allDownloadCounters = await response.json();
-        countersLoaded = true;
-
-        // Обновляем все ожидающие элементы UI с правильным форматированием
-        pendingCounterElements.forEach((counterInfo, counterKey) => {
-          const count = allDownloadCounters[counterKey] || "0";
-          counterInfo.element.innerHTML = count === "0" ? "" :
-            `<span class="download-counter">${formatDownloadCount(count)}</span>`;
-        });
-        pendingCounterElements.clear();
-
-        // Разрешаем начать HEAD-запросы после получения счетчиков
-        processPendingHeadRequests();
-      } catch (err) {
-        console.error('Error loading all download counters:', err);
-        countersLoaded = true; // помечаем как загруженные, чтобы избежать повторных запросов
-
-        // Запускаем HEAD-запросы даже при ошибке загрузки счетчиков
-        processPendingHeadRequests();
-      }
+    // Форматирование числа с разделителями разрядов
+    function formatNumberWithCommas(num) {
+      return num < 1000 ?
+        num.toString() :
+        num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
     // функцию форматирования счетчика скачиваний
@@ -1061,7 +1035,21 @@
       if (countersLoaded) {
         // Если данные уже загружены, используем их
         const count = allDownloadCounters[counterKey] || "0";
-        countElement.innerHTML = count === "0" ? "" : `<span class="download-counter">${formatDownloadCount(count)}</span>`;
+        if (count === "0") {
+          countElement.innerHTML = "";
+        } else {
+          // Форматируем число для отображения в счетчике
+          const countSpan = document.createElement('span');
+          countSpan.className = 'download-counter';
+          countSpan.textContent = formatDownloadCount(count);
+
+          // Добавляем тултип с точным значением скачиваний
+          const exactCount = parseInt(count, 10);
+          countSpan.title = formatNumberWithCommas(exactCount);
+
+          countElement.innerHTML = '';
+          countElement.appendChild(countSpan);
+        }
       } else {
         // Сохраняем элемент для отложенного обновления
         pendingCounterElements.set(counterKey, { element: countElement, url: fileUrl });
@@ -1069,9 +1057,64 @@
     }
 
     function incrementDownloadCounter(countElement) {
-      let current = parseInt(countElement.textContent) || 0;
+      const counterElement = countElement.querySelector('.download-counter');
+      let current = parseInt(counterElement ? counterElement.textContent.replace(/[^\d]/g, '') : '0') || 0;
       current++;
-      countElement.innerHTML = `<span class="download-counter">${formatDownloadCount(current)}</span>`;
+
+      // Создаем новый элемент счетчика
+      const newCounter = document.createElement('span');
+      newCounter.className = 'download-counter';
+      newCounter.textContent = formatDownloadCount(current);
+
+      // Добавляем тултип с точным значением
+      newCounter.title = formatNumberWithCommas(current);
+
+      countElement.innerHTML = '';
+      countElement.appendChild(newCounter);
+    }
+
+    // Функция для получения всех счетчиков
+    async function loadAllDownloadCounters() {
+      try {
+        const workerUrl = 'https://broad-pine-bbc0.amd64fox1.workers.dev/?all=true';
+        // Таймаут для запроса к Worker - 3 секунды
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+        const response = await fetch(workerUrl, { signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        allDownloadCounters = await response.json();
+        countersLoaded = true;
+
+        // Обновляем все ожидающие элементы UI с правильным форматированием
+        pendingCounterElements.forEach((counterInfo, counterKey) => {
+          const count = allDownloadCounters[counterKey] || "0";
+          if (count === "0") {
+            counterInfo.element.innerHTML = "";
+          } else {
+            const countSpan = document.createElement('span');
+            countSpan.className = 'download-counter';
+            countSpan.textContent = formatDownloadCount(count);
+
+            const exactCount = parseInt(count, 10);
+            countSpan.title = formatNumberWithCommas(exactCount);
+
+            counterInfo.element.innerHTML = '';
+            counterInfo.element.appendChild(countSpan);
+          }
+        });
+        pendingCounterElements.clear();
+
+        // Разрешаем начать HEAD-запросы после получения счетчиков
+        processPendingHeadRequests();
+      } catch (err) {
+        console.error('Error loading all download counters:', err);
+        countersLoaded = true; // помечаем как загруженные, чтобы избежать повторных запросов
+
+        // Запускаем HEAD-запросы даже при ошибке загрузки счетчиков
+        processPendingHeadRequests();
+      }
     }
 
     // Функция для обработки событий скачивания
