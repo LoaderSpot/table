@@ -185,10 +185,14 @@
     .version-cell {
       font-weight: 500;
       color: #b3b3b3;
+      position: relative;
+      cursor: default;
+      /* Устанавливаем курсор по умолчанию */
     }
 
     .version-text {
-      cursor: pointer;
+      cursor: default;
+      /* Изменяем курсор по умолчанию с pointer на default */
       display: inline-block;
       /* Чтобы курсор был только на тексте */
       position: relative;
@@ -198,10 +202,16 @@
     .short-version {
       font-size: 1.2em;
       font-weight: bold;
-      display: block;
+      display: inline-block;
+      /* изменено с block на inline-block */
       margin-bottom: 4px;
       user-select: none;
       cursor: pointer;
+      /* Явно указываем pointer только для самого текста */
+      position: relative;
+      /* Обеспечиваем позиционирование */
+      z-index: 1;
+      /* Добавляем z-index */
     }
 
     .short-version:hover {
@@ -733,6 +743,190 @@
     table.version-table tbody tr:not(:has(td.version-cell)) td:nth-child(3) {
       font-size: 13px;
     }
+
+    /* Стили для кнопки комментариев */
+    .comment-button {
+      background: transparent;
+      border: none;
+      color: #777;
+      cursor: pointer;
+      padding: 3px;
+      margin-left: -37px;
+      /* уменьшен отступ слева */
+      border-radius: 3px;
+      opacity: 0.6;
+      transition: all 0.2s ease;
+      position: relative;
+      /* изменено с absolute на relative */
+      display: inline-flex;
+      /* изменено для inline расположения */
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      vertical-align: top;
+      /* выравнивание по верху строки */
+      z-index: 2;
+      /* Убеждаемся, что кнопка находится "над" другими элементами */
+      pointer-events: auto;
+      /* Явно указываем, что события указателя должны обрабатываться */
+    }
+
+    .comment-button:hover {
+      opacity: 1;
+      color: #1db954;
+      background: rgba(29, 185, 84, 0.1);
+    }
+
+    .version-cell {
+      position: relative;
+      /* Для позиционирования кнопки комментариев */
+      cursor: default;
+      /* Устанавливаем курсор по умолчанию */
+    }
+
+    /* Стили для модального окна комментариев */
+    .comments-modal {
+      display: none;
+      position: fixed;
+      z-index: 1100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(3px);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .comments-modal.show {
+      opacity: 1;
+    }
+
+    /* Добавляем стиль для фиксации тела документа */
+    body.modal-open {
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+    }
+
+    .comments-modal-content {
+      background-color: #242628;
+      margin: 0 auto;
+      padding: 0;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 900px;
+      max-height: 90vh;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .comments-modal-header {
+      padding: 15px 20px;
+      background-color: #1f2021;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #333;
+    }
+
+    .comments-modal-title {
+      margin: 0;
+      color: #e8e6e3;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .comments-close-button {
+      background: transparent;
+      border: none;
+      color: #888;
+      font-size: 28px;
+      font-weight: 700;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0 5px;
+    }
+
+    .comments-close-button:hover {
+      color: #1db954;
+    }
+
+    .comments-modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      max-height: calc(90vh - 70px);
+      min-height: 400px; /* Добавляем минимальную высоту для предотвращения "прыжка" */
+    }
+
+
+    /* Новые стили для уведомления об авторизации */
+    .comments-auth-notice {
+      background-color: rgba(29, 185, 84, 0.1);
+      border-left: 3px solid #1db954;
+      padding: 12px 15px;
+      margin: 15px 0;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .comments-auth-notice p {
+      color: #b3b3b3;
+      margin: 0;
+      font-size: 14px;
+    }
+
+    /* Улучшение адаптивности для мобильных устройств */
+    @media (max-width: 768px) {
+      .comments-modal-content {
+        width: 95%;
+        max-height: 95vh;
+      }
+
+      .comments-modal-body {
+        padding: 15px;
+      }
+    }
+
+    /* Стили для фрейма giscus */
+    .giscus-frame {
+      width: 100%;
+      border: none;
+      min-height: 300px;
+    }
+
+    /* Стили для счетчика комментариев */
+    .comment-button .comment-count {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background-color: #444;
+      color: #aaa;
+      border-radius: 50%;
+      font-size: 10px;
+      min-width: 14px;
+      height: 14px;
+      text-align: center;
+      line-height: 14px;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+
+    .comment-button.has-comments .comment-count {
+      background-color: #e7a718;
+      color: #000;
+    }
+
+    .comment-button.has-comments:hover {
+      opacity: 1;
+    }
+
   </style>
 </head>
 
@@ -1077,9 +1271,9 @@
       // Увеличиваем счетчик в глобальном объекте
       const newCount = (parseInt(allDownloadCounters[counterKey] || "0", 10) + 1).toString();
       allDownloadCounters[counterKey] = newCount;
-      
+
       // Обновляем UI с новым значением
-      countElement.innerHTML = newCount === "0" ? "" : 
+      countElement.innerHTML = newCount === "0" ? "" :
         `<span class="download-counter">${formatDownloadCount(newCount)}</span>`;
 
       // скачивание файла не дожидаясь ответа от воркера
@@ -1838,17 +2032,458 @@
       e.stopPropagation();
     });
 
-    // Обработчик нажатия Escape для сворачивания поля поиска
-    versionSearch.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        versionSearch.value = ''; // Очищаем поле
-        performSearch(''); // Сбрасываем поиск
-        searchContainer.classList.remove('expanded');
+    // Запускаем инициализацию приложения
+    initializeApp();
+
+    // Код для работы с комментариями по версиям
+    const commentsModal = document.createElement('div');
+    commentsModal.className = 'comments-modal';
+    commentsModal.innerHTML = `
+      <div class="comments-modal-content">
+        <div class="comments-modal-header">
+          <h3 class="comments-modal-title">Comments for version <span id="comment-version-title"></span></h3>
+          <button class="comments-close-button">&times;</button>
+        </div>
+        <div class="comments-modal-body" id="comments-container">
+          <!-- Здесь будет инициализирован giscus -->
+        </div>
+      </div>
+    `;
+    document.body.appendChild(commentsModal);
+
+    // Функция для удаления giscus фрейма и скрипта
+    function cleanupGiscus() {
+      const commentsContainer = document.getElementById('comments-container');
+      if (commentsContainer) {
+        commentsContainer.innerHTML = '';
+      }
+      
+      const oldGiscusFrame = document.querySelector('iframe.giscus-frame');
+      if (oldGiscusFrame) {
+        oldGiscusFrame.remove();
+      }
+      
+      const oldGiscusScript = document.getElementById('giscus-comments-script');
+      if (oldGiscusScript) {
+        oldGiscusScript.remove();
+      }
+    }
+
+    // Отслеживаем загрузку giscus
+    let giscusLoaded = false;
+    let currentCommentVersion = '';
+    let scrollPosition = 0; // Сохраняем позицию прокрутки
+
+    // Функция открытия модального окна с блокировкой прокрутки основной страницы
+    function openModal() {
+      // Сохраняем текущую позицию прокрутки
+      scrollPosition = window.pageYOffset;
+      // Добавляем класс для фиксации тела документа
+      document.body.classList.add('modal-open');
+      // Устанавливаем top для имитации той же позиции после фиксации
+      document.body.style.top = `-${scrollPosition}px`;
+      // Отображаем модальное окно (сначала с opacity:0)
+      commentsModal.style.display = 'flex';
+      
+      // Добавляем небольшую задержку перед показом для плавности
+      setTimeout(() => {
+        commentsModal.classList.add('show');
+      }, 10);
+    }
+
+    // Функция закрытия модального окна с восстановлением прокрутки
+    function closeModal() {
+      // Анимация скрытия
+      commentsModal.classList.remove('show');
+      
+      // Ждем завершения анимации перед полным скрытием
+      setTimeout(() => {
+        // Скрываем модальное окно
+        commentsModal.style.display = 'none';
+        // Удаляем класс для фиксации тела документа
+        document.body.classList.remove('modal-open');
+        // Удаляем стиль top
+        document.body.style.top = '';
+        // Восстанавливаем позицию прокрутки
+        window.scrollTo(0, scrollPosition);
+        // Очищаем контент giscus
+        cleanupGiscus();
+        
+        // Обновляем счетчики комментариев после закрытия модального окна
+        if (currentCommentVersion) {
+          refreshCommentCountForVersion(currentCommentVersion);
+        }
+      }, 300); // Задержка должна соответствовать времени transition для opacity
+    }
+
+    // Слушаем сообщения от giscus iframe
+    window.addEventListener('message', function (e) {
+      if (e.origin !== 'https://giscus.app') return;
+
+      try {
+        // Проверяем, что данные - это строка JSON, а не объект
+        const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+
+        // Проверяем, что это сообщение от giscus
+        if (data.giscus) {
+          giscusLoaded = true;
+          
+          // Проверяем, содержит ли сообщение информацию о добавлении комментария
+          if (data.giscus.discussion && currentCommentVersion) {
+            // Если это событие добавления комментария
+            if (data.giscus.discussion.totalCommentCount !== undefined) {
+              // Обновляем кэш счетчика комментариев для текущей версии
+              const newCount = data.giscus.discussion.totalCommentCount;
+              
+              // Обновляем кэш только если значение изменилось
+              if (commentCountCache[currentCommentVersion] !== newCount) {
+                commentCountCache[currentCommentVersion] = newCount;
+                
+                // Обновляем счетчик на главной странице
+                updateCommentCountForVersion(currentCommentVersion, newCount);
+              }
+            }
+          }
+          
+          // Отслеживаем события создания и удаления комментариев
+          if (data.giscus.error === null && data.giscus.eventName) {
+            // Если произошло событие комментирования, обновляем счетчик
+            if (data.giscus.eventName === 'comment' || 
+                data.giscus.eventName === 'reply') {
+              
+              // Небольшая задержка для обновления счетчика после действия
+              setTimeout(() => {
+                if (currentCommentVersion) {
+                  refreshCommentCountForVersion(currentCommentVersion);
+                }
+              }, 1000);
+            }
+          }
+        }
+      } catch (error) {
+        console.log('Error processing giscus message:', error);
       }
     });
 
-    // Запускаем инициализацию приложения
-    initializeApp();
+    // Обработчик закрытия модального окна
+    document.querySelector('.comments-close-button').addEventListener('click', closeModal);
+
+    // Закрытие модального окна при клике вне содержимого
+    window.addEventListener('click', (e) => {
+      if (e.target === commentsModal) {
+        closeModal();
+      }
+    });
+
+    // Функция открытия модального окна с комментариями для версии
+    function openComments(version) {
+      
+      // Устанавливаем заголовок
+      document.getElementById('comment-version-title').textContent = version;
+      const commentsContainer = document.getElementById('comments-container');
+      
+      // Очищаем предыдущие комментарии
+      cleanupGiscus();
+      
+      // giscus config
+      const giscusScript = document.createElement('script');
+      giscusScript.id = 'giscus-comments-script';
+      giscusScript.src = 'https://giscus.app/client.js';
+      giscusScript.setAttribute('data-repo', 'LoaderSpot/table');
+      giscusScript.setAttribute('data-repo-id', 'R_kgDOOANMeQ');
+      giscusScript.setAttribute('data-category', 'Comments');
+      giscusScript.setAttribute('data-category-id', 'DIC_kwDOOANMec4Cn2gF');
+      giscusScript.setAttribute('data-mapping', 'specific');
+      giscusScript.setAttribute('data-term', `spotify-version-${version}`);
+      giscusScript.setAttribute('data-strict', '0');
+      giscusScript.setAttribute('data-reactions-enabled', '1');
+      giscusScript.setAttribute('data-emit-metadata', '1');
+      giscusScript.setAttribute('data-input-position', 'bottom');
+      giscusScript.setAttribute('data-theme', 'noborder_dark');
+      giscusScript.setAttribute('data-lang', 'en');
+      giscusScript.setAttribute('data-loading', 'lazy');
+      giscusScript.setAttribute('crossorigin', 'anonymous');
+      giscusScript.async = true;
+      
+      // Добавляем скрипт в контейнер
+      commentsContainer.appendChild(giscusScript);
+      
+      // Устанавливаем текущую версию и статус загрузки
+      currentCommentVersion = version;
+      giscusLoaded = false;
+      
+      // Открываем модальное окно только после всех подготовительных действий
+      openModal();
+    }
+
+    // Глобальный кэш для количества комментариев по версиям
+    const commentCountCache = {};
+    let commentCountsLoaded = false;
+    let lastCommentCountUpdate = 0;
+    const MIN_UPDATE_INTERVAL = 10000; // Минимальный интервал между обновлениями (10 секунд)
+
+    // Функция для загрузки количества комментариев для всех версий
+    async function loadAllCommentCounts() {
+      try {
+        // Если счетчики уже загружены, не запрашиваем их снова
+        if (commentCountsLoaded) return commentCountCache;
+        
+        // Проверяем, не слишком ли часто делаем запросы
+        const now = Date.now();
+        if (now - lastCommentCountUpdate < MIN_UPDATE_INTERVAL) {
+          return commentCountCache;
+        }
+        
+        lastCommentCountUpdate = now;
+
+        const apiUrl = 'https://api.github.com/repos/LoaderSpot/table/discussions?per_page=100';
+        const response = await fetch(apiUrl, {
+          headers: {
+            'Accept': 'application/vnd.github.v3+json'
+          },
+          cache: 'no-store' // Не кэшировать запрос
+        });
+
+        if (!response.ok) {
+          throw new Error(`GitHub API error: ${response.status}`);
+        }
+
+        const discussions = await response.json();
+
+        // Обрабатываем только те дискуссии, у которых название начинается с spotify-version
+        discussions.forEach(discussion => {
+          if (discussion.title.startsWith('spotify-version-')) {
+            // Извлекаем версию из названия дискуссии (убираем префикс spotify-version-)
+            const version = discussion.title.replace('spotify-version-', '');
+            commentCountCache[version] = discussion.comments;
+          }
+        });
+
+        commentCountsLoaded = true;
+
+        // После загрузки обновляем все существующие кнопки комментариев
+        updateExistingCommentButtons();
+
+        return commentCountCache;
+      } catch (error) {
+        console.error('Error loading comment counts:', error);
+        commentCountsLoaded = true; // Помечаем как загруженные, чтобы избежать повторных попыток
+        return {};
+      }
+    }
+
+    // Загружаем данные о комментариях при инициализации приложения
+    document.addEventListener('DOMContentLoaded', () => {
+      loadAllCommentCounts();
+      
+      // Настраиваем периодическое обновление счетчиков комментариев
+      // Обновляем каждые 5 минут (300000 мс)
+      setInterval(refreshAllCommentCounts, 300000);
+      
+      // Обновляем счетчики комментариев при возвращении на страницу
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          refreshAllCommentCounts();
+        }
+      });
+    });
+
+    // Функция для обновления всех счетчиков комментариев
+    async function refreshAllCommentCounts() {
+      try {
+        // Проверяем, не слишком ли часто делаем запросы
+        const now = Date.now();
+        if (now - lastCommentCountUpdate < MIN_UPDATE_INTERVAL) {
+          return commentCountCache;
+        }
+        
+        lastCommentCountUpdate = now;
+
+        const apiUrl = 'https://api.github.com/repos/LoaderSpot/table/discussions?per_page=100';
+        const response = await fetch(apiUrl, {
+          headers: {
+            'Accept': 'application/vnd.github.v3+json'
+          },
+          cache: 'no-store' // Не кэшировать запрос
+        });
+
+        if (!response.ok) {
+          throw new Error(`GitHub API error: ${response.status}`);
+        }
+
+        const discussions = await response.json();
+
+        // Обрабатываем только те дискуссии, у которых название начинается с spotify-version
+        discussions.forEach(discussion => {
+          if (discussion.title.startsWith('spotify-version-')) {
+            // Извлекаем версию из названия дискуссии (убираем префикс spotify-version-)
+            const version = discussion.title.replace('spotify-version-', '');
+            const newCount = discussion.comments;
+            
+            // Обновляем кэш только если значение изменилось
+            if (commentCountCache[version] !== newCount) {
+              commentCountCache[version] = newCount;
+              updateCommentCountForVersion(version, newCount);
+            }
+          }
+        });
+
+        return commentCountCache;
+      } catch (error) {
+        console.error('Error refreshing all comment counts:', error);
+        return commentCountCache;
+      }
+    }
+
+    // Функция для принудительного обновления счетчика комментариев для конкретной версии
+    async function refreshCommentCountForVersion(version) {
+      try {
+        // Проверяем, не слишком ли часто делаем запросы
+        const now = Date.now();
+        if (now - lastCommentCountUpdate < MIN_UPDATE_INTERVAL) {
+          return;
+        }
+        
+        lastCommentCountUpdate = now;
+
+        const apiUrl = `https://api.github.com/repos/LoaderSpot/table/discussions?per_page=100`;
+        const response = await fetch(apiUrl, {
+          headers: {
+            'Accept': 'application/vnd.github.v3+json'
+          },
+          cache: 'no-store' // Не кэшировать запрос
+        });
+
+        if (!response.ok) {
+          throw new Error(`GitHub API error: ${response.status}`);
+        }
+
+        const discussions = await response.json();
+        
+        // Ищем дискуссию для конкретной версии
+        const discussionTitle = `spotify-version-${version}`;
+        const discussion = discussions.find(d => d.title === discussionTitle);
+        
+        if (discussion) {
+          const newCount = discussion.comments;
+          
+          // Обновляем кэш только если значение изменилось
+          if (commentCountCache[version] !== newCount) {
+            commentCountCache[version] = newCount;
+            
+            // Обновляем счетчик на главной странице
+            updateCommentCountForVersion(version, newCount);
+          }
+        }
+      } catch (error) {
+        console.error('Error refreshing comment count:', error);
+      }
+    }
+
+    // Функция для обновления существующих кнопок комментариев после загрузки данных
+    function updateExistingCommentButtons() {
+      document.querySelectorAll('.comment-button').forEach(button => {
+        const version = button.dataset.version;
+        if (version && commentCountCache[version]) {
+          const countBadge = button.querySelector('.comment-count') || document.createElement('span');
+          if (!button.querySelector('.comment-count')) {
+            countBadge.className = 'comment-count';
+            button.appendChild(countBadge);
+          }
+          countBadge.textContent = commentCountCache[version];
+
+          // Если есть комментарии, делаем бейдж более заметным
+          if (commentCountCache[version] > 0) {
+            button.classList.add('has-comments');
+          }
+        }
+      });
+    }
+
+    // Функция для обновления счетчика комментариев для конкретной версии
+    function updateCommentCountForVersion(version, count) {
+      // Находим все кнопки комментариев для данной версии
+      document.querySelectorAll(`.comment-button[data-version="${version}"]`).forEach(button => {
+        // Обновляем счетчик
+        const countBadge = button.querySelector('.comment-count') || document.createElement('span');
+        if (!button.querySelector('.comment-count')) {
+          countBadge.className = 'comment-count';
+          button.appendChild(countBadge);
+        }
+        
+        countBadge.textContent = count;
+        
+        // Обновляем стиль кнопки в зависимости от наличия комментариев
+        if (count > 0) {
+          button.classList.add('has-comments');
+        } else {
+          button.classList.remove('has-comments');
+        }
+      });
+    }
+
+    // Функция для создания кнопки комментариев с отображением количества
+    function createCommentButton(version) {
+      const commentButton = document.createElement('button');
+      commentButton.className = 'comment-button';
+      commentButton.dataset.version = version;
+      commentButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>`;
+      commentButton.title = `Comments for version ${version}`;
+
+      // Если данные о комментариях уже загружены, добавляем счетчик
+      if (commentCountCache[version]) {
+        const countBadge = document.createElement('span');
+        countBadge.className = 'comment-count';
+        countBadge.textContent = commentCountCache[version];
+        commentButton.appendChild(countBadge);
+
+        // Если есть комментарии, делаем бейдж более заметным
+        if (commentCountCache[version] > 0) {
+          commentButton.classList.add('has-comments');
+        }
+      }
+
+      commentButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openComments(version);
+      });
+
+      return commentButton;
+    }
+
+    // Функция создания строк версии с добавлением кнопки комментариев
+    const originalCreateVersionRows = createVersionRows;
+    createVersionRows = function (versionKey, data, searchTerm = '') {
+      const rows = originalCreateVersionRows(versionKey, data, searchTerm);
+      if (rows.length > 0) {
+        // Находим ячейку с версией (первая ячейка в первой строке)
+        const versionCell = rows[0].querySelector('.version-cell');
+        if (versionCell) {
+          // Добавляем кнопку комментариев рядом с текстом версии
+          const commentBtn = createCommentButton(versionKey);
+          versionCell.appendChild(commentBtn);
+        }
+      }
+      return rows;
+    };
+
+    const originalLoadMoreLinuxRows = loadMoreLinuxRows;
+    loadMoreLinuxRows = function () {
+      originalLoadMoreLinuxRows();
+
+      // После загрузки строк находим все ячейки с версиями и добавляем кнопки комментариев
+      const versionCells = document.querySelectorAll('.version-cell:not(.has-comments)');
+      versionCells.forEach(cell => {
+        const versionText = cell.querySelector('.version-text .short-version');
+        if (versionText) {
+          const version = versionText.textContent.trim();
+          const commentBtn = createCommentButton(version);
+          cell.appendChild(commentBtn);
+          cell.classList.add('has-comments'); // Помечаем, чтобы не добавлять кнопку снова
+        }
+      });
+    };
   </script>
 
 </html>
