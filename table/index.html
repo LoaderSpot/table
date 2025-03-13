@@ -8,11 +8,10 @@
   <link type="image/png" rel="icon" href="favicon.png">
   <link rel="preconnect" href="https://upgrade.scdn.co" crossorigin>
   <link rel="preconnect" href="https://broad-pine-bbc0.amd64fox1.workers.dev" crossorigin>
-  <link rel="preload" href="https://encore.scdn.co/1.2.3/CircularSpotify-UI-Latin-OS2v3-Book.woff2" as="font"
+  <link rel="preload" href="font/SpotifyMixUI-Regular.woff2" as="font"
     type="font/woff2" crossorigin="anonymous" />
-  <link rel="preload" href="https://encore.scdn.co/1.2.3/CircularSpotify-UI-Latin-OS2v3-Bold.woff2" as="font"
+  <link rel="preload" href="font/SpotifyMixUI-Bold.woff2" as="font"
     type="font/woff2" crossorigin="anonymous" />
-
 
   <style>
     html {
@@ -25,16 +24,16 @@
     }
 
     @font-face {
-      font-family: 'Circular Spotify';
-      src: url('https://encore.scdn.co/1.2.3/CircularSpotify-UI-Latin-OS2v3-Book.woff2') format('woff2');
+      font-family: 'Spotify UI';
+      src: url('font/SpotifyMixUI-Regular.woff2') format('woff2');
       font-weight: 400;
       font-style: normal;
       font-display: swap;
     }
 
     @font-face {
-      font-family: 'Circular Spotify';
-      src: url('https://encore.scdn.co/1.2.3/CircularSpotify-UI-Latin-OS2v3-Bold.woff2') format('woff2');
+      font-family: 'Spotify UI';
+      src: url('font/SpotifyMixUI-Bold.woff2') format('woff2');
       font-weight: 700;
       font-style: normal;
       font-display: swap;
@@ -47,7 +46,7 @@
     }
 
     body {
-      font-family: 'Circular Spotify', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      font-family: 'Spotify UI', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
       background: #181a1b;
       color: #a59d92;
       line-height: 1.6;
@@ -137,31 +136,27 @@
       margin: 40px auto;
       position: relative;
       overflow-x: auto;
-      /* Чтобы таблица прокручивалась при узком экране */
     }
 
-    /* Стили таблицы */
     table.version-table {
       width: 100%;
       border-collapse: collapse;
       min-width: 600px;
-      /* чтобы колонки не сжимались слишком сильно */
       table-layout: fixed;
-      /* Фиксированная разметка таблицы */
     }
 
-    /* Добавляем новый стиль для разделения версий */
+    /* стиль для разделения версий */
     table.version-table tr:has(.version-cell) {
       border-top: 2px solid #444;
     }
 
-    /* Для первой строки убираем верхнюю границу */
+    /* для первой строки убираем верхнюю границу */
     table.version-table tbody tr:first-child {
       border-top: none;
       border-top: 2px solid #444;
     }
 
-    /* Добавляем стиль для нижней границы последней версии */
+    /* стиль для нижней границы последней версии */
     table.version-table tbody tr:last-child {
       border-bottom: 2px solid #444;
     }
@@ -181,37 +176,31 @@
       font-size: 14px
     }
 
-    /* Чтобы версия визуально выделялась при наведении/копирование */
     .version-cell {
       font-weight: 500;
       color: #b3b3b3;
       position: relative;
       cursor: default;
-      /* Устанавливаем курсор по умолчанию */
     }
 
     .version-text {
       cursor: default;
-      /* Изменяем курсор по умолчанию с pointer на default */
       display: inline-block;
-      /* Чтобы курсор был только на тексте */
+      flex-wrap: wrap;
+      align-items: flex-start;
       position: relative;
-      /* для корректного позиционирования tooltip */
     }
 
     .short-version {
       font-size: 1.2em;
       font-weight: bold;
-      display: inline-block;
-      /* изменено с block на inline-block */
+      display: inline-flex;
+      align-items: center;
       margin-bottom: 4px;
       user-select: none;
       cursor: pointer;
-      /* Явно указываем pointer только для самого текста */
       position: relative;
-      /* Обеспечиваем позиционирование */
       z-index: 1;
-      /* Добавляем z-index */
     }
 
     .short-version:hover {
@@ -230,8 +219,6 @@
       color: #aaa;
     }
 
-
-    /* Кнопка скачать (иконка) */
     .download-link {
       display: inline-flex;
       align-items: center;
@@ -244,9 +231,7 @@
       border-radius: 4px;
       transition: background 0.2s;
       position: relative;
-      /* для корректного позиционирования tooltip */
       cursor: pointer;
-      /* добавлено для отображения указателя при наведении */
     }
 
     .download-link:hover {
@@ -259,14 +244,12 @@
       fill: currentColor;
       transition: fill 0.2s;
       position: relative;
-      /* для корректного позиционирования tooltip */
     }
 
     .download-link:hover .download-icon {
       fill: #1db954;
     }
 
-    /* Тост-уведомление (скопировано в буфер) */
     .toast-notification {
       position: fixed;
       bottom: 20px;
@@ -290,23 +273,19 @@
 
     .action-cell {
       text-align: center;
-      /* Выравнивание содержимого ячейки по центру */
     }
 
-    /* Стили для кнопок фильтрации */
     .filter-buttons {
       display: flex;
       gap: 10px;
       padding: 8px;
     }
 
-    /* Стили для ячейки с кнопками */
     table.version-table thead td {
       border: none;
       padding: 0;
     }
 
-    /* Кнопки внутри таблицы */
     table.version-table .filter-button {
       padding: 6px 20px;
       border: 1px solid #474747;
@@ -324,19 +303,17 @@
       background: #1db954;
       color: #000;
       pointer-events: none;
-      /* блокируем клики на активной кнопке */
+      border: 1px solid #ffffff00;
     }
 
     table.version-table .filter-button:hover:not(.active) {
       background: #d6d6d62a;
     }
 
-    /* Плавный переход для контейнера таблицы */
     #versions-container {
       transition: opacity 0.3s ease-in-out;
     }
 
-    /* Стили для Linux-репозитория */
     .linux-repo-wrapper {
       background: #242628;
       border-radius: 8px;
@@ -374,12 +351,6 @@
       background: #2a2e2f;
     }
 
-    .loading-indicator {
-      padding: 16px;
-      text-align: center;
-      color: #777;
-    }
-
     .repo-content::-webkit-scrollbar {
       width: 8px;
     }
@@ -397,7 +368,6 @@
       background: #555;
     }
 
-    /* Стили для контейнера поиска */
     .search-container {
       padding: 4px 12px;
 
@@ -409,7 +379,6 @@
       height: 34px;/
     }
 
-    /* Стили для поля поиска */
     .search-container input[type="search"] {
       border: none;
       background: transparent;
@@ -420,7 +389,7 @@
       padding: 4px 0;
     }
 
-    /* Кнопка очистки для Firefox, и Chrome */
+    /* Кнопка очистки для Firefox и Chrome */
     .search-container {
       position: relative;
     }
@@ -449,7 +418,6 @@
       display: none;
     }
 
-    /* Правило для подсветки найденного текста */
     mark {
       background-color: rgba(255, 255, 0, 0.4);
     }
@@ -466,7 +434,6 @@
       /* смещает содержимое влево, не влияя на соседний столбец */
     }
 
-    /* Стиль счетчика скачиваний */
     .download-counter {
       position: relative;
       color: #a7a6a6b0;
@@ -478,14 +445,12 @@
       margin-left: 9px;
       cursor: default;
       white-space: nowrap;
-      /* чтобы все помещалось в одну строку */
     }
 
     .download-counter:hover {
       transform: scale(1.1);
     }
 
-    /* Стиль для контейнера скачивания: элементы расположены в ряд */
     .download-container {
       display: flex;
       flex-direction: row;
@@ -493,7 +458,6 @@
       gap: 4px;
     }
 
-    /* Стили для адаптации scrollbar под тёмную тему */
     ::-webkit-scrollbar {
       background-color: #2a2a2a;
     }
@@ -506,25 +470,20 @@
       background-color: #3a3a3a;
     }
 
-    /* Стили для кнопок фильтра архитектур */
     .arch-filter-buttons {
       display: inline-flex;
       gap: 10px;
       padding: 8px;
       min-height: 50px;
-      /* Добавляем минимальную высоту */
       transition: opacity 0.3s ease;
-      /* Плавное скрытие/появление */
       opacity: 1;
       height: auto;
       overflow: hidden;
     }
 
-    /* Класс для скрытия фильтров без влияния на layout */
     .arch-filter-buttons.hidden {
       opacity: 0;
       pointer-events: none;
-      /* Блокируем клики на скрытых элементах */
     }
 
     .arch-filter-button {
@@ -541,79 +500,23 @@
     .arch-filter-button.active {
       background: #1db954;
       color: #000;
+      border: 1px solid #ffffff00;
     }
 
     .arch-filter-button:hover:not(.active) {
       background: #d6d6d62a;
     }
 
-
-    /* Добавляем стиль для строки с фильтрами архитектур */
     tr.arch-filters-row {
       height: 50px;
-      /* Фиксированная высота для строки с фильтрами архитектур */
       transition: height 0.3s ease;
-      /* Плавное изменение высоты */
     }
 
-    /* Стиль для строки с фильтрами OS и поиском */
     tr.os-filters-row {
       position: relative;
-      /* Чтобы row не прыгала при исчезновении arch-фильтров */
       z-index: 2;
-      /* Строка с фильтрами OS должна быть выше */
     }
 
-    /* Добавляем стили для анимации загрузки */
-    .loader-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 30px 0;
-      width: 100%;
-    }
-
-    .spotify-loader {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: 3px solid transparent;
-      border-top-color: #1db954;
-      border-left-color: #1db954;
-      animation: spin 1s linear infinite;
-      display: inline-block;
-    }
-
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-
-    .loading-text {
-      color: #b3b3b3;
-      margin-left: 15px;
-      font-size: 14px;
-      animation: pulse 1.5s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-
-      0%,
-      100% {
-        opacity: 0.6;
-      }
-
-      50% {
-        opacity: 1;
-      }
-    }
-
-    /* Обновленные стили для контейнера поиска с эффектом появления */
     .search-container {
       display: inline-flex;
       align-items: center;
@@ -622,35 +525,23 @@
       transition: all 0.3s ease;
       overflow: hidden;
       width: 24px;
-      /* уменьшаем начальную ширину для иконки */
       border: none;
-      /* убираем границу в свернутом состоянии */
       background: transparent;
-      /* убираем фон в свернутом состоянии */
       padding: 0;
-      /* убираем отступы в свернутом состоянии */
       position: relative;
-      /* для позиционирования эффекта свечения */
     }
 
     .search-container.expanded {
       width: 220px;
-      /* ширина развернутого поиска */
       padding: 4px 12px;
-      /* восстанавливаем отступы при развертывании */
       border-radius: 20px;
-      /* восстанавливаем закругление углов */
       border: 1px solid #474747;
-      /* восстанавливаем границу */
       background: transparent;
-      /* восстанавливаем фон */
       box-shadow: 0 0 0 rgba(29, 185, 84, 0);
-      /* начальное состояние тени */
       animation: search-glow 0.6s ease-out;
-      /* анимация свечения при раскрытии */
     }
 
-    /* Анимация свечения для контейнера поиска */
+    /* свечение для контейнера поиска */
     @keyframes search-glow {
       0% {
         box-shadow: 0 0 2px rgba(29, 185, 84, 0.3);
@@ -665,32 +556,27 @@
       }
     }
 
-    /* Стили для поля поиска с эффектом появления */
+    /* стили для поля поиска с эффектом появления */
     .search-container input[type="search"] {
       border: none;
       background: transparent;
       outline: none;
       color: #b3b3b3 !important;
       width: 0;
-      /* начальная ширина 0 (скрыто) */
       font-size: 14px;
       padding: 4px 0;
       transition: width 0.3s ease, opacity 0.3s ease 0.1s;
-      /* добавлено небольшое запаздывание для opacity */
       opacity: 0;
       transform-origin: right center;
-      /* точка трансформации справа */
     }
 
     .search-container.expanded input[type="search"] {
       width: 180px;
-      /* ширина при развертывании */
       opacity: 1;
       animation: reveal-input 0.3s ease-in-out;
-      /* анимация появления поля ввода */
     }
 
-    /* Анимация для постепенного появления поля ввода */
+    /* анимация для постепенного появления поля ввода */
     @keyframes reveal-input {
       0% {
         transform: scaleX(0.7);
@@ -703,7 +589,7 @@
       }
     }
 
-    /* Стиль для иконки поиска с эффектом при нажатии */
+  
     .search-icon {
       cursor: pointer;
       min-width: 24px;
@@ -712,9 +598,7 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      /* для возможности добавления эффектов */
       z-index: 2;
-      /* иконка должна быть над другими элементами */
     }
 
     .search-icon svg {
@@ -723,14 +607,13 @@
       fill: #a6a7a7;
       display: block;
       transition: fill 0.3s ease, transform 0.2s ease;
-      /* добавлен эффект трансформации */
     }
 
     .search-container.expanded .search-icon svg {
       fill: #1db954;
     }
 
-    /* Эффект нажатия на иконку */
+    /* эффект нажатия на иконку */
     .search-icon:active svg {
       transform: scale(0.9);
     }
@@ -744,32 +627,25 @@
       font-size: 13px;
     }
 
-    /* Стили для кнопки комментариев */
     .comment-button {
       background: transparent;
       border: none;
       color: #777;
       cursor: pointer;
       padding: 3px;
-      margin-left: -37px;
-      /* уменьшен отступ слева */
+      margin-left: 5px;
       border-radius: 3px;
       opacity: 0.6;
       transition: all 0.2s ease;
       position: relative;
-      /* изменено с absolute на relative */
       display: inline-flex;
-      /* изменено для inline расположения */
       align-items: center;
       justify-content: center;
       width: 24px;
       height: 24px;
       vertical-align: top;
-      /* выравнивание по верху строки */
       z-index: 2;
-      /* Убеждаемся, что кнопка находится "над" другими элементами */
       pointer-events: auto;
-      /* Явно указываем, что события указателя должны обрабатываться */
     }
 
     .comment-button:hover {
@@ -780,12 +656,9 @@
 
     .version-cell {
       position: relative;
-      /* Для позиционирования кнопки комментариев */
       cursor: default;
-      /* Устанавливаем курсор по умолчанию */
     }
 
-    /* Стили для модального окна комментариев */
     .comments-modal {
       display: none;
       position: fixed;
@@ -806,7 +679,6 @@
       opacity: 1;
     }
 
-    /* Добавляем стиль для фиксации тела документа */
     body.modal-open {
       overflow: hidden;
       position: fixed;
@@ -863,11 +735,9 @@
       padding: 20px;
       overflow-y: auto;
       max-height: calc(90vh - 70px);
-      min-height: 400px; /* Добавляем минимальную высоту для предотвращения "прыжка" */
+      min-height: 400px;
     }
 
-
-    /* Новые стили для уведомления об авторизации */
     .comments-auth-notice {
       background-color: rgba(29, 185, 84, 0.1);
       border-left: 3px solid #1db954;
@@ -882,7 +752,7 @@
       font-size: 14px;
     }
 
-    /* Улучшение адаптивности для мобильных устройств */
+    /* улучшение адаптивности для мобильных устройств */
     @media (max-width: 768px) {
       .comments-modal-content {
         width: 95%;
@@ -894,14 +764,12 @@
       }
     }
 
-    /* Стили для фрейма giscus */
     .giscus-frame {
       width: 100%;
       border: none;
       min-height: 300px;
     }
 
-    /* Стили для счетчика комментариев */
     .comment-button .comment-count {
       position: absolute;
       top: -5px;
@@ -921,10 +789,6 @@
     .comment-button.has-comments .comment-count {
       background-color: #e7a718;
       color: #000;
-    }
-
-    .comment-button.has-comments:hover {
-      opacity: 1;
     }
 
   </style>
@@ -1017,20 +881,6 @@
       </svg>
     `;
 
-    // Создаем HTML для спиннера загрузки
-    function getLoaderHTML() {
-      return `
-        <tr>
-          <td colspan="5">
-            <div class="loader-container">
-              <div class="spotify-loader"></div>
-              <div class="loading-text">Loading data...</div>
-            </div>
-          </td>
-        </tr>
-      `;
-    }
-
     // Определяем ОС из URL параметров перед загрузкой данных
     let currentOS = (() => {
       const urlParams = new URLSearchParams(window.location.search);
@@ -1046,12 +896,6 @@
 
     // Обновляем активную вкладку в UI при загрузке страницы
     document.addEventListener('DOMContentLoaded', () => {
-      // Отображаем начальный спиннер загрузки
-      const container = document.getElementById('versions-container');
-      if (container) {
-        container.innerHTML = getLoaderHTML();
-      }
-
       document.querySelectorAll('.filter-button').forEach(btn => {
         if (btn.dataset.os === currentOS) {
           btn.classList.add('active');
@@ -1695,8 +1539,6 @@
     // Загрузка данных для Linux с поддержкой ленивой загрузки
     async function loadLinuxPackages() {
       try {
-        container.innerHTML = getLoaderHTML();
-
         const response = await fetch('versions_deb.json');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -1827,7 +1669,6 @@
 
         // Проверяем, загружены ли данные для Linux, если это текущая ОС
         if (currentOS === 'linux' && !linuxDataLoaded) {
-          container.innerHTML = getLoaderHTML();
           loadLinuxPackages();
           return;
         }
@@ -2460,9 +2301,13 @@
         // Находим ячейку с версией (первая ячейка в первой строке)
         const versionCell = rows[0].querySelector('.version-cell');
         if (versionCell) {
-          // Добавляем кнопку комментариев рядом с текстом версии
-          const commentBtn = createCommentButton(versionKey);
-          versionCell.appendChild(commentBtn);
+          // Находим элемент с короткой версией
+          const shortVersionElem = versionCell.querySelector('.short-version');
+          if (shortVersionElem) {
+            // Добавляем кнопку комментариев сразу после короткой версии
+            const commentBtn = createCommentButton(versionKey);
+            shortVersionElem.after(commentBtn); // Добавляем сразу после короткой версии
+          }
         }
       }
       return rows;
@@ -2475,11 +2320,11 @@
       // После загрузки строк находим все ячейки с версиями и добавляем кнопки комментариев
       const versionCells = document.querySelectorAll('.version-cell:not(.has-comments)');
       versionCells.forEach(cell => {
-        const versionText = cell.querySelector('.version-text .short-version');
-        if (versionText) {
-          const version = versionText.textContent.trim();
+        const shortVersionElem = cell.querySelector('.version-text .short-version');
+        if (shortVersionElem) {
+          const version = shortVersionElem.textContent.trim();
           const commentBtn = createCommentButton(version);
-          cell.appendChild(commentBtn);
+          shortVersionElem.after(commentBtn); // Добавляем сразу после короткой версии
           cell.classList.add('has-comments'); // Помечаем, чтобы не добавлять кнопку снова
         }
       });
