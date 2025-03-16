@@ -36,7 +36,7 @@
 html {
   /* Всегда показывать вертикальную полосу прокрутки, для более плавного переключения вкладок таблицы */
   overflow-y: scroll;
-  /* Стили для адаптации scrollbar под тёмную тему для Firefox */
+  /* Стили для адаптации scrollbar под тёмную тему Firefox */
   scrollbar-color: #666 #2a2a2a;
   scrollbar-width: auto;
 }

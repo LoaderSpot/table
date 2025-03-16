@@ -1,11 +1,3 @@
-const downloadIcon = `
-<svg class="download-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-  <path d="M12 15.575c-.183 0-.36-.073-.49-.203l-4.095-4.095a.694.694 0 01.981-.981L12 13.901l3.604-3.604a.694.694 0 01.981.98l-4.095 4.095a.692.692 0 01-.49.203z"/>
-  <path d="M12 15.575a.694.694 0 01-.694-.694V3.694a.694.694 0 011.388 0v11.187c0 .383-.31.694-.694.694z"/>
-  <path d="M16.306 20.306H7.694a4.167 4.167 0 01-4.162-4.163v-2.777a.694.694 0 011.388 0v2.777a2.778 2.778 0 002.774 2.775h8.612a2.778 2.778 0 002.775-2.775v-2.777a.694.694 0 011.387 0v2.777a4.167 4.167 0 01-4.162 4.163z"/>
-</svg>
-`;
-
 // определяем os из url параметров перед загрузкой данных
 let currentOS = (() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -633,10 +625,15 @@ async function loadLinuxPackages() {
         linuxDataLoaded = true;
 
         // отображаем данные с учетом текущих фильтров
-        startLazyLoading();
+        if (currentSearchTerm !== "") {
+            performSearch(currentSearchTerm);
+        } else {
+            startLazyLoading();
+        }
     } catch (error) {
         console.error('Ошибка загрузки Linux пакетов:', error);
         container.innerHTML = '<tr><td colspan="5">Ошибка загрузки списка пакетов</td></tr>';
+        container.style.opacity = "1";
     }
 }
 
@@ -647,7 +644,7 @@ function startLazyLoading() {
 
     const dataSource = getCurrentDataSource();
 
-    if (dataSource.length === 0) {
+    if (!dataSource || dataSource.length === 0) {
         container.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">No results</td></tr>';
         container.style.opacity = "1";
         return;
@@ -1239,7 +1236,15 @@ function createVersionPart(text, searchTerm, className, toastMessage) {
     return element;
 }
 
-// выделяем создание ячейки с кнопкой скачивания в отдельную функцию
+const downloadIcon = `
+<svg class="download-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <path d="M12 15.575c-.183 0-.36-.073-.49-.203l-4.095-4.095a.694.694 0 01.981-.981L12 13.901l3.604-3.604a.694.694 0 01.981.98l-4.095 4.095a.692.692 0 01-.49.203z"/>
+  <path d="M12 15.575a.694.694 0 01-.694-.694V3.694a.694.694 0 011.388 0v11.187c0 .383-.31.694-.694.694z"/>
+  <path d="M16.306 20.306H7.694a4.167 4.167 0 01-4.162-4.163v-2.777a.694.694 0 011.388 0v2.777a2.778 2.778 0 002.774 2.775h8.612a2.778 2.778 0 002.775-2.775v-2.777a.694.694 0 011.387 0v2.777a4.167 4.167 0 01-4.162 4.163z"/>
+</svg>
+`;
+
+// создание ячейки с кнопкой скачивания
 function createDownloadCell(link, version, os, arch) {
     const actionCell = document.createElement('td');
     actionCell.className = 'action-cell';
