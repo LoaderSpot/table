@@ -7,7 +7,7 @@ let currentOS = (() => {
         case urlParams.has('linux'):
             return 'linux';
         default:
-            return 'win'; 
+            return 'win';
     }
 })();
 
@@ -473,7 +473,7 @@ const container = document.getElementById('versions-container');
 // глобальная переменная для хранения Linux-пакетов
 let linuxVersionsData = [];
 let currentSearchTerm = '';
-let linuxDataLoaded = false; // Флаг успешной загрузки Linux-данных
+let linuxDataLoaded = false; // флаг успешной загрузки Linux-данных
 
 // сторож для Intersection Observer
 const sentinel = document.createElement('tr');
@@ -1269,7 +1269,6 @@ function createDownloadCell(link, version, os, arch) {
     downloadLink.innerHTML = downloadIcon;
     downloadContainer.appendChild(downloadLink);
 
-    // создаем элемент для отображения счетчика
     const downloadCountSpan = document.createElement('div');
     downloadCountSpan.style.fontSize = 'small';
     downloadContainer.appendChild(downloadCountSpan);
@@ -1281,17 +1280,3 @@ function createDownloadCell(link, version, os, arch) {
 
     return actionCell;
 }
-
-// загружаем данные о комментариях при инициализации приложения
-document.addEventListener('DOMContentLoaded', () => {
-    // настраиваем периодическое обновление данных
-    // обновляем каждые 5 минут (300000 мс)
-    setInterval(() => loadAllData(true), 300000);
-
-    // обновляем данные при возвращении на страницу
-    document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-            loadAllData(true);
-        }
-    });
-});
