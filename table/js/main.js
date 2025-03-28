@@ -883,10 +883,12 @@ versionSearch.addEventListener('input', (e) => {
 
 // обработчик клика на кнопку очистки
 clearSearchBtn.addEventListener('click', () => {
-    versionSearch.value = '';
-    searchContainer.classList.remove('show-clear');
-    performSearch('');
-    versionSearch.focus();
+    if (searchContainer.classList.contains('show-clear')) {
+        versionSearch.value = '';
+        searchContainer.classList.remove('show-clear');
+        performSearch('');
+        versionSearch.focus();
+    }
 });
 
 // добавляем логику для сворачивания/разворачивания поиска
@@ -907,9 +909,23 @@ function toggleSearch() {
     }
 }
 
-// обработчик нажатия на иконку поиска
-searchIcon.addEventListener('click', () => {
-    toggleSearch();
+// обработчик клика на иконку поиска
+document.getElementById('searchIcon').addEventListener('click', (e) => {
+    if (searchContainer.classList.contains('expanded')) {
+        if (versionSearch.value.trim() === '') {
+            searchContainer.classList.remove('expanded');
+        }
+    } else {
+        toggleSearch();
+    }
+    e.stopPropagation();
+});
+
+searchContainer.addEventListener('click', (e) => {
+    if (!searchContainer.classList.contains('expanded')) {
+        toggleSearch();
+    }
+    e.stopPropagation();
 });
 
 // обработчик потери фокуса для сворачивания при клике вне поля поиска

@@ -409,15 +409,24 @@ tr.os-filters-row {
 .search-container {
   display: inline-flex;
   align-items: center;
-  gap: var(--spacing-sm);
   height: 34px;
   transition: var(--transition-default);
   overflow: hidden;
-  width: 24px;
-  border: none;
+  width: 34px;
+  border: 1px solid #474747;
   background: transparent;
   padding: 0;
   position: relative;
+  border-radius: var(--radius-lg);
+  justify-content: center;
+}
+
+.search-container:not(.expanded) {
+  cursor: pointer;
+}
+
+.search-container:not(.expanded):hover {
+  background: #d6d6d62a;
 }
 
 .search-container.expanded {
@@ -426,23 +435,7 @@ tr.os-filters-row {
   border-radius: var(--radius-lg);
   border: 1px solid #474747;
   background: transparent;
-  box-shadow: 0 0 0 rgba(29, 185, 84, 0);
-  animation: search-glow 0.6s ease-out;
-}
-
-/* свечение для контейнера поиска */
-@keyframes search-glow {
-  0% {
-    box-shadow: 0 0 2px rgba(29, 185, 84, 0.3);
-  }
-
-  50% {
-    box-shadow: 0 0 8px rgba(29, 185, 84, 0.5);
-  }
-
-  100% {
-    box-shadow: 0 0 0 rgba(29, 185, 84, 0);
-  }
+  padding-left: 36px;
 }
 
 /* стили для поля поиска с эффектом появления */
@@ -456,11 +449,11 @@ tr.os-filters-row {
   padding: var(--spacing-xs) 0;
   transition: width 0.3s ease, opacity 0.3s ease 0.1s;
   opacity: 0;
-  transform-origin: right center;
+  transform-origin: left center;
 }
 
 .search-container.expanded input[type="search"] {
-  width: 180px;
+  width: calc(100% - 24px);
   opacity: 1;
   animation: reveal-input 0.3s ease-in-out;
 }
@@ -489,22 +482,22 @@ tr.os-filters-row {
 }
 
 .search-icon {
-  cursor: pointer;
   min-width: 24px;
   min-height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
+  position: absolute;
+  left: 5px;
+  top: 50%;
+  transform: translateY(-50%);
   z-index: 2;
+  cursor: pointer;
 }
 
 .search-icon svg {
-  width: 24px;
-  height: 24px;
-  fill: #a6a7a7;
-  display: block;
-  transition: fill 0.3s ease, transform 0.2s ease;
+  color: #a6a7a7;
+  transition: fill 0.2s ease;
 }
 
 .search-container.expanded .search-icon svg {
@@ -518,15 +511,21 @@ tr.os-filters-row {
 .clear-search {
   position: absolute;
   right: 12px;
-  top: 16.9px;
+  top: 50%;
   transform: translateY(-50%);
   width: 16px;
   height: 16px;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23e8e6e3' viewBox='0 0 20 20'%3E%3Cpath d='M14.348 5.652a1 1 0 10-1.414-1.414L10 7.172 7.066 4.238a1 1 0 10-1.414 1.414L8.586 8.586l-2.934 2.934a1 1 0 101.414 1.414L10 10l2.934 2.934a1 1 0 001.414-1.414L11.414 8.586l2.934-2.934z'/%3E%3C/svg%3E") no-repeat center;
   background-size: 16px 16px;
-  cursor: pointer;
+  cursor: default;
   opacity: 0;
   transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.search-container.show-clear .clear-search {
+  cursor: pointer;
+  pointer-events: auto;
 }
 
 /* Репозитории Linux */
