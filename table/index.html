@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://upgrade.scdn.co" crossorigin>
   <link rel="preconnect" href="https://broad-pine-bbc0.amd64fox1.workers.dev" crossorigin>
   <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <link rel="preload" href="fonts/SpotifyMixUI-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
   <link rel="preload" href="fonts/SpotifyMixUI-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
 </head>
@@ -20,21 +21,22 @@
         <!-- место для лого слева -->
       </div>
       <ul class="nav-center">
-        <li><a href="index.html" class="active" style="pointer-events: none; cursor: default;">Versions</a></li>
-        <li><a href="help.html" style="pointer-events: none; cursor: default;">Help</a></li>
-        <li><a href="links.html" style="pointer-events: none; cursor: default;">Links</a></li>
+        <li><a href="index.html" class="active">Versions</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#links">Links</a></li>
       </ul>
     </div>
   </nav>
 
   <header>
     <h1>Official Spotify full installers</h1>
-    <p>Site is in test mode, send a <a href="https://github.com/LoaderSpot/table/issues/new" target="_blank"
-        style="color: #1db954; text-decoration: none;">bug report</a></p>
   </header>
 
-  <!-- Контейнер с таблицей -->
-  <div class="container">
+  <!-- Контейнер для markdown страниц (скрыт по умолчанию) -->
+  <div id="markdownContainer" style="display: none;"></div>
+
+  <!-- Контейнер с таблицей (будет скрываться при показе markdown) -->
+  <div class="container" id="tableContainer" style="display: none;">
     <table class="version-table" id="versionsTable">
       <!-- Регулировки ширины столбцов -->
       <colgroup>
@@ -83,14 +85,14 @@
         </tr>
       </thead>
       <tbody id="versions-container">
-        <!-- контейнер для спиннера и данных таблицы-->
       </tbody>
     </table>
   </div>
 
-  <!-- Тост-уведомление (копирование) -->
   <div class="toast-notification" id="toast">Copied to clipboard</div>
 
   <script defer src="js/main.js"></script>
+
+</body>
 
 </html>

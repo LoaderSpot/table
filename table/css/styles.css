@@ -126,21 +126,27 @@ body {
 }
 
 .nav-center a {
-  color: var(--color-text-light);
+  color: #a6a7a7;
   text-decoration: none;
-  padding: var(--spacing-sm) var(--spacing-lg);
+  padding: 6px 20px;
+  border: 1px solid #474747;
   border-radius: var(--radius-lg);
   transition: var(--transition-default);
   font-weight: 700;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
 }
 
 .nav-center a.active {
   background: var(--color-primary);
   color: var(--color-background-dark);
+  pointer-events: none;
+  border: 1px solid transparent;
 }
 
 .nav-center a:hover:not(.active) {
-  color: var(--color-primary);
+  background: #d6d6d645;
 }
 
 header {
@@ -417,7 +423,7 @@ tr.os-filters-row {
   background: transparent;
   padding: 0;
   position: relative;
-  border-radius: var(--radius-lg);
+  border-radius: 10px;
   justify-content: center;
 }
 
@@ -772,4 +778,223 @@ body.modal-open {
   .comments-modal-body {
     padding: 15px;
   }
+}
+
+/* блок стилей markdown страниц */
+.markdown-content {
+  background: var(--color-background-light);
+  color: var(--color-text);
+  padding: var(--spacing-xl) var(--spacing-xxl);
+  border-radius: var(--radius-md);
+  margin: var(--spacing-xl) auto;
+  max-width: 900px;
+  line-height: 1.8;
+}
+
+/* Стили для inline code в markdown */
+.markdown-content code:not(pre code) {
+  background: rgba(135, 131, 120, 0.15);
+  color: #e8e6e3;
+  border-radius: 3px;
+  font-size: 0.9em;
+  padding: 1px 1px;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  border: 1px solid rgba(135, 131, 120, 0.2);
+}
+
+/* Стили для списков в markdown */
+.markdown-content ul {
+  margin: var(--spacing-lg) 0;
+  padding-left: var(--spacing-xl);
+}
+
+.markdown-content ul li {
+  margin: var(--spacing-sm) 0;
+  padding-left: var(--spacing-sm);
+}
+
+.markdown-content ul li:first-child {
+  margin-top: 0;
+}
+
+.markdown-content ul li:last-child {
+  margin-bottom: 0;
+}
+
+/* Стили для групп списков */
+.markdown-content ul+h2 {
+  margin-top: var(--spacing-xxl);
+}
+
+/* Стили для блоков уведомлений */
+.markdown-content blockquote {
+  border-left: 4px solid;
+  padding: 15px 20px 15px 50px;
+  margin: 15px 0;
+  border-radius: 0 4px 4px 0;
+  position: relative;
+}
+
+.markdown-content blockquote[data-type="note"] {
+  background-color: rgba(70, 136, 71, 0.1);
+  border-left-color: #468847;
+}
+
+.markdown-content blockquote[data-type="tip"] {
+  background-color: rgba(58, 135, 173, 0.1);
+  border-left-color: #3a87ad;
+}
+
+.markdown-content blockquote[data-type="important"] {
+  background-color: rgba(185, 74, 72, 0.1);
+  border-left-color: #b94a48;
+}
+
+.markdown-content blockquote[data-type="warning"] {
+  background-color: rgba(192, 152, 83, 0.1);
+  border-left-color: #c09853;
+}
+
+/* Общие стили для иконок в блоках уведомлений */
+.markdown-content blockquote::before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 15px;
+  top: 15px;
+  width: 24px;
+  height: 24px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* иконки для blockquote */
+.markdown-content blockquote[data-type="note"]::before {
+  background-image: url("data:image/svg+xml;charset=UTF-8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"%23468847\" viewBox=\"0 0 16 16\"><path d=\"M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.93 4.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z\"/></svg>");
+}
+
+.markdown-content blockquote[data-type="tip"]::before {
+  background-image: url("data:image/svg+xml;charset=UTF-8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"%233a87ad\" viewBox=\"0 0 16 16\"><path d=\"M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13h-5a.5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6zm3 8.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1-.5-.5z\"/></svg>");
+}
+
+.markdown-content blockquote[data-type="important"]::before {
+  background-image: url("data:image/svg+xml;charset=UTF-8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"%23b94a48\" viewBox=\"0 0 16 16\"><path d=\"M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z\"/></svg>");
+}
+
+.markdown-content blockquote[data-type="warning"]::before {
+  background-image: url("data:image/svg+xml;charset=UTF-8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"%23c09853\" viewBox=\"0 0 16 16\"><path d=\"M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z\"/></svg>");
+}
+
+/* Стили для вопросов и ответов (Q: и A:) */
+.markdown-content .faq {
+  margin-bottom: var(--spacing-xxl);
+  padding: 0;
+  border: none;
+  position: relative;
+}
+
+.markdown-content .faq .question {
+  color: var(--color-text-secondary);
+  margin-bottom: 0;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: linear-gradient(to right, var(--color-background-medium), rgba(42, 46, 47, 0.7));
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  border-left: none;
+  padding-left: calc(var(--spacing-lg) + 28px + var(--spacing-md));
+  padding-top: calc(var(--spacing-lg) + 1px);
+  padding-bottom: calc(var(--spacing-lg) + 4px);
+  min-height: calc(28px + var(--spacing-lg) * 2 + 8px);
+}
+
+.markdown-content .faq .question::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: var(--color-accent);
+  border-radius: var(--radius-md) 0 0 0;
+}
+
+.markdown-content .faq .question::before {
+  content: "Q";
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.1em;
+  color: var(--color-background-dark);
+  margin-right: var(--spacing-md);
+  min-width: 28px;
+  height: 28px;
+  background-color: var(--color-accent);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  left: var(--spacing-lg);
+  top: var(--spacing-lg);
+  margin: 0;
+}
+
+.markdown-content .faq .answer {
+  color: var(--color-text-secondary);
+  padding: var(--spacing-lg) var(--spacing-xl) var(--spacing-lg) calc(var(--spacing-lg) + 28px + var(--spacing-md) - 0.5px);
+  background-color: rgba(42, 46, 47, 0.4);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  position: relative;
+  z-index: 1;
+  border: 1px solid var(--color-border);
+  border-top: none;
+  margin-top: 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  line-height: 1.5;
+}
+
+.markdown-content .faq .answer br+br {
+  content: "";
+  display: block;
+  margin-top: 1em;
+}
+
+.markdown-content .faq .answer::after {
+  content: "A";
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: calc(var(--spacing-lg) - 1px);
+  top: var(--spacing-lg);
+  font-weight: 700;
+  font-size: 1.1em;
+  color: var(--color-background-dark);
+  min-width: 28px;
+  height: 28px;
+  background-color: var(--color-primary);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.markdown-content .faq .answer-content {
+  margin-left: 20px;
+  position: relative;
+}
+
+/* Стили для ссылок в markdown */
+.markdown-content a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.markdown-content a:hover {
+  text-decoration: underline;
+  color: var(--color-primary);
+  opacity: 0.8;
 }

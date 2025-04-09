@@ -61,6 +61,21 @@ function fallbackCopyTextToClipboard(text) {
     document.body.removeChild(textArea);
 }
 
+// универсальная функция для копирования текста в буфер обмена
+async function copyTextToClipboard(text, successMessage = 'Copied to clipboard') {
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+            showToast(successMessage);
+        } else {
+            fallbackCopyTextToClipboard(text);
+        }
+    } catch (err) {
+        console.error('Error while copying:', err);
+        fallbackCopyTextToClipboard(text);
+    }
+}
+
 // глобальный кэш для результатов HEAD-запросов
 const headCache = new Map();
 
@@ -108,6 +123,21 @@ function updateLinkInfo(dateCell, sizeCell, url) {
     }
 }
 
+// функция для форматирования даты в формат DD.MM.YYYY
+function formatDate(dateString) {
+    if (!dateString) return '—';
+    const date = new Date(dateString);
+    return String(date.getDate()).padStart(2, '0') + '.' +
+        String(date.getMonth() + 1).padStart(2, '0') + '.' +
+        date.getFullYear();
+}
+
+// функция для форматирования размера в MB
+function formatSize(sizeInBytes) {
+    if (!sizeInBytes) return '—';
+    return (parseInt(sizeInBytes, 10) / (1024 * 1024)).toFixed(2) + ' MB';
+}
+
 // функция для выполнения HEAD-запроса
 async function executeHeadRequest(dateCell, sizeCell, url) {
     if (headCache.has(url)) {
@@ -120,18 +150,10 @@ async function executeHeadRequest(dateCell, sizeCell, url) {
         const response = await fetch(url, { method: 'HEAD' });
         const lastModified = response.headers.get('Last-Modified');
         const contentLength = response.headers.get('Content-Length');
-        let formattedDate = '—';
-        let sizeMb = '—';
-        if (lastModified) {
-            const date = new Date(lastModified);
-            formattedDate =
-                String(date.getDate()).padStart(2, '0') + '.' +
-                String(date.getMonth() + 1).padStart(2, '0') + '.' +
-                date.getFullYear();
-        }
-        if (contentLength) {
-            sizeMb = (parseInt(contentLength, 10) / (1024 * 1024)).toFixed(2) + ' MB';
-        }
+
+        const formattedDate = formatDate(lastModified);
+        const sizeMb = formatSize(contentLength);
+
         // сохраняем результат в кэше
         headCache.set(url, { date: formattedDate, size: sizeMb });
         dateCell.textContent = formattedDate;
@@ -779,7 +801,37 @@ function performSearch(term) {
     }, 300);
 }
 
+// функция для обработки пустых строк в markdown
+function processMarkdownSpacing(mdText) {
+    // Сначала обрабатываем markdown для блоков answer
+    return mdText.replace(/(<div class="answer">\s*)(.*?)(\s*<\/div>)/gs, (match, start, content, end) => {
+        // Разбиваем содержимое на строки
+        const lines = content.trim().split(/\n\s*\n/);
+
+        // Обрабатываем каждую строку через marked для конвертации markdown
+        const processedLines = lines.map(line => marked.parse(line.trim()));
+
+        // Если есть разделение пустыми строками, соединяем с <br><br>
+        if (lines.length > 1) {
+            // Удаляем лишние <p> теги, которые добавляет marked
+            const cleanedLines = processedLines.map(line =>
+                line.replace(/<\/?p>/g, '')
+            );
+            return `${start}${cleanedLines.join('<br><br>')}${end}`;
+        }
+
+        // Если нет пустых строк, возвращаем с обработанным markdown
+        return `${start}${marked.parse(content.trim()).replace(/<\/?p>/g, '')}${end}`;
+    });
+}
+
 async function initializeApp() {
+    // Проверяем хэш перед загрузкой данных таблицы
+    const hash = window.location.hash;
+    if (hash === "#faq" || hash === "#links") {
+        return; // Не инициализируем таблицу, если это markdown-страница
+    }
+
     try {
         const response = await fetch('versions.json');
         if (!response.ok) {
@@ -794,12 +846,15 @@ async function initializeApp() {
         loadAllData().catch(err => console.error('Data fetch error:', err));
 
         // устанавливаем таймер для запуска HEAD-запросов если Worker не отвечает
+        if (headRequestsTimer) {
+            clearTimeout(headRequestsTimer);
+        }
         headRequestsTimer = setTimeout(() => {
             console.log('Starting HEAD requests after timeout');
             startHeadRequests();
         }, 2000);
 
-        // отображаем первую партию данных для текущей ОС
+        // отображаем первую партию данных для текущей ОС, только если это не markdown страница
         if (currentOS === 'linux') {
             loadLinuxPackages();
         } else {
@@ -942,7 +997,6 @@ searchContainer.addEventListener('click', (e) => {
     e.stopPropagation();
 });
 
-// запускаем инициализацию приложения
 initializeApp();
 
 // код для работы с комментариями по версиям
@@ -1113,7 +1167,6 @@ function openComments(version) {
     openModal();
 }
 
-
 // функция для обработки данных дискуссий и обновления счетчиков
 function processDiscussionData(discussions) {
     if (!discussions) return;
@@ -1235,18 +1288,8 @@ function createVersionPart(text, searchTerm, className, toastMessage) {
     element.className = className;
     element.innerHTML = searchTerm ? highlight(text, searchTerm) : text;
 
-    element.addEventListener('click', async () => {
-        try {
-            if (navigator.clipboard && window.isSecureContext) {
-                await navigator.clipboard.writeText(text);
-                showToast(toastMessage);
-            } else {
-                fallbackCopyTextToClipboard(text);
-            }
-        } catch (err) {
-            console.error('Error while copying:', err);
-            fallbackCopyTextToClipboard(text);
-        }
+    element.addEventListener('click', () => {
+        copyTextToClipboard(text, toastMessage);
     });
 
     return element;
@@ -1296,3 +1339,65 @@ function createDownloadCell(link, version, os, arch) {
 
     return actionCell;
 }
+
+// загрузка markdown страниц по hash
+function loadMarkdownPage() {
+    updateNavActive();
+    const hash = window.location.hash;
+    const mdContainer = document.getElementById('markdownContainer');
+    const tableContainer = document.getElementById('tableContainer');
+
+    if (hash === "#faq" || hash === "#links") {
+        // скрываем таблицу и показываем контейнер для markdown
+        tableContainer.style.display = "none";
+        mdContainer.style.display = "block"; // Показываем контейнер, чтобы было куда грузить
+
+        let mdFile = hash === "#faq" ? "content/faq.md" : "content/links.md";
+        fetch(mdFile)
+            .then(response => {
+                if (!response.ok) throw new Error("Error loading " + mdFile);
+                return response.text();
+            })
+            .then(mdText => {
+                // Преобразуем markdown в HTML с помощью marked.js
+                const processedMd = processMarkdownSpacing(mdText);
+                mdContainer.innerHTML = marked.parse(processedMd);
+            })
+            .catch(err => {
+                mdContainer.innerHTML = "<p>Error loading page</p>";
+                console.error(err);
+            });
+    } else {
+        // Показываем таблицу и скрываем контейнер markdown
+        mdContainer.style.display = "none";
+        tableContainer.style.display = "block";
+    }
+}
+
+// Обработчик изменения hash
+window.addEventListener('hashchange', () => {
+    loadMarkdownPage();
+    updateNavActive();
+});
+
+// Новая функция для обновления active-состояния навигационных ссылок по hash
+function updateNavActive() {
+    const hash = window.location.hash;
+    document.querySelectorAll('.nav-center a').forEach(link => {
+        if ((hash === "" && link.getAttribute("href") === "index.html") || link.getAttribute("href") === hash) {
+            link.classList.add("active");
+        } else {
+            link.classList.remove("active");
+        }
+    });
+}
+
+// Вызываем при первой загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+    loadMarkdownPage(); // Сначала проверяем и загружаем markdown
+    // Инициализируем приложение (таблицу) только если это не markdown страница
+    const hash = window.location.hash;
+    if (hash !== "#faq" && hash !== "#links") {
+        initializeApp();
+    }
+});
