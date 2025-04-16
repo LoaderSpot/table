@@ -81,7 +81,7 @@ html {
   padding-left: 0;
   display: inline-block;
   text-align: left;
-  width: 400px;
+  width: 460px;
   margin: 0 auto;
   padding-left: 40px;
 }
@@ -89,6 +89,17 @@ html {
 .markdown-content[data-page="links"] h1,
 .markdown-content[data-page="links"] h2 {
   margin: var(--spacing-lg) 0;
+}
+
+.markdown-content[data-page="links"] h2 {
+  display: block;
+  width: 425px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  text-align: left;
+  padding-left: 0;
 }
 
 body {

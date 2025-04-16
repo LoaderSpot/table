@@ -2,7 +2,7 @@
 
 # Links
 
-## Official Spotify Support Communities and FAQ
+## Official Spotify Support
 - <a href="https://support.spotify.com/us/contact-spotify-anonymous/?flow=suspended-service" target="_blank">Chat support</a>
 - <a href="https://community.spotify.com/t5/Desktop-Windows/bd-p/desktop_windows" target="_blank">Spotify Windows Desktop Support</a>  
 - <a href="https://community.spotify.com/t5/Desktop-Linux/bd-p/desktop_linux" target="_blank">Spotify Linux Desktop Support</a>  
@@ -29,6 +29,7 @@
 - xManager <a href="https://t.me/xManagerSupport" target="_blank">Telegram</a> | <a href="https://discord.gg/rWn6dbP8" target="_blank">Discord</a> for Android
 
 ## Other links
+- Enable devtools in Spotify <a href="https://github.com/amd64fox/Enable-devtools-Spotify" target="_blank">Windows</a> | <a href="https://gist.github.com/jetfir3/d66f491d0683e2bdbdf9f60068e9984b" target="_blank">Mac & Linux</a>
 - Track versions in telegram <a href="https://t.me/OfficialSpotifyUpdates" target="_blank">group</a>
 - Safely download songs from Spotify | <a href="https://github.com/spotDL/spotify-downloader" target="_blank">spotDL</a>
 
