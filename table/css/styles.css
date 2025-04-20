@@ -39,7 +39,7 @@
   --radius-md: 8px;
   --radius-lg: 20px;
   --shadow-default: 0 4px 12px rgba(0, 0, 0, 0.3);
-  
+
 }
 
 html {
@@ -444,17 +444,112 @@ table.version-table .filter-button {
   transition: var(--transition-default);
   height: 34px;
   font-family: inherit;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 table.version-table .filter-button.active {
   background: var(--color-primary);
   color: var(--color-background-dark);
-  pointer-events: none;
   border: 1px solid transparent;
 }
 
 table.version-table .filter-button:hover:not(.active) {
   background: var(--hover-bg-light);
+}
+
+.filter-button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 15px;
+}
+
+/* Стили для иконок ОС */
+.os-icon {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+}
+
+.filter-button.active .os-icon {
+  color: var(--color-background-dark);
+}
+
+.win-icon {
+  width: 18px;
+  height: 18px;
+  position: relative;
+  top: -1px;
+  margin-right: 4px;
+}
+
+.mac-icon {
+  width: 19px;
+  height: 19px;
+  position: relative;
+  top: -1px;
+  margin-right: 4px;
+}
+
+.linux-icon {
+  width: 23px;
+  height: 23px;
+  position: relative;
+  top: -1px;
+  margin-right: -3px;
+}
+
+.filter-button:not(.active) .linux-icon path {
+  fill: #a6a7a7 !important;
+}
+
+.filter-button.active .linux-icon path {
+  fill: var(--color-background-dark) !important;
+}
+
+.button-content {
+  display: flex;
+  align-items: center;
+  padding-right: 5px;
+  gap: 6px;
+}
+
+.dropdown-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  height: 100%;
+  cursor: pointer;
+  margin-left: -9px;
+}
+
+.filter-button.active .dropdown-wrapper {
+  border-left: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.dropdown-arrow {
+  font-size: 10px;
+  margin-left: 0;
+}
+
+.os-filter-container[data-os="win"] .os-version-dropdown {
+  min-width: 120px;
+  padding: var(--spacing-xs) 0;
+}
+
+.os-filter-container[data-os="win"] .os-version-dropdown li {
+  padding: var(--spacing-xs) var(--spacing-lg);
+  font-size: 0.85em;
+  padding-right: 30px;
+}
+
+.os-filter-container[data-os="win"] .os-version-dropdown li.selected::before {
+  right: 10px;
 }
 
 .arch-filter-buttons {
@@ -884,7 +979,7 @@ body.modal-open {
 }
 
 /* Анимации для элементов markdown */
-.markdown-content > *,
+.markdown-content>*,
 .faq-item,
 .question,
 .answer,
@@ -902,41 +997,97 @@ body.modal-open {
 }
 
 /* Задержка анимации для разных элементов */
-.markdown-content > *:nth-child(1) { animation-delay: 0.1s; }
-.markdown-content > *:nth-child(2) { animation-delay: 0.2s; }
-.markdown-content > *:nth-child(3) { animation-delay: 0.3s; }
-.markdown-content > *:nth-child(4) { animation-delay: 0.4s; }
-.markdown-content > *:nth-child(5) { animation-delay: 0.5s; }
-.markdown-content > *:nth-child(6) { animation-delay: 0.6s; }
-.markdown-content > *:nth-child(7) { animation-delay: 0.7s; }
-.markdown-content > *:nth-child(8) { animation-delay: 0.8s; }
-.markdown-content > *:nth-child(9) { animation-delay: 0.9s; }
-.markdown-content > *:nth-child(n+10) { animation-delay: 1s; }
+.markdown-content>*:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.markdown-content>*:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.markdown-content>*:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.markdown-content>*:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.markdown-content>*:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+.markdown-content>*:nth-child(6) {
+  animation-delay: 0.6s;
+}
+
+.markdown-content>*:nth-child(7) {
+  animation-delay: 0.7s;
+}
+
+.markdown-content>*:nth-child(8) {
+  animation-delay: 0.8s;
+}
+
+.markdown-content>*:nth-child(9) {
+  animation-delay: 0.9s;
+}
+
+.markdown-content>*:nth-child(n+10) {
+  animation-delay: 1s;
+}
 
 /* Анимация для элементов FAQ */
-.faq-item { animation-delay: 0.2s; }
-.faq-item .question { animation-delay: 0.3s; }
-.faq-item .answer { animation-delay: 0.4s; }
-.markdown-content blockquote { animation-delay: 0.5s; }
+.faq-item {
+  animation-delay: 0.2s;
+}
+
+.faq-item .question {
+  animation-delay: 0.3s;
+}
+
+.faq-item .answer {
+  animation-delay: 0.4s;
+}
+
+.markdown-content blockquote {
+  animation-delay: 0.5s;
+}
 
 /* Последовательная анимация для нескольких FAQ элементов */
-.faq-item:nth-child(2) { animation-delay: 0.4s; }
-.faq-item:nth-child(2) .question { animation-delay: 0.5s; }
-.faq-item:nth-child(2) .answer { animation-delay: 0.6s; }
+.faq-item:nth-child(2) {
+  animation-delay: 0.4s;
+}
 
-.faq-item:nth-child(3) { animation-delay: 0.6s; }
-.faq-item:nth-child(3) .question { animation-delay: 0.7s; }
-.faq-item:nth-child(3) .answer { animation-delay: 0.8s; }
+.faq-item:nth-child(2) .question {
+  animation-delay: 0.5s;
+}
+
+.faq-item:nth-child(2) .answer {
+  animation-delay: 0.6s;
+}
+
+.faq-item:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+.faq-item:nth-child(3) .question {
+  animation-delay: 0.7s;
+}
+
+.faq-item:nth-child(3) .answer {
+  animation-delay: 0.8s;
+}
 
 /* Стили для inline code в markdown */
 .markdown-content code:not(pre code) {
-    background: rgba(135, 131, 120, 0.15);
-    color: #e8e6e3;
-    border-radius: 3px;
-    font-size: 0.9em;
-    padding: 1px 1px; 
-    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-    border: 1px solid rgba(135, 131, 120, 0.2);
+  background: rgba(135, 131, 120, 0.15);
+  color: #e8e6e3;
+  border-radius: 3px;
+  font-size: 0.9em;
+  padding: 1px 1px;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  border: 1px solid rgba(135, 131, 120, 0.2);
 }
 
 /* Стили для списков в markdown */
@@ -959,7 +1110,7 @@ body.modal-open {
 }
 
 /* Стили для групп списков */
-.markdown-content ul + h2 {
+.markdown-content ul+h2 {
   margin-top: var(--spacing-xxl);
 }
 
@@ -1055,128 +1206,224 @@ body.modal-open {
 
 /* Стили для вопросов и ответов (Q: и A:) */
 .markdown-content .faq {
-    margin-bottom: var(--spacing-xxl);
-    padding: 0;
-    border: none;
-    position: relative;
-    /* Добавляем gap между вопросами */
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-xxl);
+  padding: 0;
+  border: none;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.os-filter-container {
+  position: relative;
+  display: inline-block;
+}
+
+.os-filter-container.filter-active {
+  margin-right: 10px;
+}
+
+.dropdown-arrow {
+  font-size: 0.7em;
+  left: 12px;
+  line-height: 1;
+  display: inline-block;
+  vertical-align: middle;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+}
+
+.os-version-dropdown {
+  display: none;
+  position: absolute;
+  background-color: var(--color-background-medium);
+  min-width: 160px;
+  box-shadow: var(--shadow-default);
+  z-index: 1001;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  margin-top: 5px;
+  left: 0;
+  width: auto;
+  white-space: nowrap;
+  padding: var(--spacing-xs) 0;
+  overflow: hidden;
+}
+
+.os-version-dropdown ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-radius: inherit;
+}
+
+.os-version-dropdown li {
+  color: var(--color-text-light);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
+  font-size: 0.9em;
+  white-space: nowrap;
+  position: relative;
+  padding-right: 40px;
+  border-bottom: 1px solid var(--color-border);
+  transition: var(--transition-fast);
+}
+
+.os-version-dropdown li:last-child {
+  border-bottom: none;
+}
+
+.os-version-dropdown li:hover {
+  background-color: var(--color-background-light);
+}
+
+.os-version-dropdown li.selected {
+  background-color: rgba(29, 185, 84, 0.1);
+}
+
+.os-version-dropdown li.selected::before {
+  content: "✓";
+  position: absolute;
+  right: 15px;
+  color: var(--color-primary);
+  font-weight: bold;
+}
+
+.os-version-label {
+  position: absolute;
+  top: -10px;
+  right: -20px;
+  left: auto;
+  transform: none;
+  background-color: rgb(from var(--color-accent) r g b / 0.88);
+  color: var(--color-background-dark);
+  padding: 1px 4px;
+  border-radius: var(--radius-sm);
+  font-size: 0.6em;
+  font-weight: bold;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+  min-height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .markdown-content .faq .question {
-    color: var(--color-text-light);
-    margin-bottom: 0;
-    padding: var(--spacing-md) var(--spacing-lg);
-    background: linear-gradient(to right, rgba(231, 167, 24, 0.15), rgba(231, 167, 24, 0.08));
-    border-radius: var(--radius-md) var(--radius-md) 0 0;
-    position: relative;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    border-left: none;
-    padding-left: calc(var(--spacing-lg) + 28px + var(--spacing-md));
-    padding-top: calc(var(--spacing-lg) + 1px);
-    padding-bottom: calc(var(--spacing-lg) + 4px);
-    min-height: calc(28px + var(--spacing-lg) * 2 + 8px);
-    transition: var(--transition-fast);
+  color: var(--color-text-light);
+  margin-bottom: 0;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: linear-gradient(to right, rgba(231, 167, 24, 0.15), rgba(231, 167, 24, 0.08));
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  border-left: none;
+  padding-left: calc(var(--spacing-lg) + 28px + var(--spacing-md));
+  padding-top: calc(var(--spacing-lg) + 1px);
+  padding-bottom: calc(var(--spacing-lg) + 4px);
+  min-height: calc(28px + var(--spacing-lg) * 2 + 8px);
+  transition: var(--transition-fast);
 }
 
 .markdown-content .faq .question:hover {
-    background: linear-gradient(to right, rgba(231, 167, 24, 0.2), rgba(231, 167, 24, 0.12));
+  background: linear-gradient(to right, rgba(231, 167, 24, 0.2), rgba(231, 167, 24, 0.12));
 }
 
 .markdown-content .faq .question::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    background-color: var(--color-accent);
-    border-radius: var(--radius-md) 0 0 0;
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: var(--color-accent);
+  border-radius: var(--radius-md) 0 0 0;
 }
 
 .markdown-content .faq .question::before {
-    content: "Q";
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: 700;
-    font-size: 1.1em;
-    color: var(--color-background-dark);
-    margin-right: var(--spacing-md);
-    min-width: 28px;
-    height: 28px;
-    background-color: var(--color-accent);
-    border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    position: absolute;
-    left: var(--spacing-lg);
-    top: var(--spacing-lg);
-    margin: 0;
+  content: "Q";
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.1em;
+  color: var(--color-background-dark);
+  margin-right: var(--spacing-md);
+  min-width: 28px;
+  height: 28px;
+  background-color: var(--color-accent);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  left: var(--spacing-lg);
+  top: var(--spacing-lg);
+  margin: 0;
 }
 
 .markdown-content .faq .answer {
-    color: var(--color-text-secondary);
-    padding: var(--spacing-lg) var(--spacing-xl) var(--spacing-lg) calc(var(--spacing-lg) + 28px + var(--spacing-md) - 0.5px);
-    background-color: rgba(29, 185, 84, 0.05);
-    border-radius: 0 0 var(--radius-md) var(--radius-md);
-    position: relative;
-    z-index: 1;
-    border: 1px solid var(--color-border);
-    border-top: none;
-    margin-top: 0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    line-height: 1.5;
-    transition: var(--transition-fast);
+  color: var(--color-text-secondary);
+  padding: var(--spacing-lg) var(--spacing-xl) var(--spacing-lg) calc(var(--spacing-lg) + 28px + var(--spacing-md) - 0.5px);
+  background-color: rgba(29, 185, 84, 0.05);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  position: relative;
+  z-index: 1;
+  border: 1px solid var(--color-border);
+  border-top: none;
+  margin-top: 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  line-height: 1.5;
+  transition: var(--transition-fast);
 }
 
 .markdown-content .faq .answer:hover {
-    background-color: rgba(29, 185, 84, 0.08);
+  background-color: rgba(29, 185, 84, 0.08);
 }
 
-.markdown-content .faq .answer br + br {
-    content: "";
-    display: block;
-    margin-top: 1em;
+.markdown-content .faq .answer br+br {
+  content: "";
+  display: block;
+  margin-top: 1em;
 }
 
 .markdown-content .faq .answer::after {
-    content: "A";
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    left: calc(var(--spacing-lg) - 1px);
-    top: var(--spacing-lg);
-    font-weight: 700;
-    font-size: 1.1em;
-    color: var(--color-background-dark);
-    min-width: 28px;
-    height: 28px;
-    background-color: var(--color-primary);
-    border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  content: "A";
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: calc(var(--spacing-lg) - 1px);
+  top: var(--spacing-lg);
+  font-weight: 700;
+  font-size: 1.1em;
+  color: var(--color-background-dark);
+  min-width: 28px;
+  height: 28px;
+  background-color: var(--color-primary);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Стиль контента ответа */
 .markdown-content .faq .answer-content {
-    margin-left: 20px;
-    position: relative;
+  margin-left: 20px;
+  position: relative;
 }
 
-/* Стили для ссылок в markdown */
 .markdown-content a {
-    color: var(--color-primary);
-    text-decoration: none;
-    transition: var(--transition-fast);
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: var(--transition-fast);
 }
 
 .markdown-content a:hover {
-    text-decoration: underline;
-    color: var(--color-primary);
-    opacity: 0.8;
+  text-decoration: underline;
+  color: var(--color-primary);
+  opacity: 0.8;
 }

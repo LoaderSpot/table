@@ -11,16 +11,136 @@ let currentOS = (() => {
     }
 })();
 
+const osVersionFilters = {
+    win: [
+        { version: '1.2.5.1006', label: '7-8.1', full: 'Windows 7-8.1' }
+    ],
+    mac: [
+        { version: '1.2.37.701', label: '10.15', full: 'macOS 10.15' },
+        { version: '1.2.20.1218', label: '10.13/10.14', full: 'macOS 10.13 / 10.14' },
+        { version: '1.1.89.862', label: '10.11/10.12', full: 'macOS 10.12 / OS X 10.11' }
+    ]
+};
+
+let currentWinVersionFilter = null;
+let currentMacVersionFilter = null;
+
 // обновляем активную вкладку в ui при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.filter-button').forEach(btn => {
-        if (btn.dataset.os === currentOS) {
+        const os = btn.dataset.os;
+
+        // Добавляем стрелку и контейнер для выпадающего списка (Windows и Mac)
+        if (os === 'win' || os === 'mac') {
+            const container = document.createElement('div');
+            container.className = 'os-filter-container';
+            container.setAttribute('data-os', os);
+            btn.parentNode.insertBefore(container, btn);
+            container.appendChild(btn);
+
+            const buttonContent = document.createElement('span');
+            buttonContent.className = 'button-content';
+
+            while (btn.firstChild) {
+                buttonContent.appendChild(btn.firstChild);
+            }
+            btn.appendChild(buttonContent);
+
+            const dropdownWrapper = document.createElement('span');
+            dropdownWrapper.className = 'dropdown-wrapper';
+
+            const arrow = document.createElement('span');
+            arrow.className = 'dropdown-arrow';
+            arrow.innerHTML = '▼';
+
+            dropdownWrapper.appendChild(arrow);
+            btn.appendChild(dropdownWrapper);
+
+            const versionLabel = document.createElement('span');
+            versionLabel.className = 'os-version-label';
+            versionLabel.style.display = 'none';
+            container.appendChild(versionLabel);
+
+            const dropdown = document.createElement('div');
+            dropdown.className = 'os-version-dropdown';
+            container.appendChild(dropdown);
+
+            const ul = document.createElement('ul');
+            dropdown.appendChild(ul);
+
+            if (osVersionFilters[os]) {
+                osVersionFilters[os].forEach(filter => {
+                    const li = document.createElement('li');
+                    li.textContent = filter.full;
+                    li.dataset.version = filter.version;
+                    li.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        toggleOsVersionFilter(os, filter.version, filter.label, li);
+                        dropdown.style.display = 'none';
+                    });
+                    ul.appendChild(li);
+                });
+            }
+
+            dropdownWrapper.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isActive = btn.classList.contains('active');
+
+                if (!isActive) {
+                    e.preventDefault();
+                    btn.click();
+                    return;
+                }
+
+                if (isActive) {
+                    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                }
+            });
+
+            document.addEventListener('click', () => {
+                dropdown.style.display = 'none';
+            });
+        }
+
+        if (os === currentOS) {
             btn.classList.add('active');
         } else {
             btn.classList.remove('active');
         }
     });
 });
+
+function toggleOsVersionFilter(os, version, label, listItem) {
+    const container = listItem.closest('.os-filter-container');
+    const versionLabel = container.querySelector('.os-version-label');
+    const allItems = container.querySelectorAll('li');
+
+    let currentFilter = os === 'win' ? currentWinVersionFilter : currentMacVersionFilter;
+
+    if (currentFilter === version) {
+        currentFilter = null;
+        versionLabel.style.display = 'none';
+        listItem.classList.remove('selected');
+        container.classList.remove('filter-active');
+    } else {
+
+        currentFilter = version;
+        versionLabel.textContent = label;
+        versionLabel.style.display = 'block';
+        container.classList.add('filter-active');
+
+        allItems.forEach(item => item.classList.remove('selected'));
+        listItem.classList.add('selected');
+    }
+
+    if (os === 'win') {
+        currentWinVersionFilter = currentFilter;
+    } else {
+        currentMacVersionFilter = currentFilter;
+    }
+
+    reRenderVersions();
+}
 
 // функция отображения тоста
 function showToast(message) {
@@ -279,7 +399,7 @@ function formatDownloadCount(count) {
         formatted = formatted.slice(0, -2);
     }
 
-    return `${formatted}${unit} ${suffix}`;
+    return `${formatted}${formatted.endsWith('k') ? 'k' : ''} ${suffix}`;
 }
 
 function updateDownloadCount(fileUrl, countElement, version, os, arch) {
@@ -394,18 +514,35 @@ function updateArchFilters() {
     });
 }
 
-// функция для повторного рендера версий с учетом текущих фильтров (ОС + архитектура + поиск)
+// Функция для сравнения версий
+function compareVersions(version1, version2) {
+    const parts1 = version1.split('.');
+    const parts2 = version2.split('.');
+
+    const maxLength = Math.max(parts1.length, parts2.length);
+
+    for (let i = 0; i < maxLength; i++) {
+        const num1 = parseInt(parts1[i] || 0, 10);
+        const num2 = parseInt(parts2[i] || 0, 10);
+
+        if (num1 > num2) return 1;
+        if (num1 < num2) return -1;
+    }
+
+    return 0;
+}
+
+// функция для повторного рендера версий с учетом текущих фильтров (ОС + архитектура + поиск + версия ОС)
 function reRenderVersions() {
     container.style.opacity = "0";
     observer.unobserve(sentinel);
 
+    currentIndex = 0;
+
     setTimeout(() => {
-        // сбрасываем текущие результаты поиска, если они были
         if (currentSearchTerm !== "") {
-            // если есть активный поиск, повторно выполняем его с учетом нового фильтра архитектуры
             performSearch(currentSearchTerm);
         } else {
-            // в противном случае просто перезагружаем данные с новым фильтром архитектуры
             currentSearchResults = null;
             startLazyLoading();
         }
@@ -417,6 +554,16 @@ function createVersionRows(versionKey, data, searchTerm = '') {
     const shortVersion = versionKey;
     const archCombos = [];
     let totalRowsForVersion = 0;
+
+    if (currentOS === 'win' && currentWinVersionFilter) {
+        if (compareVersions(shortVersion, currentWinVersionFilter) > 0) {
+            return [];
+        }
+    } else if (currentOS === 'mac' && currentMacVersionFilter) {
+        if (compareVersions(shortVersion, currentMacVersionFilter) > 0) {
+            return [];
+        }
+    }
 
     // фильтруем только по текущей ОС
     if (data.links[currentOS]) {
@@ -594,69 +741,29 @@ function loadMoreLinuxRows() {
 function loadMoreWinMacRows() {
     const dataSource = currentSearchResults || allVersions;
     const endIndex = Math.min(currentIndex + ITEMS_PER_BATCH, dataSource.length);
+    let rowsAdded = 0;
 
     for (let i = currentIndex; i < endIndex; i++) {
         const [versionKey, versionData] = dataSource[i];
         const versionRows = createVersionRows(versionKey, versionData, currentSearchTerm);
         versionRows.forEach(r => container.appendChild(r));
+        rowsAdded += versionRows.length;
     }
 
     currentIndex = endIndex;
+
     if (currentIndex < dataSource.length) {
         container.appendChild(sentinel);
+    } else if (rowsAdded === 0 && currentIndex === dataSource.length) {
+        if (container.childElementCount === 0) {
+            showNoResults();
+        }
     }
 }
 
-// функция для Linux ленивой загрузки
-async function loadLinuxPackages() {
-    try {
-        const response = await fetch('versions_deb.json');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const linuxData = await response.json();
-
-        linuxVersionsData = Object.entries(linuxData).map(([versionKey, data]) => {
-            return {
-                version: {
-                    short: versionKey,
-                    full: data.fullversion
-                },
-                architectures: Object.entries(data.links).map(([arch, link]) => {
-                    // Рассчитываем размер в MB
-                    const sizeInMB = data.size ?
-                        (parseInt(data.size, 10) / (1024 * 1024)).toFixed(2) + ' MB' :
-                        '—';
-
-                    return {
-                        arch,
-                        link,
-                        date: data.data || '—',
-                        size: sizeInMB
-                    };
-                })
-            };
-        });
-
-        // сортируем версии (новые первыми)
-        linuxVersionsData.sort((a, b) => {
-            return b.version.short.localeCompare(a.version.short, undefined, { numeric: true });
-        });
-
-        linuxDataLoaded = true;
-
-        // отображаем данные с учетом текущих фильтров
-        if (currentSearchTerm !== "") {
-            performSearch(currentSearchTerm);
-        } else {
-            startLazyLoading();
-        }
-    } catch (error) {
-        console.error('Ошибка загрузки Linux пакетов:', error);
-        container.innerHTML = '<tr><td colspan="5">Ошибка загрузки списка пакетов</td></tr>';
-        container.style.opacity = "1";
-    }
+function showNoResults() {
+    container.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">No results</td></tr>';
+    container.style.opacity = "1";
 }
 
 // функция для запуска ленивой загрузки в зависимости от ОС
@@ -667,9 +774,30 @@ function startLazyLoading() {
     const dataSource = getCurrentDataSource();
 
     if (!dataSource || dataSource.length === 0) {
-        container.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">No results</td></tr>';
-        container.style.opacity = "1";
+        showNoResults();
         return;
+    }
+
+    if (currentOS !== 'linux') {
+        const filteredVersions = dataSource.filter(([versionKey, data]) => {
+            if (!data.links[currentOS]) return false;
+
+            if (currentArch !== 'all' && !data.links[currentOS][currentArch]) return false;
+
+            if (currentOS === 'win' && currentWinVersionFilter) {
+                return compareVersions(versionKey, currentWinVersionFilter) <= 0;
+            }
+            if (currentOS === 'mac' && currentMacVersionFilter) {
+                return compareVersions(versionKey, currentMacVersionFilter) <= 0;
+            }
+
+            return true;
+        });
+
+        if (filteredVersions.length === 0) {
+            showNoResults();
+            return;
+        }
     }
 
     // загружаем первую порцию в зависимости от ОС
@@ -803,26 +931,71 @@ function performSearch(term) {
 
 // функция для обработки пустых строк в markdown
 function processMarkdownSpacing(mdText) {
-    // Сначала обрабатываем markdown для блоков answer
+
     return mdText.replace(/(<div class="answer">\s*)(.*?)(\s*<\/div>)/gs, (match, start, content, end) => {
-        // Разбиваем содержимое на строки
+
         const lines = content.trim().split(/\n\s*\n/);
-
-        // Обрабатываем каждую строку через marked для конвертации markdown
         const processedLines = lines.map(line => marked.parse(line.trim()));
-
-        // Если есть разделение пустыми строками, соединяем с <br><br>
         if (lines.length > 1) {
-            // Удаляем лишние <p> теги, которые добавляет marked
             const cleanedLines = processedLines.map(line =>
                 line.replace(/<\/?p>/g, '')
             );
             return `${start}${cleanedLines.join('<br><br>')}${end}`;
         }
-
-        // Если нет пустых строк, возвращаем с обработанным markdown
         return `${start}${marked.parse(content.trim()).replace(/<\/?p>/g, '')}${end}`;
     });
+}
+
+// функция для Linux ленивой загрузки
+async function loadLinuxPackages() {
+    try {
+        const response = await fetch('versions_deb.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const linuxData = await response.json();
+
+        linuxVersionsData = Object.entries(linuxData).map(([versionKey, data]) => {
+            return {
+                version: {
+                    short: versionKey,
+                    full: data.fullversion
+                },
+                architectures: Object.entries(data.links).map(([arch, link]) => {
+                    // Рассчитываем размер в MB
+                    const sizeInMB = data.size ?
+                        (parseInt(data.size, 10) / (1024 * 1024)).toFixed(2) + ' MB' :
+                        '—';
+
+                    return {
+                        arch,
+                        link,
+                        date: data.data || '—',
+                        size: sizeInMB
+                    };
+                })
+            };
+        });
+
+        // сортируем версии (новые первыми)
+        linuxVersionsData.sort((a, b) => {
+            return b.version.short.localeCompare(a.version.short, undefined, { numeric: true });
+        });
+
+        linuxDataLoaded = true;
+
+        // отображаем данные с учетом текущих фильтров
+        if (currentSearchTerm !== "") {
+            performSearch(currentSearchTerm);
+        } else {
+            startLazyLoading();
+        }
+    } catch (error) {
+        console.error('Ошибка загрузки Linux пакетов:', error);
+        container.innerHTML = '<tr><td colspan="5">Ошибка загрузки списка пакетов</td></tr>';
+        container.style.opacity = "1";
+    }
 }
 
 async function initializeApp() {
