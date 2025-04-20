@@ -25,6 +25,12 @@ const osVersionFilters = {
 let currentWinVersionFilter = null;
 let currentMacVersionFilter = null;
 
+function closeAllOsVersionDropdowns() {
+    document.querySelectorAll('.os-version-dropdown').forEach(dd => {
+        dd.style.display = 'none';
+    });
+}
+
 // обновляем активную вкладку в ui при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.filter-button').forEach(btn => {
@@ -48,11 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const dropdownWrapper = document.createElement('span');
             dropdownWrapper.className = 'dropdown-wrapper';
+            dropdownWrapper.style.pointerEvents = 'none';
 
             const arrow = document.createElement('span');
             arrow.className = 'dropdown-arrow';
             arrow.innerHTML = '▼';
-
             dropdownWrapper.appendChild(arrow);
             btn.appendChild(dropdownWrapper);
 
@@ -82,18 +88,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
-            dropdownWrapper.addEventListener('click', (e) => {
-                e.stopPropagation();
+            btn.addEventListener('click', function (e) {
                 const isActive = btn.classList.contains('active');
-
                 if (!isActive) {
                     e.preventDefault();
+                    btn.classList.add('active');
                     btn.click();
                     return;
                 }
-
-                if (isActive) {
-                    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                const rect = btn.getBoundingClientRect();
+                const wrapper = btn.querySelector('.dropdown-wrapper');
+                const wrapperRect = wrapper.getBoundingClientRect();
+                const clickX = e.clientX;
+                if (
+                    clickX >= wrapperRect.left
+                ) {
+                    e.stopPropagation();
+                    if (dropdown.style.display === 'block') {
+                        dropdown.style.display = 'none';
+                    } else {
+                        closeAllOsVersionDropdowns();
+                        dropdown.style.display = 'block';
+                    }
                 }
             });
 
