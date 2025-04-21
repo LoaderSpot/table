@@ -17,8 +17,8 @@ const osVersionFilters = {
     ],
     mac: [
         { version: '1.2.37.701', label: '10.15', full: 'macOS 10.15' },
-        { version: '1.2.20.1218', label: '10.13/10.14', full: 'macOS 10.13 / 10.14' },
-        { version: '1.1.89.862', label: '10.11/10.12', full: 'macOS 10.12 / OS X 10.11' }
+        { version: '1.2.20.1218', label: '10.14/10.13', full: 'macOS 10.14 / 10.13' },
+        { version: '1.1.89.862', label: '10.12/10.11', full: 'macOS 10.12 / OS X 10.11' }
     ]
 };
 
@@ -415,7 +415,7 @@ function formatDownloadCount(count) {
         formatted = formatted.slice(0, -2);
     }
 
-    return `${formatted}${formatted.endsWith('k') ? 'k' : ''} ${suffix}`;
+    return `${formatted}${unit} ${suffix}`;
 }
 
 function updateDownloadCount(fileUrl, countElement, version, os, arch) {
