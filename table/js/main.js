@@ -159,14 +159,34 @@ function toggleOsVersionFilter(os, version, label, listItem) {
 }
 
 // функция отображения тоста
-function showToast(message) {
+function showToast(message, duration = 2000, type = null) {
     const toast = document.getElementById('toast');
     if (!toast) return;
-    toast.textContent = message;
+    toast.innerHTML = String(message).replace(/\n/g, '<br>');
+    let bg = "";
+    let fg = "";
+    if (type === "error") {
+        bg = "#6f1611";
+        fg = "#fff";
+    } else if (type === "success") {
+        bg = "#1db954";
+        fg = "#000000";
+    } else {
+        bg = "#333";
+        fg = "#fff";
+    }
+    toast.style.background = bg;
+    toast.style.color = fg;
+    toast.style.textAlign = "center";
     toast.classList.add('show');
     setTimeout(() => {
         toast.classList.remove('show');
-    }, 2000);
+        setTimeout(() => {
+            toast.style.background = "";
+            toast.style.color = "";
+            toast.style.textAlign = "";
+        }, 300);
+    }, duration);
 }
 
 // функция fallback для копирования текста
@@ -1588,5 +1608,204 @@ document.addEventListener('DOMContentLoaded', () => {
     const hash = window.location.hash;
     if (hash !== "#faq" && hash !== "#links") {
         initializeApp();
+    }
+});
+
+// Кнопка плюс и микроформа
+const plusButton = document.getElementById('plusButton');
+const microFormContainer = document.getElementById('microFormContainer');
+const blurOverlay = document.getElementById('blurOverlay');
+let microFormScrollPosition = 0;
+
+function showMicroForm() {
+    if (microFormContainer.style.display === 'block') return;
+    microFormContainer.innerHTML = `
+      <form id="microForm" autocomplete="off" class="micro-form-vertical micro-form-with-close">
+        <div class="micro-form-title">Add New Version</div>
+        <div class="micro-form-subtext">
+          This form is for adding new versions. You can also add outdated versions if they are missing from the table.
+          After sending, the version will be automatically checked within the next hour and, if successful, will be immediately added to the table.
+        </div>
+        <div class="micro-form-close-wrap">
+          <button type="button" class="close-micro-form" title="Close">&times;</button>
+        </div>
+        <div class="micro-form-field">
+          <label for="microFormInput" class="micro-form-label">Version</label>
+          <input type="text" id="microFormInput" class="micro-form-input micro-form-input-wide" placeholder="e.g. 1.2.62.580.gb27ad23e" maxlength="100" required />
+        </div>
+        <div id="microFormInputError"></div>
+        <div id="descBlock" class="micro-form-field">
+          <label for="microFormDesc" class="micro-form-label" id="descLabel" style="display:none;">Description</label>
+          <button type="button" id="showDescBtn" class="micro-form-desc-btn">Add description</button>
+          <textarea id="microFormDesc" class="micro-form-input micro-form-desc-textarea" placeholder="any useful information about the version" maxlength="300" style="display:none;resize:vertical;min-height:38px;"></textarea>
+        </div>
+        <div class="micro-form-actions">
+          <button type="submit" class="micro-form-send">Send</button>
+        </div>
+      </form>
+    `;
+    microFormContainer.style.display = 'block';
+    blurOverlay.style.display = 'block';
+
+    const form = document.getElementById('microForm');
+    form.classList.add('micro-form-animate-in');
+    setTimeout(() => {
+        form.classList.add('micro-form-animate-visible');
+    }, 10);
+
+    microFormScrollPosition = window.pageYOffset;
+    document.body.classList.add('modal-open');
+    document.body.style.top = `-${microFormScrollPosition}px`;
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+
+    setTimeout(() => {
+        const input = document.getElementById('microFormInput');
+        if (input) input.focus();
+    }, 100);
+
+    const versionInput = document.getElementById('microFormInput');
+    const errorDiv = document.getElementById('microFormInputError');
+    versionInput.addEventListener('input', function () {
+        errorDiv.textContent = '';
+        errorDiv.style.display = 'none';
+    });
+
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const value = versionInput.value.trim();
+        const desc = document.getElementById('microFormDesc').value.trim();
+        const regex = /^\d+\.\d+\.\d+\.\d+\.g[0-9a-f]{8}$/;
+
+        if (!regex.test(value)) {
+            errorDiv.textContent = 'version does not match the format: e.g. 1.1.11.111.g12345abc';
+            errorDiv.style.display = 'block';
+            versionInput.focus();
+            return;
+        }
+
+        const parts = value.split('.');
+        let shortVersion = '';
+        if (parts.length >= 3) {
+            shortVersion = parts[0] + '.' + parts[1] + '.' + parts[2];
+        }
+
+        function compareShortVersions(a, b) {
+            const pa = a.split('.').map(Number);
+            const pb = b.split('.').map(Number);
+            for (let i = 0; i < 3; i++) {
+                if ((pa[i] || 0) > (pb[i] || 0)) return 1;
+                if ((pa[i] || 0) < (pb[i] || 0)) return -1;
+            }
+            return 0;
+        }
+
+        if (shortVersion && compareShortVersions(shortVersion, '1.1.58') <= 0) {
+            errorDiv.textContent = 'versions 1.1.58 and below are not accepted as they have been disabled on the server side';
+            errorDiv.style.display = 'block';
+            versionInput.focus();
+            return;
+        }
+
+        let exists = false;
+        if (Array.isArray(allVersions) && allVersions.length > 0) {
+            exists = allVersions.some(([key, data]) => data.fullversion === value);
+        }
+
+        if (exists) {
+            errorDiv.textContent = 'this version already exists in the table';
+            errorDiv.style.display = 'block';
+            versionInput.focus();
+            return;
+        }
+
+        const errorPrefix = 'Version was not sent';
+        try {
+            const response = await fetch('https://broad-pine-bbc0.amd64fox1.workers.dev/submit-version', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    version: value,
+                    desc: desc
+                })
+            });
+            const result = await response.json();
+            if (result.success) {
+                showToast('Version <b>' + value + '</b> has been successfully sent for review', 5000, 'success');
+                hideMicroForm();
+            } else {
+                hideMicroForm();
+                let errorMsg = errorPrefix + '\n' + (result.error || 'Unknown error');
+                if (result.status) {
+                    errorMsg += `: ${result.status}`;
+                }
+                showToast(errorMsg, 5000, 'error');
+            }
+        } catch (err) {
+            hideMicroForm();
+            showToast(errorPrefix + '\n' + err, 5000, 'error');
+        }
+    });
+
+    form.querySelector('.close-micro-form').addEventListener('click', hideMicroForm);
+
+    const showDescBtn = document.getElementById('showDescBtn');
+    const descTextarea = document.getElementById('microFormDesc');
+    const descLabel = document.getElementById('descLabel');
+    showDescBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        showDescBtn.style.display = 'none';
+        descLabel.style.display = 'block';
+        descTextarea.style.display = 'block';
+        descTextarea.focus();
+    });
+
+    setTimeout(() => {
+        document.addEventListener('mousedown', handleOutsideClick);
+    }, 0);
+}
+
+// функция скрытия микроформы
+function hideMicroForm() {
+    const form = document.getElementById('microForm');
+    if (form) {
+        form.classList.remove('micro-form-animate-visible');
+        setTimeout(() => {
+            microFormContainer.style.display = 'none';
+            microFormContainer.innerHTML = '';
+        }, 350);
+    } else {
+        microFormContainer.style.display = 'none';
+        microFormContainer.innerHTML = '';
+    }
+    blurOverlay.style.display = 'none';
+    document.body.classList.remove('modal-open');
+    document.body.style.top = '';
+    document.body.style.position = '';
+    document.body.style.width = '';
+    window.scrollTo(0, microFormScrollPosition);
+    document.removeEventListener('mousedown', handleOutsideClick);
+}
+
+// обработка клика вне микроформы
+function handleOutsideClick(e) {
+    if (
+        !microFormContainer.contains(e.target) &&
+        e.target !== plusButton &&
+        !blurOverlay.contains(e.target)
+    ) {
+        hideMicroForm();
+    }
+}
+
+// обработчик нажатия на плюс
+plusButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (microFormContainer.style.display === 'block') {
+        hideMicroForm();
+    } else {
+        showMicroForm();
     }
 });

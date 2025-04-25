@@ -16,6 +16,11 @@
   --filter-border-color: #474747;
   --hover-bg-light: #d6d6d62a;
   --hover-bg-medium: #d6d6d645;
+  --color-btn-hover: #19a84a;
+  --color-placeholder: #888;
+  --micro-form-bg: #191b1c;
+  --micro-form-input-bg: #141516;
+  --micro-form-shadow: var(--shadow-default);
 
   /* стили для scrollbar */
   --scrollbar-track: #3a3a3a;
@@ -29,6 +34,9 @@
   --spacing-lg: 16px;
   --spacing-xl: 20px;
   --spacing-xxl: 30px;
+  --icon-size-md: 23px;
+  --icon-size-sm: 21px;
+  --icon-size-lg: 23px;
 
   /* анимации и переходы */
   --transition-default: all 0.3s ease;
@@ -166,32 +174,11 @@ body {
 }
 
 /* Общие стили для кнопок навигации и фильтров */
-.btn-filter-base {
-  padding: 6px 20px;
-  border: 1px solid var(--filter-border-color);
-  background: transparent;
-  color: #a6a7a7;
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  font-weight: 700;
-  transition: var(--transition-default);
-  height: 34px;
-  display: inline-flex;
-  align-items: center;
-}
-
-.btn-filter-base.active {
-  background: var(--color-primary);
-  color: var(--color-background-dark);
-  pointer-events: none;
-  border: 1px solid transparent;
-}
-
-.btn-filter-base:hover:not(.active) {
-  background: var(--hover-bg-light);
-}
-
-.nav-center a {
+.nav-center a,
+.btn-filter-base,
+.filter-btn,
+table.version-table .filter-button,
+.arch-filter-button {
   padding: 6px 20px;
   border: 1px solid var(--filter-border-color);
   background: transparent;
@@ -206,11 +193,16 @@ body {
   text-decoration: none;
 }
 
+.btn-filter-base.active,
 .nav-center a.active {
   background: var(--color-primary);
   color: var(--color-background-dark);
   pointer-events: none;
   border: 1px solid transparent;
+}
+
+.btn-filter-base:hover:not(.active) {
+  background: var(--hover-bg-light);
 }
 
 .nav-center a:hover:not(.active) {
@@ -470,8 +462,8 @@ table.version-table .filter-button:hover:not(.active) {
 /* Стили для иконок ОС */
 .os-icon {
   display: inline-flex;
-  width: 18px;
-  height: 18px;
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
   vertical-align: middle;
 }
 
@@ -480,24 +472,24 @@ table.version-table .filter-button:hover:not(.active) {
 }
 
 .win-icon {
-  width: 18px;
-  height: 18px;
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
   position: relative;
-  top: -1px;
+  top: 0px;
   margin-right: 4px;
 }
 
 .mac-icon {
-  width: 19px;
-  height: 19px;
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
   position: relative;
-  top: -1px;
-  margin-right: 4px;
+  top: -2px;
+  margin-right: 2px;
 }
 
 .linux-icon {
-  width: 23px;
-  height: 23px;
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
   position: relative;
   top: -1px;
   margin-right: -3px;
@@ -532,10 +524,6 @@ table.version-table .filter-button:hover:not(.active) {
   border-left: 1px solid rgba(0, 0, 0, 0.3);
 }
 
-.dropdown-arrow {
-  font-size: 10px;
-  margin-left: 0;
-}
 
 .os-filter-container[data-os="win"] .os-version-dropdown {
   min-width: 120px;
@@ -690,7 +678,7 @@ tr.os-filters-row {
 
 .search-icon svg {
   color: #a6a7a7;
-  transition: fill 0.2s ease;
+  transition: fill 0.2s;
 }
 
 .search-container.expanded .search-icon svg {
@@ -877,10 +865,14 @@ mark {
 }
 
 body.modal-open {
-  overflow: hidden;
-  position: fixed;
-  width: 100%;
-  height: 100%;
+  overflow: hidden !important;
+}
+
+body.modal-open .main-table,
+body.modal-open .table-headers,
+body.modal-open .table-content {
+  pointer-events: none !important;
+  user-select: none;
 }
 
 .comments-modal-content {
@@ -1189,7 +1181,6 @@ body.modal-open {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232f96b4'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z'/%3E%3C/svg%3E");
 }
 
-
 .markdown-content blockquote[data-type="important"] {
   background-color: rgba(185, 74, 72, 0.1);
   border: 1px solid rgba(185, 74, 72, 0.2);
@@ -1226,7 +1217,7 @@ body.modal-open {
 
 .dropdown-arrow {
   font-size: 0.7em;
-  left: 12px;
+  left: 9px;
   line-height: 1;
   display: inline-block;
   vertical-align: middle;
@@ -1426,4 +1417,305 @@ body.modal-open {
   text-decoration: underline;
   color: var(--color-primary);
   opacity: 0.8;
+}
+
+/* Стили для кнопки плюс */
+.plus-button {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--filter-border-color);
+  background: transparent;
+  color: #a6a7a7;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition-default);
+  padding: 0;
+  vertical-align: middle;
+}
+
+.plus-button:hover {
+  background: var(--hover-bg-light);
+}
+
+.plus-button svg {
+  display: block;
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+  pointer-events: none;
+}
+
+/* Стили для микроформы */
+#microFormContainer {
+  position: fixed;
+  z-index: 1101;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+  max-width: 96vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: none;
+  display: none;
+}
+
+#microFormContainer form {
+  max-width: 410px;
+  min-width: 400px;
+  width: 100%;
+  margin: 0 auto;
+  background: var(--micro-form-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--micro-form-shadow);
+  padding: 28px 28px 22px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+#microFormContainer form.micro-form-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 350px;
+  width: 100%;
+  margin: 0;
+  padding: 15px;
+  position: relative;
+}
+
+#microFormContainer form.micro-form-vertical.micro-form-with-close {
+  padding-top: 38px;
+}
+
+#microFormContainer .micro-form-title {
+  font-size: 1.13em;
+  font-weight: 700;
+  color: var(--color-text-light);
+  margin-bottom: 18px;
+  margin-top: 0;
+  text-align: center;
+  padding-left: 0;
+  letter-spacing: 0.01em;
+}
+
+#microFormContainer .micro-form-close-wrap {
+  position: absolute;
+  top: 9px;
+  right: 7px;
+  z-index: 3;
+  width: 40px;
+  height: 38px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+
+#microFormContainer .close-micro-form {
+  position: static;
+  margin: 0;
+  width: 32px;
+  height: 32px;
+  font-size: 22px;
+  background: transparent;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  line-height: 1;
+  border-radius: 3px;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+
+#microFormContainer .close-micro-form:hover {
+  color: var(--color-primary);
+}
+
+#microFormContainer .micro-form-input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-size: 14px;
+  background: var(--micro-form-input-bg);
+  color: var(--color-text-light);
+  outline: none;
+  transition: border 0.2s;
+  margin: 0;
+  min-height: 32px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+#microFormContainer .micro-form-input::placeholder {
+  color: var(--color-placeholder);
+  opacity: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+#microFormContainer .micro-form-input-wide {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  font-size: 14px;
+}
+
+#microFormContainer .micro-form-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  border-top: none;
+  padding-top: 0;
+}
+
+#microFormContainer .micro-form-send {
+  padding: 6px 22px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--color-primary);
+  color: var(--color-background-dark);
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.2s;
+  margin: 0 auto;
+  display: block;
+}
+
+#microFormContainer .micro-form-send:hover {
+  background: var(--color-btn-hover);
+}
+
+#microFormContainer .micro-form-desc-btn {
+  margin-top: 2px;
+  margin-bottom: 0;
+  padding: 7px 0 7px 0;
+  width: 100%;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: #888;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border 0.2s, color 0.2s, background 0.2s;
+  outline: none;
+  display: block;
+}
+
+#microFormContainer .micro-form-desc-btn:hover,
+#microFormContainer .micro-form-desc-btn:focus {
+  border: 1.5px solid var(--color-primary);
+  color: var(--color-primary);
+  background: #232a1b33;
+}
+
+#microFormContainer .micro-form-desc-textarea {
+
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  font-size: 14px;
+  margin-top: 0;
+  margin-bottom: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--micro-form-input-bg);
+  color: var(--color-text-light);
+  padding: 6px 10px;
+  outline: none;
+  transition: border 0.2s;
+  resize: vertical;
+  display: none;
+}
+
+#microFormContainer .micro-form-subtext {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-bottom: 14px;
+  margin-top: 0;
+  text-align: left;
+  line-height: 1.7;
+  padding: 8px 12px;
+  letter-spacing: 0.01em;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: #181a1b;
+}
+
+#blurOverlay {
+  position: fixed;
+  z-index: 1100;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(24, 26, 27, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: opacity 0.2s;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (max-width: 500px) {
+  #microFormContainer form {
+    max-width: 98vw;
+    min-width: 0;
+    padding: 18px 4vw 14px 4vw;
+  }
+}
+
+.micro-form-animate-in {
+  opacity: 0;
+  transform: translateY(-32px) scale(0.98);
+  transition: opacity 0.35s cubic-bezier(.4, 0, .2, 1), transform 0.35s cubic-bezier(.4, 0, .2, 1);
+}
+
+.micro-form-animate-in.micro-form-animate-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+#microFormInputError {
+  color: #e7a718;
+  font-size: 12px;
+  min-height: 18px;
+  margin-top: 2px;
+  margin-bottom: 0;
+  display: none;
+  margin-left: 4px;
+}
+
+.micro-form-label {
+  font-size: 13px;
+  color: #b3b3b3;
+  margin-bottom: 2px;
+  margin-top: 6px;
+  display: block;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-align: left;
+}
+
+.micro-form-field {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
 }

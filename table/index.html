@@ -88,7 +88,7 @@
                 </span>
                 Linux
               </button>
-              <!--блок поиска -->
+              <!-- блок поиска -->
               <div class="search-container" id="searchContainer">
                 <span class="search-icon" id="searchIcon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -100,6 +100,14 @@
                 <input type="search" id="versionSearch" placeholder="Search by version" style="font-size: 13px;">
                 <span class="clear-search"></span>
               </div>
+              <!-- кнопка плюс -->
+              <button class="plus-button" id="plusButton" title="Add new version">
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                  <rect x="9.25" y="4" width="3.5" height="14" rx="1.5" fill="currentColor" />
+                  <rect x="18" y="9.25" width="3.5" height="14" rx="1.5" transform="rotate(90 18 9.25)"
+                    fill="currentColor" />
+                </svg>
+              </button>
             </div>
           </td>
         </tr>
@@ -115,9 +123,9 @@
       </tbody>
     </table>
   </div>
-
+  <div id="blurOverlay" style="display:none;"></div>
+  <div id="microFormContainer" style="display:none;"></div>
   <div class="toast-notification" id="toast">Copied to clipboard</div>
-
   <script defer src="js/main.js"></script>
 
 </body>
