@@ -1645,12 +1645,23 @@ function showMicroForm() {
       </form>
     `;
     microFormContainer.style.display = 'block';
+    microFormContainer.style.overflow = 'hidden';
     blurOverlay.style.display = 'block';
+    blurOverlay.style.opacity = "0";
+    setTimeout(() => {
+        blurOverlay.style.opacity = "1";
+    }, 10);
 
     const form = document.getElementById('microForm');
     form.classList.add('micro-form-animate-in');
     setTimeout(() => {
         form.classList.add('micro-form-animate-visible');
+        setTimeout(() => {
+            if (microFormContainer.style.display === 'block') {
+                microFormContainer.style.overflowY = 'auto';
+                microFormContainer.style.overflowX = 'hidden';
+            }
+        }, 380);
     }, 10);
 
     microFormScrollPosition = window.pageYOffset;
@@ -1770,17 +1781,23 @@ function showMicroForm() {
 // функция скрытия микроформы
 function hideMicroForm() {
     const form = document.getElementById('microForm');
+    microFormContainer.style.overflow = 'hidden';
     if (form) {
         form.classList.remove('micro-form-animate-visible');
+        form.classList.remove('micro-form-animate-in');
+        form.classList.add('micro-form-animate-out');
         setTimeout(() => {
             microFormContainer.style.display = 'none';
             microFormContainer.innerHTML = '';
-        }, 350);
+        }, 320);
     } else {
         microFormContainer.style.display = 'none';
         microFormContainer.innerHTML = '';
     }
-    blurOverlay.style.display = 'none';
+    blurOverlay.style.opacity = "0";
+    setTimeout(() => {
+        blurOverlay.style.display = 'none';
+    }, 350);
     document.body.classList.remove('modal-open');
     document.body.style.top = '';
     document.body.style.position = '';

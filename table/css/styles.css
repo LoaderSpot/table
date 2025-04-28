@@ -1458,6 +1458,7 @@ body.modal-open .table-content {
   max-width: 96vw;
   max-height: 90vh;
   overflow-y: auto;
+  overflow-x: hidden;
   background: none;
   display: none;
 }
@@ -1475,6 +1476,7 @@ body.modal-open .table-content {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  overflow-x: hidden;
 }
 
 #microFormContainer form.micro-form-vertical {
@@ -1564,6 +1566,14 @@ body.modal-open .table-content {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+}
+
+#microFormContainer label.micro-form-label {
+  font-size: 0.8em;
+  padding-left: var(--spacing-xs);
+  color: var(--color-text-secondary);
+  display: block;
+  margin-bottom: 4px;
 }
 
 #microFormContainer .micro-form-input-wide {
@@ -1668,7 +1678,7 @@ body.modal-open .table-content {
   background: rgba(24, 26, 27, 0.45);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  transition: opacity 0.2s;
+  transition: opacity 0.35s cubic-bezier(.4, 0, .2, 1), backdrop-filter 0.35s cubic-bezier(.4, 0, .2, 1);
   opacity: 1;
   pointer-events: auto;
 }
@@ -1681,15 +1691,50 @@ body.modal-open .table-content {
   }
 }
 
+
+#blurOverlay[style*="display: none"] {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+@keyframes microFormFadeScaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.93) translateY(30px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes microFormFadeScaleOut {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.93) translateY(30px);
+  }
+}
+
 .micro-form-animate-in {
   opacity: 0;
-  transform: translateY(-32px) scale(0.98);
-  transition: opacity 0.35s cubic-bezier(.4, 0, .2, 1), transform 0.35s cubic-bezier(.4, 0, .2, 1);
+  transform: scale(0.93) translateY(30px);
+  animation: microFormFadeScaleIn 0.38s cubic-bezier(.4, 0, .2, 1) forwards;
 }
 
 .micro-form-animate-in.micro-form-animate-visible {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: scale(1) translateY(0);
+
+}
+
+.micro-form-animate-out {
+  animation: microFormFadeScaleOut 0.32s cubic-bezier(.4, 0, .2, 1) forwards;
 }
 
 #microFormInputError {
