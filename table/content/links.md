@@ -24,7 +24,7 @@
 ## Ad blockers
 - <a href="https://github.com/SpotX-Official/SpotX" target="_blank">SpotX</a> for Windows
 - <a href="https://github.com/SpotX-Official/SpotX-Bash" target="_blank">SpotX-Bash</a> for Linux & Mac
-- <a href="https://github.com/whoeevee/EeveeSpotify/releases/latest" target="_blank">EeveeSpotify</a> for iOS
+- <a href="https://github.com/whoeevee/EeveeSpotifyReborn/releases/latest" target="_blank">EeveeSpotify</a> for iOS
 - <a href="https://github.com/revanced/revanced-manager/releases/latest" target="_blank">Revanced manager</a> for Android
 - xManager <a href="https://t.me/xManagerSupport" target="_blank">Telegram</a> | <a href="https://discord.gg/rWn6dbP8" target="_blank">Discord</a> for Android
 
