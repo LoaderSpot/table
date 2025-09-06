@@ -1,15 +1,9 @@
-// определяем os из url параметров перед загрузкой данных
-let currentOS = (() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    switch (true) {
-        case urlParams.has('mac'):
-            return 'mac';
-        case urlParams.has('linux'):
-            return 'linux';
-        default:
-            return 'win';
-    }
-})();
+const urlParams = new URLSearchParams(window.location.search);
+let currentArch = urlParams.get('arch') || 'all';
+let currentOS = urlParams.get('os') || 'win';
+let currentSearchTerm = urlParams.get('search') || '';
+let currentWinVersionFilter = urlParams.get('winVersion') || null;
+let currentMacVersionFilter = urlParams.get('macVersion') || null;
 
 const osVersionFilters = {
     win: [
@@ -21,9 +15,6 @@ const osVersionFilters = {
         { version: '1.1.89.862', label: '10.12/10.11', full: 'macOS 10.12 / OS X 10.11' }
     ]
 };
-
-let currentWinVersionFilter = null;
-let currentMacVersionFilter = null;
 
 function closeAllOsVersionDropdowns() {
     document.querySelectorAll('.os-version-dropdown').forEach(dd => {
@@ -86,6 +77,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     ul.appendChild(li);
                 });
+
+                // восстанавливаем состояние фильтра версий из параметров URL
+                const currentVersionFilter = os === 'win' ? currentWinVersionFilter : currentMacVersionFilter;
+                if (currentVersionFilter) {
+                    const matchingFilter = osVersionFilters[os].find(filter => filter.version === currentVersionFilter);
+                    if (matchingFilter) {
+                        const matchingLi = ul.querySelector(`li[data-version="${currentVersionFilter}"]`);
+                        if (matchingLi) {
+                            matchingLi.classList.add('selected');
+                            versionLabel.textContent = matchingFilter.label;
+                            versionLabel.style.display = 'block';
+                            container.classList.add('filter-active');
+                        }
+                    }
+                }
             }
 
             btn.addEventListener('click', function (e) {
@@ -155,6 +161,7 @@ function toggleOsVersionFilter(os, version, label, listItem) {
         currentMacVersionFilter = currentFilter;
     }
 
+    syncUrlWithState();
     reRenderVersions();
 }
 
@@ -495,9 +502,6 @@ function highlight(text, term) {
     return text.replace(regexCache.get(term), '<mark>$1</mark>');
 }
 
-// глобальная переменная для архитектурного фильтра
-let currentArch = 'all';
-
 // функция обновления фильтров архитектур
 function updateArchFilters() {
     const archContainer = document.getElementById('arch-filters');
@@ -543,6 +547,7 @@ function updateArchFilters() {
             } else {
                 currentArch = arch;
             }
+            syncUrlWithState();
             updateArchFilters();
             reRenderVersions();
         });
@@ -677,7 +682,6 @@ const container = document.getElementById('versions-container');
 
 // глобальная переменная для хранения Linux-пакетов
 let linuxVersionsData = [];
-let currentSearchTerm = '';
 let linuxDataLoaded = false; // флаг успешной загрузки Linux-данных
 
 // сторож для Intersection Observer
@@ -895,6 +899,8 @@ function performSearch(term) {
     currentSearchTerm = term;
     observer.unobserve(sentinel);
 
+    syncUrlWithState();
+
     setTimeout(() => {
         if (term === "") {
             currentSearchResults = null;
@@ -963,6 +969,34 @@ function performSearch(term) {
         // запускаем ленивую загрузку результатов поиска
         startLazyLoading();
     }, 300);
+}
+
+function syncUrlWithState() {
+    const params = {};
+
+    params.os = currentOS;
+    params.search = currentSearchTerm;
+
+    if (currentArch && currentArch !== 'all') {
+        params.arch = currentArch;
+    } else {
+        params.arch = null;
+    }
+
+    params.winVersion = currentWinVersionFilter;
+    params.macVersion = currentMacVersionFilter;
+
+    const url = new URL(window.location);
+
+    Object.entries(params).forEach(([key, value]) => {
+        if (value == null || value === undefined || value === '') {
+            url.searchParams.delete(key);
+        } else {
+            url.searchParams.set(key, value);
+        }
+    });
+
+    window.history.replaceState(null, '', url);
 }
 
 // функция для обработки пустых строк в markdown
@@ -1064,11 +1098,23 @@ async function initializeApp() {
         }, 2000);
 
         // отображаем первую партию данных для текущей ОС, только если это не markdown страница
-        if (currentOS === 'linux') {
-            loadLinuxPackages();
+        if (currentSearchTerm) {
+            versionSearch.value = currentSearchTerm
+            searchContainer.classList.add('show-clear');
+            searchContainer.classList.add('expanded');
+            
+            if (currentOS !== 'linux') {
+                updateArchFilters();
+            }
+            
+            performSearch(currentSearchTerm);
         } else {
-            startLazyLoading();
-            updateArchFilters();
+            if (currentOS === 'linux') {
+                loadLinuxPackages();
+            } else {
+                startLazyLoading();
+                updateArchFilters();
+            }
         }
     } catch (err) {
         console.error('Error loading version data:', err);
@@ -1111,6 +1157,8 @@ document.querySelectorAll('.filter-button').forEach(button => {
 
         // обновляем фильтры архитектур
         updateArchFilters();
+
+        syncUrlWithState();
 
         setTimeout(() => {
             // если мы переходим на Linux и данные еще не загружены, загружаем их
@@ -1560,6 +1608,11 @@ function loadMarkdownPage() {
         // скрываем таблицу и показываем контейнер для markdown
         tableContainer.style.display = "none";
         mdContainer.style.display = "block"; // Показываем контейнер, чтобы было куда грузить
+
+        currentArch = null;
+        currentOS = null;
+        currentSearchTerm = null;
+        syncUrlWithState();
 
         let mdFile = hash === "#faq" ? "content/faq.md" : "content/links.md";
         fetch(mdFile)
