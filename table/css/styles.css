@@ -1292,7 +1292,7 @@ body.modal-open .table-content {
   transform: none;
   background-color: rgb(from var(--color-accent) r g b / 0.88);
   color: var(--color-background-dark);
-  padding: 1px 4px;
+  padding: 1px 8px 1px 4px;
   border-radius: var(--radius-sm);
   font-size: 0.6em;
   font-weight: bold;
@@ -1303,6 +1303,39 @@ body.modal-open .table-content {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: default;
+  transition: var(--transition-fast);
+}
+
+.os-version-label-close {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  font-size: 9px;
+  line-height: 1;
+  width: 12px;
+  height: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: var(--transition-fast);
+  font-weight: bold;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.os-version-label-close:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.3);
+  color: #000;
+  transform: scale(1.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .markdown-content .faq .question {
