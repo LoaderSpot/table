@@ -1,15 +1,10 @@
-// определяем os из url параметров перед загрузкой данных
-let currentOS = (() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    switch (true) {
-        case urlParams.has('mac'):
-            return 'mac';
-        case urlParams.has('linux'):
-            return 'linux';
-        default:
-            return 'win';
-    }
-})();
+const urlParams = new URLSearchParams(window.location.search);
+let currentArch = urlParams.get('arch') || 'all';
+let currentOS = urlParams.get('os') || 'win';
+let currentSearchTerm = urlParams.get('search') || '';
+let currentWinVersionFilter = urlParams.get('winVersion') || null;
+let currentMacVersionFilter = urlParams.get('macVersion') || null;
+let currentLinuxVersionFilter = urlParams.get('linuxVersion') || null;
 
 const osVersionFilters = {
     win: [
@@ -19,11 +14,11 @@ const osVersionFilters = {
         { version: '1.2.37.701', label: '10.15', full: 'macOS 10.15' },
         { version: '1.2.20.1218', label: '10.14/10.13', full: 'macOS 10.14 / 10.13' },
         { version: '1.1.89.862', label: '10.12/10.11', full: 'macOS 10.12 / OS X 10.11' }
+    ],
+    linux: [
+        // { version: '1.2.40.651', label: 'Latest', full: 'Latest stable' }
     ]
 };
-
-let currentWinVersionFilter = null;
-let currentMacVersionFilter = null;
 
 function closeAllOsVersionDropdowns() {
     document.querySelectorAll('.os-version-dropdown').forEach(dd => {
@@ -36,8 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.filter-button').forEach(btn => {
         const os = btn.dataset.os;
 
-        // Добавляем стрелку и контейнер для выпадающего списка (Windows и Mac)
-        if (os === 'win' || os === 'mac') {
+        if (os === 'win' || os === 'mac' || os === 'linux') {
+            const hasFilters = osVersionFilters[os] && osVersionFilters[os].length > 0;
+
             const container = document.createElement('div');
             container.className = 'os-filter-container';
             container.setAttribute('data-os', os);
@@ -52,29 +48,31 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             btn.appendChild(buttonContent);
 
-            const dropdownWrapper = document.createElement('span');
-            dropdownWrapper.className = 'dropdown-wrapper';
-            dropdownWrapper.style.pointerEvents = 'none';
+            if (hasFilters) {
+                const dropdownWrapper = document.createElement('span');
+                dropdownWrapper.className = 'dropdown-wrapper';
+                dropdownWrapper.style.pointerEvents = 'none';
 
-            const arrow = document.createElement('span');
-            arrow.className = 'dropdown-arrow';
-            arrow.innerHTML = '▼';
-            dropdownWrapper.appendChild(arrow);
-            btn.appendChild(dropdownWrapper);
+                const arrow = document.createElement('span');
+                arrow.className = 'dropdown-arrow';
+                arrow.innerHTML = '▼';
+                dropdownWrapper.appendChild(arrow);
+                btn.appendChild(dropdownWrapper);
+            }
 
             const versionLabel = document.createElement('span');
             versionLabel.className = 'os-version-label';
             versionLabel.style.display = 'none';
             container.appendChild(versionLabel);
 
-            const dropdown = document.createElement('div');
-            dropdown.className = 'os-version-dropdown';
-            container.appendChild(dropdown);
+            if (hasFilters) {
+                const dropdown = document.createElement('div');
+                dropdown.className = 'os-version-dropdown';
+                container.appendChild(dropdown);
 
-            const ul = document.createElement('ul');
-            dropdown.appendChild(ul);
+                const ul = document.createElement('ul');
+                dropdown.appendChild(ul);
 
-            if (osVersionFilters[os]) {
                 osVersionFilters[os].forEach(filter => {
                     const li = document.createElement('li');
                     li.textContent = filter.full;
@@ -86,36 +84,70 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     ul.appendChild(li);
                 });
-            }
 
-            btn.addEventListener('click', function (e) {
-                const isActive = btn.classList.contains('active');
-                if (!isActive) {
-                    e.preventDefault();
-                    btn.classList.add('active');
-                    btn.click();
-                    return;
-                }
-                const rect = btn.getBoundingClientRect();
-                const wrapper = btn.querySelector('.dropdown-wrapper');
-                const wrapperRect = wrapper.getBoundingClientRect();
-                const clickX = e.clientX;
-                if (
-                    clickX >= wrapperRect.left
-                ) {
-                    e.stopPropagation();
-                    if (dropdown.style.display === 'block') {
-                        dropdown.style.display = 'none';
+                // восстанавливаем состояние фильтра версий из параметров URL
+                const currentVersionFilter = os === 'win' ? currentWinVersionFilter :
+                    os === 'mac' ? currentMacVersionFilter : currentLinuxVersionFilter;
+                if (currentVersionFilter) {
+                    const matchingFilter = osVersionFilters[os].find(filter => filter.version === currentVersionFilter);
+                    if (matchingFilter) {
+                        const matchingLi = ul.querySelector(`li[data-version="${currentVersionFilter}"]`);
+                        if (matchingLi) {
+                            matchingLi.classList.add('selected');
+                            updateVersionLabel(versionLabel, matchingFilter.label, os);
+                            versionLabel.style.display = 'block';
+                            container.classList.add('filter-active');
+                        }
                     } else {
-                        closeAllOsVersionDropdowns();
-                        dropdown.style.display = 'block';
+                        updateVersionLabel(versionLabel, currentVersionFilter, os);
+                        versionLabel.style.display = 'block';
+                        container.classList.add('filter-active');
                     }
                 }
-            });
+            }
 
-            document.addEventListener('click', () => {
-                dropdown.style.display = 'none';
-            });
+            const currentVersionFilter = os === 'win' ? currentWinVersionFilter :
+                os === 'mac' ? currentMacVersionFilter : currentLinuxVersionFilter;
+            if (currentVersionFilter && !hasFilters) {
+                updateVersionLabel(versionLabel, currentVersionFilter, os);
+                versionLabel.style.display = 'block';
+                container.classList.add('filter-active');
+            }
+
+            if (hasFilters) {
+                btn.addEventListener('click', function (e) {
+                    const isActive = btn.classList.contains('active');
+                    if (!isActive) {
+                        e.preventDefault();
+                        btn.classList.add('active');
+                        btn.click();
+                        return;
+                    }
+                    const rect = btn.getBoundingClientRect();
+                    const wrapper = btn.querySelector('.dropdown-wrapper');
+                    if (wrapper) {
+                        const wrapperRect = wrapper.getBoundingClientRect();
+                        const clickX = e.clientX;
+                        if (clickX >= wrapperRect.left) {
+                            e.stopPropagation();
+                            const dropdown = container.querySelector('.os-version-dropdown');
+                            if (dropdown.style.display === 'block') {
+                                dropdown.style.display = 'none';
+                            } else {
+                                closeAllOsVersionDropdowns();
+                                dropdown.style.display = 'block';
+                            }
+                        }
+                    }
+                });
+
+                const dropdown = container.querySelector('.os-version-dropdown');
+                document.addEventListener('click', () => {
+                    if (dropdown) {
+                        dropdown.style.display = 'none';
+                    }
+                });
+            }
         }
 
         if (os === currentOS) {
@@ -131,7 +163,8 @@ function toggleOsVersionFilter(os, version, label, listItem) {
     const versionLabel = container.querySelector('.os-version-label');
     const allItems = container.querySelectorAll('li');
 
-    let currentFilter = os === 'win' ? currentWinVersionFilter : currentMacVersionFilter;
+    let currentFilter = os === 'win' ? currentWinVersionFilter :
+        os === 'mac' ? currentMacVersionFilter : currentLinuxVersionFilter;
 
     if (currentFilter === version) {
         currentFilter = null;
@@ -141,7 +174,7 @@ function toggleOsVersionFilter(os, version, label, listItem) {
     } else {
 
         currentFilter = version;
-        versionLabel.textContent = label;
+        updateVersionLabel(versionLabel, label, os);
         versionLabel.style.display = 'block';
         container.classList.add('filter-active');
 
@@ -151,10 +184,48 @@ function toggleOsVersionFilter(os, version, label, listItem) {
 
     if (os === 'win') {
         currentWinVersionFilter = currentFilter;
-    } else {
+    } else if (os === 'mac') {
         currentMacVersionFilter = currentFilter;
+    } else {
+        currentLinuxVersionFilter = currentFilter;
     }
 
+    syncUrlWithState();
+    reRenderVersions();
+}
+
+// обновление плашки версии с кнопкой закрытия
+function updateVersionLabel(versionLabel, label, os) {
+    versionLabel.innerHTML = `${label}<button class="os-version-label-close" title="Remove filter">×</button>`;
+
+    const closeBtn = versionLabel.querySelector('.os-version-label-close');
+    closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        clearOsVersionFilter(os);
+    });
+}
+
+function clearOsVersionFilter(os) {
+    if (os === 'win') {
+        currentWinVersionFilter = null;
+    } else if (os === 'mac') {
+        currentMacVersionFilter = null;
+    } else if (os === 'linux') {
+        currentLinuxVersionFilter = null;
+    }
+
+    const container = document.querySelector(`.os-filter-container[data-os="${os}"]`);
+    if (container) {
+        const versionLabel = container.querySelector('.os-version-label');
+        const allItems = container.querySelectorAll('li');
+
+        if (versionLabel) versionLabel.style.display = 'none';
+        allItems.forEach(item => item.classList.remove('selected'));
+        container.classList.remove('filter-active');
+    }
+
+    syncUrlWithState();
     reRenderVersions();
 }
 
@@ -495,9 +566,6 @@ function highlight(text, term) {
     return text.replace(regexCache.get(term), '<mark>$1</mark>');
 }
 
-// глобальная переменная для архитектурного фильтра
-let currentArch = 'all';
-
 // функция обновления фильтров архитектур
 function updateArchFilters() {
     const archContainer = document.getElementById('arch-filters');
@@ -543,6 +611,7 @@ function updateArchFilters() {
             } else {
                 currentArch = arch;
             }
+            syncUrlWithState();
             updateArchFilters();
             reRenderVersions();
         });
@@ -552,17 +621,13 @@ function updateArchFilters() {
 
 // Функция для сравнения версий
 function compareVersions(version1, version2) {
-    const parts1 = version1.split('.');
-    const parts2 = version2.split('.');
+    const parts1 = version1.split('.').map(p => parseInt(p || '0', 10) || 0);
+    const parts2 = version2.split('.').map(p => parseInt(p || '0', 10) || 0);
+    const minLength = Math.min(parts1.length, parts2.length);
 
-    const maxLength = Math.max(parts1.length, parts2.length);
-
-    for (let i = 0; i < maxLength; i++) {
-        const num1 = parseInt(parts1[i] || 0, 10);
-        const num2 = parseInt(parts2[i] || 0, 10);
-
-        if (num1 > num2) return 1;
-        if (num1 < num2) return -1;
+    for (let i = 0; i < minLength; i++) {
+        if (parts1[i] > parts2[i]) return 1;
+        if (parts1[i] < parts2[i]) return -1;
     }
 
     return 0;
@@ -597,6 +662,10 @@ function createVersionRows(versionKey, data, searchTerm = '') {
         }
     } else if (currentOS === 'mac' && currentMacVersionFilter) {
         if (compareVersions(shortVersion, currentMacVersionFilter) > 0) {
+            return [];
+        }
+    } else if (currentOS === 'linux' && currentLinuxVersionFilter) {
+        if (compareVersions(shortVersion, currentLinuxVersionFilter) > 0) {
             return [];
         }
     }
@@ -677,7 +746,6 @@ const container = document.getElementById('versions-container');
 
 // глобальная переменная для хранения Linux-пакетов
 let linuxVersionsData = [];
-let currentSearchTerm = '';
 let linuxDataLoaded = false; // флаг успешной загрузки Linux-данных
 
 // сторож для Intersection Observer
@@ -722,6 +790,12 @@ function loadMoreLinuxRows() {
 
     for (let i = currentIndex; i < endIndex; i++) {
         const version = dataSource[i];
+
+        if (currentLinuxVersionFilter) {
+            if (compareVersions(version.version.short, currentLinuxVersionFilter) > 0) {
+                continue;
+            }
+        }
 
         // создаем элементы для версии с использованием общей функции
         const { versionText, shortVersionElem } = createVersionElement(
@@ -826,6 +900,9 @@ function startLazyLoading() {
             if (currentOS === 'mac' && currentMacVersionFilter) {
                 return compareVersions(versionKey, currentMacVersionFilter) <= 0;
             }
+            if (currentOS === 'linux' && currentLinuxVersionFilter) {
+                return compareVersions(versionKey, currentLinuxVersionFilter) <= 0;
+            }
 
             return true;
         });
@@ -895,6 +972,8 @@ function performSearch(term) {
     currentSearchTerm = term;
     observer.unobserve(sentinel);
 
+    syncUrlWithState();
+
     setTimeout(() => {
         if (term === "") {
             currentSearchResults = null;
@@ -963,6 +1042,35 @@ function performSearch(term) {
         // запускаем ленивую загрузку результатов поиска
         startLazyLoading();
     }, 300);
+}
+
+function syncUrlWithState() {
+    const params = {};
+
+    params.os = currentOS;
+    params.search = currentSearchTerm;
+
+    if (currentArch && currentArch !== 'all') {
+        params.arch = currentArch;
+    } else {
+        params.arch = null;
+    }
+
+    params.winVersion = currentWinVersionFilter;
+    params.macVersion = currentMacVersionFilter;
+    params.linuxVersion = currentLinuxVersionFilter;
+
+    const url = new URL(window.location);
+
+    Object.entries(params).forEach(([key, value]) => {
+        if (value == null || value === undefined || value === '') {
+            url.searchParams.delete(key);
+        } else {
+            url.searchParams.set(key, value);
+        }
+    });
+
+    window.history.replaceState(null, '', url);
 }
 
 // функция для обработки пустых строк в markdown
@@ -1064,11 +1172,23 @@ async function initializeApp() {
         }, 2000);
 
         // отображаем первую партию данных для текущей ОС, только если это не markdown страница
-        if (currentOS === 'linux') {
-            loadLinuxPackages();
+        if (currentSearchTerm) {
+            versionSearch.value = currentSearchTerm
+            searchContainer.classList.add('show-clear');
+            searchContainer.classList.add('expanded');
+
+            if (currentOS !== 'linux') {
+                updateArchFilters();
+            }
+
+            performSearch(currentSearchTerm);
         } else {
-            startLazyLoading();
-            updateArchFilters();
+            if (currentOS === 'linux') {
+                loadLinuxPackages();
+            } else {
+                startLazyLoading();
+                updateArchFilters();
+            }
         }
     } catch (err) {
         console.error('Error loading version data:', err);
@@ -1111,6 +1231,8 @@ document.querySelectorAll('.filter-button').forEach(button => {
 
         // обновляем фильтры архитектур
         updateArchFilters();
+
+        syncUrlWithState();
 
         setTimeout(() => {
             // если мы переходим на Linux и данные еще не загружены, загружаем их
@@ -1560,6 +1682,11 @@ function loadMarkdownPage() {
         // скрываем таблицу и показываем контейнер для markdown
         tableContainer.style.display = "none";
         mdContainer.style.display = "block"; // Показываем контейнер, чтобы было куда грузить
+
+        currentArch = null;
+        currentOS = null;
+        currentSearchTerm = null;
+        syncUrlWithState();
 
         let mdFile = hash === "#faq" ? "content/faq.md" : "content/links.md";
         fetch(mdFile)
