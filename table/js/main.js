@@ -1368,12 +1368,15 @@ function cleanupGiscus() {
 let giscusLoaded = false;
 let currentCommentVersion = '';
 let scrollPosition = 0;
+const commentRefreshTimers = new Map();
 
 // функция открытия модального окна с блокировкой прокрутки основной страницы
 function openModal() {
     scrollPosition = window.pageYOffset;
     document.body.classList.add('modal-open');
     document.body.style.top = `-${scrollPosition}px`;
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
     commentsModal.style.display = 'flex';
 
     // добавляем небольшую задержку перед показом для плавности
@@ -1392,12 +1395,19 @@ function closeModal() {
         commentsModal.style.display = 'none';
         document.body.classList.remove('modal-open');
         document.body.style.top = '';
+    document.body.style.position = '';
+    document.body.style.width = '';
         window.scrollTo(0, scrollPosition);
         cleanupGiscus();
 
         // обновляем счетчики комментариев после закрытия модального окна
         // используем запрос только для комментариев
         if (currentCommentVersion) {
+            const t = commentRefreshTimers.get(currentCommentVersion);
+            if (t) {
+                clearTimeout(t);
+                commentRefreshTimers.delete(currentCommentVersion);
+            }
             refreshCommentCountForVersion(currentCommentVersion);
         }
     }, 300); // задержка должна соответствовать времени transition для opacity
@@ -1415,35 +1425,19 @@ window.addEventListener('message', function (e) {
         if (data.giscus) {
             giscusLoaded = true;
 
-            // проверяем, содержит ли сообщение информацию о добавлении комментария
-            if (data.giscus.discussion && currentCommentVersion) {
-                // если это событие добавления комментария
-                if (data.giscus.discussion.totalCommentCount !== undefined) {
-                    // обновляем кэш счетчика комментариев для текущей версии
-                    const newCount = data.giscus.discussion.totalCommentCount;
-
-                    // обновляем кэш только если значение изменилось
-                    if (commentCountCache[currentCommentVersion] !== newCount) {
-                        commentCountCache[currentCommentVersion] = newCount;
-
-                        // обновляем счетчик на главной странице
-                        updateCommentCountForVersion(currentCommentVersion, newCount);
-                    }
-                }
-            }
-
-            // отслеживаем события
             if (data.giscus.error === null && data.giscus.eventName) {
                 // если произошло событие обновляем счетчик
                 if (data.giscus.eventName === 'comment' ||
                     data.giscus.eventName === 'reply') {
-
-                    // небольшая задержка для обновления счетчика после действия
-                    setTimeout(() => {
-                        if (currentCommentVersion) {
+                    if (currentCommentVersion) {
+                        const prev = commentRefreshTimers.get(currentCommentVersion);
+                        if (prev) clearTimeout(prev);
+                        const timer = setTimeout(() => {
+                            commentRefreshTimers.delete(currentCommentVersion);
                             refreshCommentCountForVersion(currentCommentVersion);
-                        }
-                    }, 1000);
+                        }, 800);
+                        commentRefreshTimers.set(currentCommentVersion, timer);
+                    }
                 }
             }
         }
@@ -1521,27 +1515,27 @@ async function refreshCommentCountForVersion(version) {
     await loadAllData(true, true);
 
     // после обновления счетчиков комментариев, обновляем UI для конкретной версии
-    if (commentCountCache[version]) {
-        updateCommentCountForVersion(version, commentCountCache[version]);
-    }
+    updateCommentCountForVersion(version, commentCountCache[version] || 0);
 }
 
 // функция для обновления существующих кнопок комментариев после загрузки данных
 function updateExistingCommentButtons() {
     document.querySelectorAll('.comment-button').forEach(button => {
         const version = button.dataset.version;
-        if (version && commentCountCache[version]) {
-            const countBadge = button.querySelector('.comment-count') || document.createElement('span');
-            if (!button.querySelector('.comment-count')) {
-                countBadge.className = 'comment-count';
-                button.appendChild(countBadge);
+        if (!version) return;
+        const count = Number(commentCountCache[version] || 0);
+        const existing = button.querySelector('.comment-count');
+        if (count > 0) {
+            const badge = existing || document.createElement('span');
+            if (!existing) {
+                badge.className = 'comment-count';
+                button.appendChild(badge);
             }
-            countBadge.textContent = commentCountCache[version];
-
-            // если есть комментарии, делаем бейдж более заметным
-            if (commentCountCache[version] > 0) {
-                button.classList.add('has-comments');
-            }
+            badge.textContent = count;
+            button.classList.add('has-comments');
+        } else {
+            if (existing) existing.remove();
+            button.classList.remove('has-comments');
         }
     });
 }
@@ -1550,19 +1544,18 @@ function updateExistingCommentButtons() {
 function updateCommentCountForVersion(version, count) {
     // находим все кнопки комментариев для данной версии
     document.querySelectorAll(`.comment-button[data-version="${version}"]`).forEach(button => {
-        // обновляем счетчик
-        const countBadge = button.querySelector('.comment-count') || document.createElement('span');
-        if (!button.querySelector('.comment-count')) {
-            countBadge.className = 'comment-count';
-            button.appendChild(countBadge);
-        }
-
-        countBadge.textContent = count;
-
-        // обновляем стиль кнопки в зависимости от наличия комментариев
-        if (count > 0) {
+        const numeric = Number(count || 0);
+        const existing = button.querySelector('.comment-count');
+        if (numeric > 0) {
+            const badge = existing || document.createElement('span');
+            if (!existing) {
+                badge.className = 'comment-count';
+                button.appendChild(badge);
+            }
+            badge.textContent = numeric;
             button.classList.add('has-comments');
         } else {
+            if (existing) existing.remove();
             button.classList.remove('has-comments');
         }
     });
@@ -1778,6 +1771,7 @@ function showMicroForm() {
     setTimeout(() => {
         blurOverlay.style.opacity = "1";
     }, 10);
+    blurOverlay.addEventListener('click', hideMicroForm);
 
     const form = document.getElementById('microForm');
     form.classList.add('micro-form-animate-in');
@@ -1925,6 +1919,7 @@ function hideMicroForm() {
     setTimeout(() => {
         blurOverlay.style.display = 'none';
     }, 350);
+    blurOverlay.removeEventListener('click', hideMicroForm);
     document.body.classList.remove('modal-open');
     document.body.style.top = '';
     document.body.style.position = '';

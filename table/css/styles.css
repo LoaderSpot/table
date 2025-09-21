@@ -135,11 +135,14 @@ body {
   background: var(--color-background-dark);
   padding: 2rem;
   margin-bottom: var(--spacing-xl);
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 1000;
+  left: 0;
+  width: 100%;
+  z-index: 1050;
   display: flex;
   justify-content: center;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.18);
 }
 
 .navbar {
@@ -212,6 +215,7 @@ table.version-table .filter-button,
 header {
   padding: var(--spacing-xl);
   text-align: center;
+  margin-top: 84px;
 }
 
 header h1 {
@@ -229,7 +233,7 @@ header p {
 .container {
   width: 90%;
   max-width: 1000px;
-  margin: 40px auto;
+  margin: 40px auto 40px auto;
   position: relative;
   overflow-x: auto;
 }
@@ -856,6 +860,7 @@ mark {
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
