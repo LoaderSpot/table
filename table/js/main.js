@@ -670,10 +670,8 @@ function createVersionRows(versionKey, data, searchTerm = '') {
         }
     }
 
-    // фильтруем только по текущей ОС
     if (data.links[currentOS]) {
         for (const arch of Object.keys(data.links[currentOS])) {
-            // фильтруем по архитектуре, если выбран конкретный
             if (currentArch !== 'all' && arch !== currentArch) continue;
             const link = data.links[currentOS][arch];
             if (link) {
@@ -696,40 +694,42 @@ function createVersionRows(versionKey, data, searchTerm = '') {
             versionCell.className = 'version-cell';
             versionCell.rowSpan = totalRowsForVersion;
 
-            // используем оптимизированную функцию для создания элементов версий
+            const versionContainer = document.createElement('div');
+            versionContainer.className = 'version-container';
+
+            const versionTextWrapper = document.createElement('div');
+            versionTextWrapper.className = 'version-text-wrapper';
+
             const { versionText, shortVersionElem } = createVersionElement(
                 { short: shortVersion, full: data.fullversion },
                 searchTerm
             );
 
-            // добавляем кнопку комментариев
             const commentBtn = createCommentButton(versionKey);
+            
+            versionTextWrapper.appendChild(versionText);
             shortVersionElem.after(commentBtn);
+            versionContainer.appendChild(versionTextWrapper);
 
-            versionCell.appendChild(versionText);
+            versionCell.appendChild(versionContainer);
             row.appendChild(versionCell);
             isFirstVersionRow = false;
         }
 
-        // архитектура
         const archCell = document.createElement('td');
         archCell.textContent = combo.arch;
         row.appendChild(archCell);
 
-        // дата
         const dateCell = document.createElement('td');
         dateCell.textContent = '—';
         row.appendChild(dateCell);
 
-        // размер
         const sizeCell = document.createElement('td');
         sizeCell.textContent = '—';
         row.appendChild(sizeCell);
 
-        // создаем ячейку с кнопкой скачивания и счетчиком
         row.appendChild(createDownloadCell(combo.link, shortVersion, currentOS, combo.arch));
 
-        // обновляем инфу о дате и размере
         updateLinkInfo(dateCell, sizeCell, combo.link);
 
         rows.push(row);
@@ -766,9 +766,18 @@ const observer = new IntersectionObserver((entries) => {
             }
 
             // если есть еще данные для загрузки, снова подключаем наблюдателя
-            const currentSource = getCurrentDataSource();
-            if (currentIndex < currentSource.length) {
-                observer.observe(sentinel);
+            if (currentOS === 'linux') {
+                const currentSource = getCurrentDataSource();
+                if (currentIndex < currentSource.length) {
+                    observer.observe(sentinel);
+                }
+            } else {
+                const dataSource = currentSearchResults || allVersions;
+                const groupedVersions = groupVersions(dataSource);
+                const groups = Object.entries(groupedVersions);
+                if (currentIndex < groups.length) {
+                    observer.observe(sentinel);
+                }
             }
         }
     });
@@ -777,99 +786,326 @@ const observer = new IntersectionObserver((entries) => {
 // функция для получения текущего источника данных в зависимости от ОС и поиска
 function getCurrentDataSource() {
     if (currentOS === 'linux') {
-        return currentSearchResults || linuxVersionsData;
+        const dataSource = currentSearchResults || linuxVersionsData;
+        const groupedVersions = groupLinuxVersions(dataSource);
+        return Object.entries(groupedVersions);
     } else {
         return currentSearchResults || allVersions;
     }
 }
 
-// функция для создания строк таблицы для Linux-пакетов с поддержкой ленивой загрузки
+function hasSearchMatchInHiddenVersions(versions, searchTerm, osType = 'winmac') {
+    if (!searchTerm) return false;
+    
+    const term = searchTerm.toLowerCase();
+    
+    for (let i = 1; i < versions.length; i++) {
+        if (osType === 'linux') {
+            const version = versions[i];
+            if (version.version.short.toLowerCase().includes(term) || 
+                version.version.full.toLowerCase().includes(term)) {
+                return true;
+            }
+        } else {
+            const [versionKey, versionData] = versions[i];
+            if (versionKey.toLowerCase().includes(term) || 
+                versionData.fullversion.toLowerCase().includes(term)) {
+                return true;
+            }
+        }
+    }
+    
+    return false;
+}
+
 function loadMoreLinuxRows() {
     const dataSource = currentSearchResults || linuxVersionsData;
-    const endIndex = Math.min(currentIndex + ITEMS_PER_BATCH, dataSource.length);
+    const groupedVersions = groupLinuxVersions(dataSource);
+    const groups = Object.entries(groupedVersions);
+
+    const endIndex = Math.min(currentIndex + ITEMS_PER_BATCH, groups.length);
 
     for (let i = currentIndex; i < endIndex; i++) {
-        const version = dataSource[i];
+        const [groupKey, versions] = groups[i];
+        
+        versions.sort((a, b) => compareVersions(b.version.short, a.version.short));
 
+        const latestVersion = versions[0];
+        
         if (currentLinuxVersionFilter) {
-            if (compareVersions(version.version.short, currentLinuxVersionFilter) > 0) {
+            if (compareVersions(latestVersion.version.short, currentLinuxVersionFilter) > 0) {
                 continue;
             }
         }
 
-        // создаем элементы для версии с использованием общей функции
         const { versionText, shortVersionElem } = createVersionElement(
-            { short: version.version.short, full: version.version.full },
+            { short: latestVersion.version.short, full: latestVersion.version.full },
             currentSearchTerm
         );
 
-        // добавляем кнопку комментариев
-        const commentBtn = createCommentButton(version.version.short);
-        shortVersionElem.after(commentBtn);
+        const versionContainer = document.createElement('div');
+        versionContainer.className = 'version-container';
 
-        version.architectures.forEach((arch, index) => {
+        const versionTextWrapper = document.createElement('div');
+        versionTextWrapper.className = 'version-text-wrapper';
+
+        const commentBtn = createCommentButton(latestVersion.version.short);
+        
+        versionTextWrapper.appendChild(versionText);
+        shortVersionElem.after(commentBtn);
+        versionContainer.appendChild(versionTextWrapper);
+
+        if (versions.length > 1) {
+            const hiddenCount = versions.length - 1;
+            const spoilerBtn = createSpoiler(groupKey, hiddenCount);
+            
+            const hasMatchInHidden = hasSearchMatchInHiddenVersions(versions, currentSearchTerm, 'linux');
+            
+            if (hasMatchInHidden) {
+                spoilerBtn.classList.add('expanded');
+            }
+            
+            versionContainer.appendChild(spoilerBtn);
+        }
+
+        latestVersion.architectures.forEach((arch, index) => {
             const row = document.createElement('tr');
 
             if (index === 0) {
                 const versionCell = document.createElement('td');
                 versionCell.className = 'version-cell has-comments';
-                versionCell.rowSpan = version.architectures.length;
-                versionCell.appendChild(versionText);
+                versionCell.rowSpan = latestVersion.architectures.length;
+                versionCell.appendChild(versionContainer);
                 row.appendChild(versionCell);
             }
 
-            // архитектура
             const archCell = document.createElement('td');
             archCell.textContent = arch.arch;
             row.appendChild(archCell);
 
-            // дата
             const dateCell = document.createElement('td');
             dateCell.textContent = arch.date;
             row.appendChild(dateCell);
 
-            // размер
             const sizeCell = document.createElement('td');
             sizeCell.textContent = arch.size;
             row.appendChild(sizeCell);
 
-            // кнопка скачать с обновлением счетчика
-            row.appendChild(createDownloadCell(arch.link, version.version.short, 'linux', arch.arch));
+            row.appendChild(createDownloadCell(arch.link, latestVersion.version.short, 'linux', arch.arch));
 
-            // добавляем строку в контейнер
             container.appendChild(row);
         });
+
+        if (versions.length > 1) {
+            const shouldExpand = hasSearchMatchInHiddenVersions(versions, currentSearchTerm, 'linux');
+            
+            for (let j = 1; j < versions.length; j++) {
+                const olderVersion = versions[j];
+                
+                olderVersion.architectures.forEach((arch, index) => {
+                    const row = document.createElement('tr');
+                    row.classList.add('spoiler-content-row');
+                    row.dataset.spoilerFor = groupKey;
+                    
+                    if (shouldExpand) {
+                        row.style.display = 'table-row';
+                        row.classList.add('visible');
+                    } else {
+                        row.style.display = 'none';
+                    }
+
+                    if (index === 0) {
+                        const { versionText: oldVersionText } = createVersionElement(
+                            { short: olderVersion.version.short, full: olderVersion.version.full },
+                            currentSearchTerm
+                        );
+
+                        const versionCell = document.createElement('td');
+                        versionCell.className = 'version-cell has-comments';
+                        versionCell.rowSpan = olderVersion.architectures.length;
+                        versionCell.appendChild(oldVersionText);
+                        row.appendChild(versionCell);
+                    }
+
+                    const archCell = document.createElement('td');
+                    archCell.textContent = arch.arch;
+                    row.appendChild(archCell);
+
+                    const dateCell = document.createElement('td');
+                    dateCell.textContent = arch.date;
+                    row.appendChild(dateCell);
+
+                    const sizeCell = document.createElement('td');
+                    sizeCell.textContent = arch.size;
+                    row.appendChild(sizeCell);
+
+                    row.appendChild(createDownloadCell(arch.link, olderVersion.version.short, 'linux', arch.arch));
+
+                    container.appendChild(row);
+                });
+            }
+        }
     }
 
     currentIndex = endIndex;
-    if (currentIndex < dataSource.length) {
+    if (currentIndex < groups.length) {
         container.appendChild(sentinel);
     }
 }
-
-// функция для Windows/Mac ленивой загрузки
 function loadMoreWinMacRows() {
     const dataSource = currentSearchResults || allVersions;
-    const endIndex = Math.min(currentIndex + ITEMS_PER_BATCH, dataSource.length);
+    
+    const groupedVersions = groupVersions(dataSource);
+    const groups = Object.entries(groupedVersions);
+
+    const endIndex = Math.min(currentIndex + ITEMS_PER_BATCH, groups.length);
     let rowsAdded = 0;
 
     for (let i = currentIndex; i < endIndex; i++) {
-        const [versionKey, versionData] = dataSource[i];
-        const versionRows = createVersionRows(versionKey, versionData, currentSearchTerm);
-        versionRows.forEach(r => container.appendChild(r));
-        rowsAdded += versionRows.length;
+        const [groupKey, versions] = groups[i];
+        
+        versions.sort((a, b) => compareVersions(b[0], a[0]));
+
+        const [latestVersionKey, latestVersionData] = versions[0];
+        const latestVersionRows = createVersionRows(latestVersionKey, latestVersionData, currentSearchTerm);
+        
+        if (latestVersionRows.length > 0) {
+            if (versions.length > 1) {
+                const versionContainer = latestVersionRows[0].querySelector('.version-cell .version-container');
+                if (versionContainer) {
+                    const hiddenCount = versions.length - 1;
+                    const spoilerBtn = createSpoiler(groupKey, hiddenCount);
+                    const hasMatchInHidden = hasSearchMatchInHiddenVersions(versions, currentSearchTerm, 'winmac');
+                    
+                    if (hasMatchInHidden) {
+                        spoilerBtn.classList.add('expanded');
+                    }
+                    
+                    versionContainer.appendChild(spoilerBtn);
+                }
+            }
+
+            latestVersionRows.forEach(r => container.appendChild(r));
+            rowsAdded += latestVersionRows.length;
+
+            if (versions.length > 1) {
+
+                const shouldExpand = hasSearchMatchInHiddenVersions(versions, currentSearchTerm, 'winmac');
+                
+                for (let j = 1; j < versions.length; j++) {
+                    const [versionKey, versionData] = versions[j];
+                    const olderVersionRows = createVersionRows(versionKey, versionData, currentSearchTerm);
+
+                    olderVersionRows.forEach(row => {
+                        row.classList.add('spoiler-content-row');
+                        row.dataset.spoilerFor = groupKey;  
+                        
+                        if (shouldExpand) {
+                            row.style.display = 'table-row';
+                            row.classList.add('visible');
+                        } else {
+                            row.style.display = 'none';
+                        }
+                        container.appendChild(row);  
+                    });
+                }
+            }
+        }
     }
 
     currentIndex = endIndex;
 
-    if (currentIndex < dataSource.length) {
+    if (currentIndex < groups.length) {
         container.appendChild(sentinel);
-    } else if (rowsAdded === 0 && currentIndex === dataSource.length) {
+    } else if (rowsAdded === 0 && currentIndex === groups.length) {
         if (container.childElementCount === 0) {
             showNoResults();
         }
     }
 }
+
+function toggleSpoiler(groupKey) {
+    const spoilerRows = document.querySelectorAll(`tr.spoiler-content-row[data-spoiler-for="${groupKey}"]`);
+    const toggleButton = document.querySelector(`.spoiler-toggle[data-group-key="${groupKey}"]`);
+    
+    if (spoilerRows.length > 0) {
+
+        const isHidden = !toggleButton.classList.contains('expanded');
+
+        if (isHidden) {
+            toggleButton.classList.add('expanded');
+            spoilerRows.forEach(row => {
+                row.style.display = 'table-row';
+
+                setTimeout(() => {
+                    row.classList.add('visible');
+                }, 10); 
+            });
+
+        } else {
+            toggleButton.classList.remove('expanded');
+            spoilerRows.forEach(row => {
+                row.classList.remove('visible');
+
+                setTimeout(() => {
+                    row.style.display = 'none';
+                }, 300); 
+            });
+        }
+    }
+}
+
+function groupVersions(versions) {
+    const groups = {};
+    versions.forEach(([versionKey, data]) => {
+        const groupKey = versionKey.split('.').slice(0, 3).join('.');
+        if (!groups[groupKey]) {
+            groups[groupKey] = [];
+        }
+        groups[groupKey].push([versionKey, data]);
+    });
+    return groups;
+}
+
+function groupLinuxVersions(versions) {
+    const groups = {};
+    versions.forEach((version) => {
+        const groupKey = version.version.short.split('.').slice(0, 3).join('.');
+        if (!groups[groupKey]) {
+            groups[groupKey] = [];
+        }
+        groups[groupKey].push(version);
+    });
+    return groups;
+}
+
+function createSpoiler(groupKey, hiddenCount) {
+    const spoilerBtn = document.createElement('span');
+    spoilerBtn.className = 'spoiler-toggle';
+    spoilerBtn.title = 'Show older builds';
+    spoilerBtn.dataset.groupKey = groupKey;
+    spoilerBtn.addEventListener('click', () => toggleSpoiler(groupKey));
+
+    const counterText = document.createElement('span');
+    counterText.className = 'spoiler-counter-text';
+    const plural = hiddenCount > 1 ? 's' : '';
+    counterText.textContent = `${hiddenCount} more build${plural}`;
+
+    const spoilerIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    spoilerIcon.setAttribute('class', 'spoiler-arrow-icon');
+    spoilerIcon.setAttribute('viewBox', '0 0 24 24');
+    
+    const spoilerIconPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    spoilerIconPath.setAttribute('d', 'M5.41 7.59L4 9l8 8 8-8-1.41-1.41L12 14.17');
+    
+    spoilerIcon.appendChild(spoilerIconPath);
+
+    spoilerBtn.appendChild(counterText);
+    spoilerBtn.appendChild(spoilerIcon);
+    
+    return spoilerBtn;
+}
+
 
 function showNoResults() {
     container.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">No results</td></tr>';
@@ -921,8 +1157,18 @@ function startLazyLoading() {
     }
 
     // если есть еще данные для загрузки, подключаем наблюдателя
-    if (currentIndex < dataSource.length) {
-        observer.observe(sentinel);
+    if (currentOS === 'linux') {
+        const currentSource = getCurrentDataSource();
+        if (currentIndex < currentSource.length) {
+            observer.observe(sentinel);
+        }
+    } else {
+        const dataSource = currentSearchResults || allVersions;
+        const groupedVersions = groupVersions(dataSource);
+        const groups = Object.entries(groupedVersions);
+        if (currentIndex < groups.length) {
+            observer.observe(sentinel);
+        }
     }
 
     container.style.opacity = "1";
@@ -981,7 +1227,6 @@ function performSearch(term) {
             return;
         }
 
-        // Очищаем контейнер
         container.innerHTML = "";
         currentIndex = 0;
 
@@ -991,20 +1236,16 @@ function performSearch(term) {
             return;
         }
 
-        // выполняем поиск в зависимости от текущей ОС
         if (currentOS === 'linux') {
-            // поиск по Linux-данным
             currentSearchResults = linuxVersionsData.filter(version =>
                 version.version.short.toLowerCase().includes(term) ||
                 version.version.full.toLowerCase().includes(term)
             ).sort((a, b) => {
-                // логика сортировки для Linux
                 const shortA = a.version.short.toLowerCase();
                 const shortB = b.version.short.toLowerCase();
                 const fullA = a.version.full.toLowerCase();
                 const fullB = b.version.full.toLowerCase();
 
-                // проверяем точное совпадение
                 const termWithBoundaries = `(^|\\.|\\ )${term}($|\\.|\\s)`;
                 const reExact = new RegExp(termWithBoundaries);
 
@@ -1028,7 +1269,7 @@ function performSearch(term) {
                 return b.version.short.localeCompare(a.version.short, undefined, { numeric: true });
             });
         } else {
-            // поиск для Windows и Mac (существующая логика)
+            // поиск для Windows и Mac
             const filtered = allVersions.filter(([versionKey, data]) => {
                 return (versionKey.toLowerCase().includes(term) ||
                     data.fullversion.toLowerCase().includes(term)) &&
@@ -1333,13 +1574,16 @@ initializeApp();
 // код для работы с комментариями по версиям
 const commentsModal = document.createElement('div');
 commentsModal.className = 'comments-modal';
+commentsModal.setAttribute('role', 'dialog');
+commentsModal.setAttribute('aria-modal', 'true');
+commentsModal.setAttribute('aria-labelledby', 'comments-modal-title');
 commentsModal.innerHTML = `
 <div class="comments-modal-content">
   <div class="comments-modal-header">
-    <h3 class="comments-modal-title">Comments for version <span id="comment-version-title"></span></h3>
-    <button class="comments-close-button">&times;</button>
+    <h3 class="comments-modal-title" id="comments-modal-title">Comments for version <span id="comment-version-title"></span></h3>
+    <button class="comments-close-button" aria-label="Close comments">&times;</button>
   </div>
-  <div class="comments-modal-body" id="comments-container">
+  <div class="comments-modal-body" id="comments-container" role="main">
     <!-- Здесь будет инициализирован giscus -->
   </div>
 </div>
@@ -1382,6 +1626,8 @@ function openModal() {
     // добавляем небольшую задержку перед показом для плавности
     setTimeout(() => {
         commentsModal.classList.add('show');
+        const closeButton = commentsModal.querySelector('.comments-close-button');
+        if (closeButton) closeButton.focus();
     }, 10);
 }
 
@@ -1395,8 +1641,8 @@ function closeModal() {
         commentsModal.style.display = 'none';
         document.body.classList.remove('modal-open');
         document.body.style.top = '';
-    document.body.style.position = '';
-    document.body.style.width = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
         window.scrollTo(0, scrollPosition);
         cleanupGiscus();
 
@@ -1417,16 +1663,16 @@ function closeModal() {
 window.addEventListener('message', function (e) {
     if (e.origin !== 'https://giscus.app') return;
 
+    if (!e.data || typeof e.data !== 'object') return;
+
     try {
-        // проверяем, что данные - это строка JSON, а не объект
         const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
 
-        // проверяем, что это сообщение от giscus
         if (data.giscus) {
             giscusLoaded = true;
 
             if (data.giscus.error === null && data.giscus.eventName) {
-                // если произошло событие обновляем счетчик
+
                 if (data.giscus.eventName === 'comment' ||
                     data.giscus.eventName === 'reply') {
                     if (currentCommentVersion) {
@@ -1456,14 +1702,26 @@ window.addEventListener('click', (e) => {
     }
 });
 
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && commentsModal.style.display === 'flex') {
+        closeModal();
+    }
+});
+
 // функция открытия модального окна с комментариями для версии
 function openComments(version) {
-
     document.getElementById('comment-version-title').textContent = version;
     const commentsContainer = document.getElementById('comments-container');
-
-    // очищаем предыдущие комментарии
     cleanupGiscus();
+
+    // ссылка на версию в шапке дискуссии 
+    let backlink = document.querySelector('meta[name="giscus:backlink"]');
+    if (!backlink) {
+        backlink = document.createElement('meta');
+        backlink.setAttribute('name', 'giscus:backlink');
+        document.head.appendChild(backlink);
+    }
+    backlink.setAttribute('content', `https://loadspot.pages.dev/?os=win&winVersion=${version}`);
 
     // giscus config
     const giscusScript = document.createElement('script');
@@ -1484,6 +1742,10 @@ function openComments(version) {
     giscusScript.setAttribute('data-loading', 'lazy');
     giscusScript.setAttribute('crossorigin', 'anonymous');
     giscusScript.async = true;
+
+    giscusScript.onerror = function () {
+        commentsContainer.innerHTML = '<div class="giscus-error">Failed to load comments. Please try again later.</div>';
+    };
 
     commentsContainer.appendChild(giscusScript);
     currentCommentVersion = version;
