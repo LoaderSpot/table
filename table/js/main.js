@@ -980,12 +980,11 @@ function loadMoreWinMacRows() {
 
     for (let i = currentIndex; i < endIndex; i++) {
         const [groupKey, versions] = groups[i];
-        
         versions.sort((a, b) => compareVersions(b[0], a[0]));
 
         const [latestVersionKey, latestVersionData] = versions[0];
         const latestVersionRows = createVersionRows(latestVersionKey, latestVersionData, currentSearchTerm);
-        
+
         if (latestVersionRows.length > 0) {
             if (versions.length > 1) {
                 const versionContainer = latestVersionRows[0].querySelector('.version-cell .version-container');
@@ -993,11 +992,11 @@ function loadMoreWinMacRows() {
                     const hiddenCount = versions.length - 1;
                     const spoilerBtn = createSpoiler(groupKey, hiddenCount);
                     const hasMatchInHidden = hasSearchMatchInHiddenVersions(versions, currentSearchTerm, 'winmac');
-                    
+
                     if (hasMatchInHidden) {
                         spoilerBtn.classList.add('expanded');
                     }
-                    
+
                     versionContainer.appendChild(spoilerBtn);
                 }
             }
@@ -1006,9 +1005,7 @@ function loadMoreWinMacRows() {
             rowsAdded += latestVersionRows.length;
 
             if (versions.length > 1) {
-
                 const shouldExpand = hasSearchMatchInHiddenVersions(versions, currentSearchTerm, 'winmac');
-                
                 for (let j = 1; j < versions.length; j++) {
                     const [versionKey, versionData] = versions[j];
                     const olderVersionRows = createVersionRows(versionKey, versionData, currentSearchTerm, shouldExpand);
@@ -1016,7 +1013,7 @@ function loadMoreWinMacRows() {
                     olderVersionRows.forEach(row => {
                         row.classList.add('spoiler-content-row');
                         row.dataset.spoilerFor = groupKey;  
-                        
+
                         if (shouldExpand) {
                             row.style.display = 'table-row';
                             row.classList.add('visible');
@@ -1097,9 +1094,16 @@ function groupVersions(versions) {
     versions.forEach(([versionKey, data]) => {
         const groupKey = versionKey.split('.').slice(0, 3).join('.');
         if (!groups[groupKey]) {
-            groups[groupKey] = [];
+            groups[groupKey] = new Map();
         }
-        groups[groupKey].push([versionKey, data]);
+
+        if (!groups[groupKey].has(versionKey)) {
+            groups[groupKey].set(versionKey, data);
+        }
+    });
+
+    Object.keys(groups).forEach(key => {
+        groups[key] = Array.from(groups[key].entries());
     });
     return groups;
 }
@@ -1313,8 +1317,13 @@ function performSearch(term) {
                     data.links[currentOS] &&
                     (currentArch === 'all' || data.links[currentOS].hasOwnProperty(currentArch));
             });
-
-            currentSearchResults = sortSearchResults(filtered, term);
+            const unique = new Map();
+            filtered.forEach(([versionKey, data]) => {
+                if (!unique.has(versionKey)) {
+                    unique.set(versionKey, data);
+                }
+            });
+            currentSearchResults = sortSearchResults(Array.from(unique.entries()), term);
         }
 
         // запускаем ленивую загрузку результатов поиска
@@ -1445,7 +1454,6 @@ async function initializeApp() {
             clearTimeout(headRequestsTimer);
         }
         headRequestsTimer = setTimeout(() => {
-            console.log('Starting HEAD requests after timeout');
             startHeadRequests();
         }, 2000);
 
@@ -2023,11 +2031,6 @@ function updateNavActive() {
 // Вызываем при первой загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
     loadMarkdownPage(); // Сначала проверяем и загружаем markdown
-    // Инициализируем приложение (таблицу) только если это не markdown страница
-    const hash = window.location.hash;
-    if (hash !== "#faq" && hash !== "#links") {
-        initializeApp();
-    }
 });
 
 // Кнопка плюс и микроформа
