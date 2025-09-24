@@ -334,7 +334,11 @@ function startHeadRequests() {
 }
 
 // функция updateLinkInfo с использованием очереди
-function updateLinkInfo(dateCell, sizeCell, url) {
+function updateLinkInfo(dateCell, sizeCell, url, isVisible = true) {
+    if (!isVisible) {
+        return;
+    }
+
     // Добавляем запрос в очередь
     pendingHeadRequests.push({ dateCell, sizeCell, url });
 
@@ -429,48 +433,58 @@ async function loadAllData(forceUpdate = false, commentsOnly = false) {
         // добавляем параметр для запроса только комментариев при необходимости
         const workerUrl = `https://broad-pine-bbc0.amd64fox1.workers.dev/all-data${commentsOnly ? '?comments-only=1' : ''}`;
 
-        // таймаут для запроса к Worker - 3 секунды
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        let lastError;
+        for (let attempt = 1; attempt <= 2; attempt++) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 6000);
 
-        const response = await fetch(workerUrl, {
-            signal: controller.signal,
-            cache: 'no-store'
-        });
-        clearTimeout(timeoutId);
+                const response = await fetch(workerUrl, {
+                    signal: controller.signal,
+                    cache: 'no-store'
+                });
+                clearTimeout(timeoutId);
 
-        if (!response.ok) {
-            throw new Error(`API error: ${response.status}`);
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (!commentsOnly && data.downloads) {
+                    allDownloadCounters = data.downloads;
+                    countersLoaded = true;
+
+                    pendingCounterElements.forEach((counterInfo, counterKey) => {
+                        const count = allDownloadCounters[counterKey] || "0";
+                        counterInfo.element.innerHTML = count === "0" ? "" :
+                            `<span class="download-counter">${formatDownloadCount(count)}</span>`;
+                    });
+                    pendingCounterElements.clear();
+
+                    startHeadRequests();
+                }
+
+                if (data.comments && Array.isArray(data.comments)) {
+                    processDiscussionData(data.comments);
+                    commentCountsLoaded = true;
+                    updateExistingCommentButtons();
+                }
+
+                return commentsOnly ? { comments: commentCountCache } :
+                    { downloads: allDownloadCounters, comments: commentCountCache };
+                    
+            } catch (err) {
+                lastError = err;
+                const errorType = err.name === 'AbortError' ? 'timeout' : 'network';
+                console.warn(`Worker request attempt ${attempt} failed (${errorType}):`, err);
+                
+                if (attempt < 2) {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+            }
         }
-
-        const data = await response.json();
-
-        // обрабатываем счетчики скачиваний, если это не запрос только комментариев
-        if (!commentsOnly && data.downloads) {
-            allDownloadCounters = data.downloads;
-            countersLoaded = true;
-
-            // обновляем все ожидающие элементы ui для счетчиков скачиваний
-            pendingCounterElements.forEach((counterInfo, counterKey) => {
-                const count = allDownloadCounters[counterKey] || "0";
-                counterInfo.element.innerHTML = count === "0" ? "" :
-                    `<span class="download-counter">${formatDownloadCount(count)}</span>`;
-            });
-            pendingCounterElements.clear();
-
-            // разрешаем начать HEAD-запросы после получения данных только при полном запросе
-            startHeadRequests();
-        }
-
-        // обрабатываем данные о комментариях
-        if (data.comments && Array.isArray(data.comments)) {
-            processDiscussionData(data.comments);
-            commentCountsLoaded = true;
-            updateExistingCommentButtons();
-        }
-
-        return commentsOnly ? { comments: commentCountCache } :
-            { downloads: allDownloadCounters, comments: commentCountCache };
+        throw lastError;
     } catch (err) {
         console.error('Error loading data from worker:', err);
 
@@ -651,7 +665,7 @@ function reRenderVersions() {
 }
 
 // функция для создания строк таблицы для одной версии
-function createVersionRows(versionKey, data, searchTerm = '') {
+function createVersionRows(versionKey, data, searchTerm = '', isVisible = true) {
     const shortVersion = versionKey;
     const archCombos = [];
     let totalRowsForVersion = 0;
@@ -728,11 +742,14 @@ function createVersionRows(versionKey, data, searchTerm = '') {
         sizeCell.textContent = '—';
         row.appendChild(sizeCell);
 
-        row.appendChild(createDownloadCell(combo.link, shortVersion, currentOS, combo.arch));
+    const downloadCell = createDownloadCell(combo.link, shortVersion, currentOS, combo.arch);
 
-        updateLinkInfo(dateCell, sizeCell, combo.link);
+    downloadCell.setAttribute('data-download-url', combo.link);
+    row.appendChild(downloadCell);
 
-        rows.push(row);
+    updateLinkInfo(dateCell, sizeCell, combo.link, isVisible);
+
+    rows.push(row);
     });
 
     return rows;
@@ -994,7 +1011,7 @@ function loadMoreWinMacRows() {
                 
                 for (let j = 1; j < versions.length; j++) {
                     const [versionKey, versionData] = versions[j];
-                    const olderVersionRows = createVersionRows(versionKey, versionData, currentSearchTerm);
+                    const olderVersionRows = createVersionRows(versionKey, versionData, currentSearchTerm, shouldExpand);
 
                     olderVersionRows.forEach(row => {
                         row.classList.add('spoiler-content-row');
@@ -1034,8 +1051,28 @@ function toggleSpoiler(groupKey) {
 
         if (isHidden) {
             toggleButton.classList.add('expanded');
-            spoilerRows.forEach(row => {
+            
+            spoilerRows.forEach((row, index) => {
                 row.style.display = 'table-row';
+
+                const cells = row.querySelectorAll('td');
+                let dateCell, sizeCell, downloadCell;
+                const versionCell = row.querySelector('.version-cell');
+                if (versionCell) {
+                    dateCell = cells[2];
+                    sizeCell = cells[3];
+                    downloadCell = cells[4];
+                } else {
+                    dateCell = cells[1];
+                    sizeCell = cells[2];
+                    downloadCell = cells[3];
+                }
+                if (dateCell && sizeCell && downloadCell) {
+                    const url = downloadCell.getAttribute('data-download-url');
+                    if (url) {
+                        updateLinkInfo(dateCell, sizeCell, url, true);
+                    }
+                }
 
                 setTimeout(() => {
                     row.classList.add('visible');
