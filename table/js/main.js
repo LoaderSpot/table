@@ -847,16 +847,19 @@ function loadMoreLinuxRows() {
         
         versions.sort((a, b) => compareVersions(b.version.short, a.version.short));
 
-        const latestVersion = versions[0];
-        
+        let visibleVersions = versions;
         if (currentLinuxVersionFilter) {
-            if (compareVersions(latestVersion.version.short, currentLinuxVersionFilter) > 0) {
-                continue;
-            }
+            visibleVersions = versions.filter(v => compareVersions(v.version.short, currentLinuxVersionFilter) <= 0);
         }
 
+        if (visibleVersions.length === 0) continue;
+
+        visibleVersions.sort((a, b) => compareVersions(b.version.short, a.version.short));
+
+        const displayVersion = visibleVersions[0];
+
         const { versionText, shortVersionElem } = createVersionElement(
-            { short: latestVersion.version.short, full: latestVersion.version.full },
+            { short: displayVersion.version.short, full: displayVersion.version.full },
             currentSearchTerm
         );
 
@@ -866,32 +869,35 @@ function loadMoreLinuxRows() {
         const versionTextWrapper = document.createElement('div');
         versionTextWrapper.className = 'version-text-wrapper';
 
-        const commentBtn = createCommentButton(latestVersion.version.short);
+        const commentBtn = createCommentButton(displayVersion.version.short);
         
         versionTextWrapper.appendChild(versionText);
         shortVersionElem.after(commentBtn);
         versionContainer.appendChild(versionTextWrapper);
 
-        if (versions.length > 1) {
-            const hiddenCount = versions.length - 1;
+        const hiddenVersions = visibleVersions.slice(1);
+
+        if (hiddenVersions.length > 0) {
+            const hiddenCount = hiddenVersions.length;
             const spoilerBtn = createSpoiler(groupKey, hiddenCount);
             
-            const hasMatchInHidden = hasSearchMatchInHiddenVersions(versions, currentSearchTerm, 'linux');
+            const hasMatchInHidden = hasSearchMatchInHiddenVersions(visibleVersions, currentSearchTerm, 'linux');
+            const hasVersionFilterInHidden = currentLinuxVersionFilter && hiddenVersions.some(v => v.version.short === currentLinuxVersionFilter);
             
-            if (hasMatchInHidden) {
+            if (hasMatchInHidden || hasVersionFilterInHidden) {
                 spoilerBtn.classList.add('expanded');
             }
             
             versionContainer.appendChild(spoilerBtn);
         }
 
-        latestVersion.architectures.forEach((arch, index) => {
+        displayVersion.architectures.forEach((arch, index) => {
             const row = document.createElement('tr');
 
             if (index === 0) {
                 const versionCell = document.createElement('td');
                 versionCell.className = 'version-cell has-comments';
-                versionCell.rowSpan = latestVersion.architectures.length;
+                versionCell.rowSpan = displayVersion.architectures.length;
                 versionCell.appendChild(versionContainer);
                 row.appendChild(versionCell);
             }
@@ -908,16 +914,16 @@ function loadMoreLinuxRows() {
             sizeCell.textContent = arch.size;
             row.appendChild(sizeCell);
 
-            row.appendChild(createDownloadCell(arch.link, latestVersion.version.short, 'linux', arch.arch));
+            row.appendChild(createDownloadCell(arch.link, displayVersion.version.short, 'linux', arch.arch));
 
             container.appendChild(row);
         });
 
-        if (versions.length > 1) {
-            const shouldExpand = hasSearchMatchInHiddenVersions(versions, currentSearchTerm, 'linux');
+        if (hiddenVersions.length > 0) {
+            const shouldExpand = hasSearchMatchInHiddenVersions(visibleVersions, currentSearchTerm, 'linux') || (currentLinuxVersionFilter && hiddenVersions.some(v => v.version.short === currentLinuxVersionFilter));
             
-            for (let j = 1; j < versions.length; j++) {
-                const olderVersion = versions[j];
+            for (let j = 0; j < hiddenVersions.length; j++) {
+                const olderVersion = hiddenVersions[j];
                 
                 olderVersion.architectures.forEach((arch, index) => {
                     const row = document.createElement('tr');
@@ -982,18 +988,32 @@ function loadMoreWinMacRows() {
         const [groupKey, versions] = groups[i];
         versions.sort((a, b) => compareVersions(b[0], a[0]));
 
-        const [latestVersionKey, latestVersionData] = versions[0];
-        const latestVersionRows = createVersionRows(latestVersionKey, latestVersionData, currentSearchTerm);
+        const currentVersionFilter = currentOS === 'win' ? currentWinVersionFilter : currentMacVersionFilter;
 
-        if (latestVersionRows.length > 0) {
-            if (versions.length > 1) {
-                const versionContainer = latestVersionRows[0].querySelector('.version-cell .version-container');
+        let visibleVersions = versions;
+        if (currentVersionFilter) {
+            visibleVersions = versions.filter(([v]) => compareVersions(v, currentVersionFilter) <= 0);
+        }
+
+        if (visibleVersions.length === 0) continue;
+
+        visibleVersions.sort((a, b) => compareVersions(b[0], a[0]));
+
+        const [displayVersionKey, displayVersionData] = visibleVersions[0];
+        const displayVersionRows = createVersionRows(displayVersionKey, displayVersionData, currentSearchTerm);
+
+        if (displayVersionRows.length > 0) {
+            const hiddenVersions = visibleVersions.slice(1);
+
+            if (hiddenVersions.length > 0) {
+                const versionContainer = displayVersionRows[0].querySelector('.version-cell .version-container');
                 if (versionContainer) {
-                    const hiddenCount = versions.length - 1;
+                    const hiddenCount = hiddenVersions.length;
                     const spoilerBtn = createSpoiler(groupKey, hiddenCount);
-                    const hasMatchInHidden = hasSearchMatchInHiddenVersions(versions, currentSearchTerm, 'winmac');
+                    const hasMatchInHidden = hasSearchMatchInHiddenVersions(visibleVersions, currentSearchTerm, 'winmac');
+                    const hasVersionFilterInHidden = currentVersionFilter && hiddenVersions.some(([v]) => v === currentVersionFilter);
 
-                    if (hasMatchInHidden) {
+                    if (hasMatchInHidden || hasVersionFilterInHidden) {
                         spoilerBtn.classList.add('expanded');
                     }
 
@@ -1001,13 +1021,13 @@ function loadMoreWinMacRows() {
                 }
             }
 
-            latestVersionRows.forEach(r => container.appendChild(r));
-            rowsAdded += latestVersionRows.length;
+            displayVersionRows.forEach(r => container.appendChild(r));
+            rowsAdded += displayVersionRows.length;
 
-            if (versions.length > 1) {
-                const shouldExpand = hasSearchMatchInHiddenVersions(versions, currentSearchTerm, 'winmac');
-                for (let j = 1; j < versions.length; j++) {
-                    const [versionKey, versionData] = versions[j];
+            if (hiddenVersions.length > 0) {
+                const shouldExpand = hasSearchMatchInHiddenVersions(visibleVersions, currentSearchTerm, 'winmac') || (currentVersionFilter && hiddenVersions.some(([v]) => v === currentVersionFilter));
+                for (let j = 0; j < hiddenVersions.length; j++) {
+                    const [versionKey, versionData] = hiddenVersions[j];
                     const olderVersionRows = createVersionRows(versionKey, versionData, currentSearchTerm, shouldExpand);
 
                     olderVersionRows.forEach(row => {
