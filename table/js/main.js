@@ -371,10 +371,14 @@ function formatSize(sizeInBytes) {
 
 // функция для выполнения HEAD-запроса
 async function executeHeadRequest(dateCell, sizeCell, url) {
+
+    const dateCellTarget = dateCell.querySelector('.cell-wrapper') || dateCell;
+    const sizeCellTarget = sizeCell.querySelector('.cell-wrapper') || sizeCell;
+
     if (headCache.has(url)) {
         const cached = headCache.get(url);
-        dateCell.textContent = cached.date;
-        sizeCell.textContent = cached.size;
+        dateCellTarget.textContent = cached.date;
+        sizeCellTarget.textContent = cached.size;
         return;
     }
     try {
@@ -385,14 +389,16 @@ async function executeHeadRequest(dateCell, sizeCell, url) {
         const formattedDate = formatDate(lastModified);
         const sizeMb = formatSize(contentLength);
 
-        // сохраняем результат в кэше
         headCache.set(url, { date: formattedDate, size: sizeMb });
-        dateCell.textContent = formattedDate;
-        sizeCell.textContent = sizeMb;
+
+        dateCellTarget.textContent = formattedDate;
+        sizeCellTarget.textContent = sizeMb;
     } catch (error) {
         console.error('Error getting headers', error);
-        dateCell.textContent = '—';
-        sizeCell.textContent = '—';
+
+        dateCellTarget.textContent = '—';
+        sizeCellTarget.textContent = '—';
+
         headCache.set(url, { date: '—', size: '—' });
     }
 }
@@ -450,7 +456,7 @@ async function loadAllData(forceUpdate = false, commentsOnly = false) {
                 }
 
                 const data = await response.json();
-                
+
                 if (!commentsOnly && data.downloads) {
                     allDownloadCounters = data.downloads;
                     countersLoaded = true;
@@ -473,12 +479,12 @@ async function loadAllData(forceUpdate = false, commentsOnly = false) {
 
                 return commentsOnly ? { comments: commentCountCache } :
                     { downloads: allDownloadCounters, comments: commentCountCache };
-                    
+
             } catch (err) {
                 lastError = err;
                 const errorType = err.name === 'AbortError' ? 'timeout' : 'network';
                 console.warn(`Worker request attempt ${attempt} failed (${errorType}):`, err);
-                
+
                 if (attempt < 2) {
                     await new Promise(resolve => setTimeout(resolve, 1000));
                 }
@@ -720,7 +726,7 @@ function createVersionRows(versionKey, data, searchTerm = '', isVisible = true) 
             );
 
             const commentBtn = createCommentButton(versionKey);
-            
+
             versionTextWrapper.appendChild(versionText);
             shortVersionElem.after(commentBtn);
             versionContainer.appendChild(versionTextWrapper);
@@ -742,14 +748,14 @@ function createVersionRows(versionKey, data, searchTerm = '', isVisible = true) 
         sizeCell.textContent = '—';
         row.appendChild(sizeCell);
 
-    const downloadCell = createDownloadCell(combo.link, shortVersion, currentOS, combo.arch);
+        const downloadCell = createDownloadCell(combo.link, shortVersion, currentOS, combo.arch);
 
-    downloadCell.setAttribute('data-download-url', combo.link);
-    row.appendChild(downloadCell);
+        downloadCell.setAttribute('data-download-url', combo.link);
+        row.appendChild(downloadCell);
 
-    updateLinkInfo(dateCell, sizeCell, combo.link, isVisible);
+        updateLinkInfo(dateCell, sizeCell, combo.link, isVisible);
 
-    rows.push(row);
+        rows.push(row);
     });
 
     return rows;
@@ -813,25 +819,25 @@ function getCurrentDataSource() {
 
 function hasSearchMatchInHiddenVersions(versions, searchTerm, osType = 'winmac') {
     if (!searchTerm) return false;
-    
+
     const term = searchTerm.toLowerCase();
-    
+
     for (let i = 1; i < versions.length; i++) {
         if (osType === 'linux') {
             const version = versions[i];
-            if (version.version.short.toLowerCase().includes(term) || 
+            if (version.version.short.toLowerCase().includes(term) ||
                 version.version.full.toLowerCase().includes(term)) {
                 return true;
             }
         } else {
             const [versionKey, versionData] = versions[i];
-            if (versionKey.toLowerCase().includes(term) || 
+            if (versionKey.toLowerCase().includes(term) ||
                 versionData.fullversion.toLowerCase().includes(term)) {
                 return true;
             }
         }
     }
-    
+
     return false;
 }
 
@@ -844,7 +850,7 @@ function loadMoreLinuxRows() {
 
     for (let i = currentIndex; i < endIndex; i++) {
         const [groupKey, versions] = groups[i];
-        
+
         versions.sort((a, b) => compareVersions(b.version.short, a.version.short));
 
         let visibleVersions = versions;
@@ -870,7 +876,7 @@ function loadMoreLinuxRows() {
         versionTextWrapper.className = 'version-text-wrapper';
 
         const commentBtn = createCommentButton(displayVersion.version.short);
-        
+
         versionTextWrapper.appendChild(versionText);
         shortVersionElem.after(commentBtn);
         versionContainer.appendChild(versionTextWrapper);
@@ -880,14 +886,14 @@ function loadMoreLinuxRows() {
         if (hiddenVersions.length > 0) {
             const hiddenCount = hiddenVersions.length;
             const spoilerBtn = createSpoiler(groupKey, hiddenCount);
-            
+
             const hasMatchInHidden = hasSearchMatchInHiddenVersions(visibleVersions, currentSearchTerm, 'linux');
             const hasVersionFilterInHidden = currentLinuxVersionFilter && hiddenVersions.some(v => v.version.short === currentLinuxVersionFilter);
-            
+
             if (hasMatchInHidden || hasVersionFilterInHidden) {
                 spoilerBtn.classList.add('expanded');
             }
-            
+
             versionContainer.appendChild(spoilerBtn);
         }
 
@@ -921,15 +927,15 @@ function loadMoreLinuxRows() {
 
         if (hiddenVersions.length > 0) {
             const shouldExpand = hasSearchMatchInHiddenVersions(visibleVersions, currentSearchTerm, 'linux') || (currentLinuxVersionFilter && hiddenVersions.some(v => v.version.short === currentLinuxVersionFilter));
-            
+
             for (let j = 0; j < hiddenVersions.length; j++) {
                 const olderVersion = hiddenVersions[j];
-                
+
                 olderVersion.architectures.forEach((arch, index) => {
                     const row = document.createElement('tr');
                     row.classList.add('spoiler-content-row');
                     row.dataset.spoilerFor = groupKey;
-                    
+
                     if (shouldExpand) {
                         row.style.display = 'table-row';
                         row.classList.add('visible');
@@ -965,6 +971,10 @@ function loadMoreLinuxRows() {
                     row.appendChild(createDownloadCell(arch.link, olderVersion.version.short, 'linux', arch.arch));
 
                     container.appendChild(row);
+
+                    if (shouldExpand) {
+                        wrapSpoilerCells(row);
+                    }
                 });
             }
         }
@@ -977,7 +987,7 @@ function loadMoreLinuxRows() {
 }
 function loadMoreWinMacRows() {
     const dataSource = currentSearchResults || allVersions;
-    
+
     const groupedVersions = groupVersions(dataSource);
     const groups = Object.entries(groupedVersions);
 
@@ -1032,7 +1042,7 @@ function loadMoreWinMacRows() {
 
                     olderVersionRows.forEach(row => {
                         row.classList.add('spoiler-content-row');
-                        row.dataset.spoilerFor = groupKey;  
+                        row.dataset.spoilerFor = groupKey;
 
                         if (shouldExpand) {
                             row.style.display = 'table-row';
@@ -1040,7 +1050,11 @@ function loadMoreWinMacRows() {
                         } else {
                             row.style.display = 'none';
                         }
-                        container.appendChild(row);  
+                        container.appendChild(row);
+
+                        if (shouldExpand) {
+                            wrapSpoilerCells(row);
+                        }
                     });
                 }
             }
@@ -1061,18 +1075,22 @@ function loadMoreWinMacRows() {
 function toggleSpoiler(groupKey) {
     const spoilerRows = document.querySelectorAll(`tr.spoiler-content-row[data-spoiler-for="${groupKey}"]`);
     const toggleButton = document.querySelector(`.spoiler-toggle[data-group-key="${groupKey}"]`);
-    
+
     if (spoilerRows.length > 0) {
 
         const isHidden = !toggleButton.classList.contains('expanded');
 
         if (isHidden) {
             toggleButton.classList.add('expanded');
-            
+
             spoilerRows.forEach((row, index) => {
+
                 row.style.display = 'table-row';
 
                 const cells = row.querySelectorAll('td');
+
+                wrapSpoilerCells(row);
+
                 let dateCell, sizeCell, downloadCell;
                 const versionCell = row.querySelector('.version-cell');
                 if (versionCell) {
@@ -1084,29 +1102,60 @@ function toggleSpoiler(groupKey) {
                     sizeCell = cells[2];
                     downloadCell = cells[3];
                 }
+
                 if (dateCell && sizeCell && downloadCell) {
                     const url = downloadCell.getAttribute('data-download-url');
                     if (url) {
-                        updateLinkInfo(dateCell, sizeCell, url, true);
+
+                        const dateCellWrapper = dateCell.querySelector('.cell-wrapper');
+                        const sizeCellWrapper = sizeCell.querySelector('.cell-wrapper');
+
+                        if (headCache.has(url)) {
+
+                            const cached = headCache.get(url);
+                            if (dateCellWrapper) dateCellWrapper.textContent = cached.date;
+                            if (sizeCellWrapper) sizeCellWrapper.textContent = cached.size;
+                        } else {
+                            updateLinkInfo(dateCell, sizeCell, url, true);
+                        }
                     }
                 }
 
                 setTimeout(() => {
                     row.classList.add('visible');
-                }, 10); 
+                }, index * 30);
             });
 
         } else {
             toggleButton.classList.remove('expanded');
-            spoilerRows.forEach(row => {
-                row.classList.remove('visible');
+
+            spoilerRows.forEach((row, index) => {
+
+                setTimeout(() => {
+                    row.classList.remove('visible');
+                }, index * 20);
+
 
                 setTimeout(() => {
                     row.style.display = 'none';
-                }, 300); 
+                }, 400 + (index * 20));
             });
         }
     }
+}
+
+function wrapSpoilerCells(row) {
+    const cells = row.querySelectorAll('td');
+    cells.forEach(cell => {
+        if (!cell.querySelector('.cell-wrapper')) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'cell-wrapper';
+            while (cell.firstChild) {
+                wrapper.appendChild(cell.firstChild);
+            }
+            cell.appendChild(wrapper);
+        }
+    });
 }
 
 function groupVersions(versions) {
@@ -1155,15 +1204,15 @@ function createSpoiler(groupKey, hiddenCount) {
     const spoilerIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     spoilerIcon.setAttribute('class', 'spoiler-arrow-icon');
     spoilerIcon.setAttribute('viewBox', '0 0 24 24');
-    
+
     const spoilerIconPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     spoilerIconPath.setAttribute('d', 'M5.41 7.59L4 9l8 8 8-8-1.41-1.41L12 14.17');
-    
+
     spoilerIcon.appendChild(spoilerIconPath);
 
     spoilerBtn.appendChild(counterText);
     spoilerBtn.appendChild(spoilerIcon);
-    
+
     return spoilerBtn;
 }
 
