@@ -112,10 +112,32 @@
           </td>
         </tr>
         <tr class="table-headers">
-          <th>Version</th>
+          <th>
+            <div id="versionHeader" class="version-header" aria-label="Version column" style="display:flex;align-items:center;gap:8px;">
+              <span id="versionSortControl" class="version-sort-control" role="button" tabindex="0" aria-label="Sort by version" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                <span class="version-label">Version</span>
+                <span id="sortArrow" class="sort-arrow">
+                  <svg data-encore-id="icon" role="img" aria-hidden="true" viewBox="0 0 16 16"><path d="m14 6-6 6-6-6h12z"></path></svg>
+                </span>
+              </span>
+            </div>
+          </th>
           <th>Architecture</th>
           <th>Date</th>
-          <th>Size</th>
+          <th>
+            <div id="sizeHeader" class="size-header" aria-label="Size column" style="display:flex;align-items:center;gap:8px;justify-content:flex-start;">
+              <span id="sizeSortControl" class="size-sort-control" role="button" tabindex="0" aria-label="Sort by size" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                <span class="size-label">Size</span>
+                <span id="sizeSortArrow" class="sort-arrow">
+                  <svg data-encore-id="icon" role="img" aria-hidden="true" viewBox="0 0 16 16"><path d="m14 6-6 6-6-6h12z"></path></svg>
+                </span>
+              </span>
+              <div id="sizeLoadingIndicator" class="size-loading-indicator" style="display:none;">
+                <div class="loading-spinner"></div>
+                <span class="loading-text">Loading sizes...</span>
+              </div>
+            </div>
+          </th>
           <th> </th>
         </tr>
       </thead>

@@ -267,6 +267,252 @@ table.version-table thead th {
   font-weight: 700;
 }
 
+.sort-button {
+  background: transparent;
+  border: 1px solid var(--filter-border-color);
+  color: var(--color-text-secondary);
+  height: 28px;
+  width: 28px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.sort-button.active {
+  background: var(--color-primary);
+  color: var(--color-background-dark);
+  border-color: transparent;
+}
+
+.version-header:hover .sort-arrow {
+  opacity: 0.9;
+}
+
+.version-sort-control {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.version-sort-control:focus {
+  outline: none;
+}
+
+.version-sort-control:focus-visible {
+  outline: none;
+  box-shadow: none;
+  border-color: transparent;
+}
+
+.size-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.size-header:hover .sort-arrow {
+  opacity: 0.9;
+}
+
+.size-sort-control {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.size-sort-control:focus {
+  outline: none;
+}
+
+.size-sort-control:focus-visible {
+  outline: none;
+  box-shadow: none;
+  border-color: transparent;
+}
+
+.size-label {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.size-loading-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+  margin-left: 4px;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+.loading-spinner {
+  width: 11px;
+  height: 11px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  font-size: 10px;
+  color: var(--color-primary);
+  white-space: nowrap;
+  font-weight: 600;
+  min-width: 28px;
+  text-align: center;
+}
+
+.table-skeleton-overlay {
+  position: relative;
+  pointer-events: none;
+}
+
+tbody.table-skeleton-overlay {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+tbody.table-skeleton-overlay .skeleton-row {
+  display: table-row !important;
+  height: 56px; 
+}
+
+tbody.table-skeleton-overlay .skeleton-row td {
+  padding: 16px 7px; 
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+tbody.table-skeleton-overlay .skeleton-row td:nth-child(5) {
+  width: 10%; 
+  text-align: center;
+}
+
+.skeleton-box {
+  height: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  animation: skeletonPulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-version {
+  width: 160px;
+  height: 16px;
+}
+
+.skeleton-arch {
+  width: 50px;
+  height: 13px;
+}
+
+.skeleton-date {
+  width: 85px;
+  height: 13px;
+}
+
+.skeleton-size {
+  width: 70px;
+  height: 13px;
+}
+
+.skeleton-download-cell {
+  text-align: center;
+  width: 10%;
+}
+
+.skeleton-download-icon {
+  width: 24px;
+  height: 24px;
+  fill: rgba(255, 255, 255, 0.12);
+  opacity: 0.5;
+  animation: skeletonPulse 1.5s ease-in-out infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+tbody.table-skeleton-overlay::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 12px;
+}
+
+@keyframes skeletonShimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes skeletonPulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.sort-arrow {
+  display: inline-block;
+  margin-left: -2px; 
+  text-align: center;
+  font-size: 11px; 
+  color: var(--color-text-secondary);
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.sort-arrow svg {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  vertical-align: middle;
+  fill: currentColor;
+  transition: transform 0.18s ease;
+}
+
+.version-label {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
 table.version-table tbody td {
   padding: 7px;
   border-bottom: 1px solid var(--color-border);

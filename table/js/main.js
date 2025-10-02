@@ -5,6 +5,13 @@ let currentSearchTerm = urlParams.get('search') || '';
 let currentWinVersionFilter = urlParams.get('winVersion') || null;
 let currentMacVersionFilter = urlParams.get('macVersion') || null;
 let currentLinuxVersionFilter = urlParams.get('linuxVersion') || null;
+let sortVersionAscending = urlParams.get('sortVersion') === 'asc' || (urlParams.get('sortVersion') === null && urlParams.get('sort') === 'asc');
+let sortSizeAscending = urlParams.get('sortSize') === 'asc';
+let currentSortColumn = urlParams.get('sortSize') !== null ? 'size' : 'version';
+
+if (urlParams.get('sort') && !urlParams.get('sortVersion') && !urlParams.get('sortSize')) {
+    sortVersionAscending = urlParams.get('sort') === 'asc';
+}
 
 const osVersionFilters = {
     win: [
@@ -403,6 +410,133 @@ async function executeHeadRequest(dateCell, sizeCell, url) {
     }
 }
 
+function preventScroll(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+}
+
+function disableScroll() {
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('wheel', preventScroll, { passive: false });
+    document.addEventListener('touchmove', preventScroll, { passive: false });
+    document.addEventListener('keydown', (e) => {
+        if ([32, 33, 34, 35, 36, 37, 38, 39, 40].includes(e.keyCode)) {
+            e.preventDefault();
+        }
+    });
+}
+
+function enableScroll() {
+    document.body.style.overflow = '';
+    document.removeEventListener('wheel', preventScroll, { passive: false });
+    document.removeEventListener('touchmove', preventScroll, { passive: false });
+}
+async function preloadSizesForSorting(dataSource) {
+    const linksToFetch = [];
+    
+    dataSource.forEach(([versionKey, versionData]) => {
+        if (!versionData.links[currentOS]) return;
+        
+        Object.keys(versionData.links[currentOS]).forEach(arch => {
+            if (currentArch !== 'all' && arch !== currentArch) return;
+            
+            const link = versionData.links[currentOS][arch];
+            if (link && !headCache.has(link)) {
+                linksToFetch.push(link);
+            }
+        });
+    });
+    
+    if (linksToFetch.length === 0) return; 
+    
+    const loadingIndicator = document.getElementById('sizeLoadingIndicator');
+    const loadingText = loadingIndicator?.querySelector('.loading-text');
+    const tbody = document.getElementById('versions-container');
+    
+    if (loadingIndicator) {
+        loadingIndicator.style.display = 'flex';
+        if (loadingText) {
+            loadingText.textContent = `0%`;
+        }
+    }
+    
+    // очищаем tbody и добавляем skeleton эффект
+    if (tbody) {
+        const skeletonRowsHTML = Array.from({ length: 15 }, () => `
+            <tr class="skeleton-row">
+                <td><div class="skeleton-box skeleton-version"></div></td>
+                <td><div class="skeleton-box skeleton-arch"></div></td>
+                <td><div class="skeleton-box skeleton-date"></div></td>
+                <td><div class="skeleton-box skeleton-size"></div></td>
+                <td class="skeleton-download-cell">
+                    <svg class="skeleton-download-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 15.575c-.183 0-.36-.073-.49-.203l-4.095-4.095a.694.694 0 01.981-.981L12 13.901l3.604-3.604a.694.694 0 01.981.98l-4.095 4.095a.692.692 0 01-.49.203z"/>
+                        <path d="M12 15.575a.694.694 0 01-.694-.694V3.694a.694.694 0 011.388 0v11.187c0 .383-.31.694-.694.694z"/>
+                        <path d="M16.306 20.306H7.694a4.167 4.167 0 01-4.162-4.163v-2.777a.694.694 0 011.388 0v2.777a2.778 2.778 0 002.774 2.775h8.612a2.778 2.778 0 002.775-2.775v-2.777a.694.694 0 011.387 0v2.777a4.167 4.167 0 01-4.162 4.163z"/>
+                    </svg>
+                </td>
+            </tr>
+        `).join('');
+        
+        tbody.innerHTML = skeletonRowsHTML;
+        tbody.classList.add('table-skeleton-overlay');
+        
+        const tableContainer = document.getElementById('tableContainer');
+        if (tableContainer) {
+            tableContainer.style.overflow = 'hidden';
+        }
+        disableScroll();
+    }
+    
+    const maxConcurrent = 15;
+    let completed = 0;
+    
+    const promises = linksToFetch.map(link => 
+        (async () => {
+            try {
+                const response = await fetch(link, { method: 'HEAD' });
+                const lastModified = response.headers.get('Last-Modified');
+                const contentLength = response.headers.get('Content-Length');
+                
+                const formattedDate = formatDate(lastModified);
+                const sizeMb = formatSize(contentLength);
+                
+                headCache.set(link, { date: formattedDate, size: sizeMb });
+            } catch (error) {
+                headCache.set(link, { date: '—', size: '—' });
+            }
+            
+            completed++;
+            if (loadingText) {
+                const percent = Math.round((completed / linksToFetch.length) * 100);
+                loadingText.textContent = `${percent}%`;
+            }
+        })()
+    );
+    
+    for (let i = 0; i < promises.length; i += maxConcurrent) {
+        await Promise.all(promises.slice(i, i + maxConcurrent));
+    }
+    
+    if (tbody) {
+        tbody.classList.remove('table-skeleton-overlay');
+        tbody.innerHTML = ''; 
+    }
+    
+    const tableContainer = document.getElementById('tableContainer');
+    if (tableContainer) {
+        tableContainer.style.overflow = '';
+    }
+    enableScroll();
+    
+    if (loadingIndicator) {
+        setTimeout(() => {
+            loadingIndicator.style.display = 'none';
+        }, 300);
+    }
+}
+
 // функция для генерации ключа счетчика
 const generateCounterKey = (version, os, arch) => `${version}-${os}-${arch}`;
 
@@ -653,12 +787,65 @@ function compareVersions(version1, version2) {
     return 0;
 }
 
-// функция для повторного рендера версий с учетом текущих фильтров (ОС + архитектура + поиск + версия ОС)
+function parseSizeToBytes(sizeStr) {
+    if (!sizeStr || sizeStr === '—') return 0;
+    
+    const match = sizeStr.match(/^([\d.]+)\s*(MB|GB|KB|B)?$/i);
+    if (!match) return 0;
+    
+    const value = parseFloat(match[1]);
+    const unit = (match[2] || 'B').toUpperCase();
+    
+    const multipliers = {
+        'B': 1,
+        'KB': 1024,
+        'MB': 1024 * 1024,
+        'GB': 1024 * 1024 * 1024
+    };
+    
+    return value * (multipliers[unit] || 1);
+}
+
+function getSortMultiplier() {
+    if (currentSortColumn === 'size') {
+        return sortSizeAscending ? 1 : -1;
+    }
+    return sortVersionAscending ? 1 : -1;
+}
+
+function versionCompare(v1, v2) {
+    return getSortMultiplier() * compareVersions(v1, v2);
+}
+
+function sizeCompare(size1, size2) {
+    const bytes1 = parseSizeToBytes(size1);
+    const bytes2 = parseSizeToBytes(size2);
+    const diff = bytes1 - bytes2;
+    return getSortMultiplier() * (diff === 0 ? 0 : (diff > 0 ? 1 : -1));
+}
+
 function reRenderVersions() {
     container.style.opacity = "0";
     observer.unobserve(sentinel);
 
     currentIndex = 0;
+    window.sizesPreloaded = false; 
+    
+    const loadingIndicator = document.getElementById('sizeLoadingIndicator');
+    const tableContainer = document.getElementById('tableContainer');
+    
+    if (loadingIndicator) {
+        loadingIndicator.style.display = 'none';
+    }
+    
+    if (container) {
+        container.classList.remove('table-skeleton-overlay');
+    }
+    
+    if (tableContainer) {
+        tableContainer.style.overflow = '';
+    }
+    enableScroll();
 
     setTimeout(() => {
         if (currentSearchTerm !== "") {
@@ -670,7 +857,6 @@ function reRenderVersions() {
     }, 300);
 }
 
-// функция для создания строк таблицы для одной версии
 function createVersionRows(versionKey, data, searchTerm = '', isVisible = true) {
     const shortVersion = versionKey;
     const archCombos = [];
@@ -790,15 +976,48 @@ const observer = new IntersectionObserver((entries) => {
 
             // если есть еще данные для загрузки, снова подключаем наблюдателя
             if (currentOS === 'linux') {
-                const currentSource = getCurrentDataSource();
-                if (currentIndex < currentSource.length) {
+                const dataSource = currentSearchResults || linuxVersionsData;
+                let totalItems;
+                
+                if (currentSortColumn === 'size') {
+                    totalItems = dataSource.reduce((sum, version) => {
+                        if (currentLinuxVersionFilter && compareVersions(version.version.short, currentLinuxVersionFilter) > 0) {
+                            return sum;
+                        }
+                        return sum + version.architectures.length;
+                    }, 0);
+                } else {
+                    const groupedVersions = groupLinuxVersions(dataSource);
+                    totalItems = Object.keys(groupedVersions).length;
+                }
+                
+                if (currentIndex < totalItems) {
                     observer.observe(sentinel);
                 }
             } else {
                 const dataSource = currentSearchResults || allVersions;
-                const groupedVersions = groupVersions(dataSource);
-                const groups = Object.entries(groupedVersions);
-                if (currentIndex < groups.length) {
+                let totalItems;
+                
+                if (currentSortColumn === 'size') {
+                    const currentVersionFilter = currentOS === 'win' ? currentWinVersionFilter : currentMacVersionFilter;
+                    totalItems = dataSource.reduce((sum, [versionKey, versionData]) => {
+                        if (currentVersionFilter && compareVersions(versionKey, currentVersionFilter) > 0) {
+                            return sum;
+                        }
+                        if (!versionData.links[currentOS]) return sum;
+                        
+                        const archCount = Object.keys(versionData.links[currentOS]).filter(arch => {
+                            return currentArch === 'all' || arch === currentArch;
+                        }).length;
+                        
+                        return sum + archCount;
+                    }, 0);
+                } else {
+                    const groupedVersions = groupVersions(dataSource);
+                    totalItems = Object.keys(groupedVersions).length;
+                }
+                
+                if (currentIndex < totalItems) {
                     observer.observe(sentinel);
                 }
             }
@@ -811,7 +1030,9 @@ function getCurrentDataSource() {
     if (currentOS === 'linux') {
         const dataSource = currentSearchResults || linuxVersionsData;
         const groupedVersions = groupLinuxVersions(dataSource);
-        return Object.entries(groupedVersions);
+        const groups = Object.entries(groupedVersions);
+        groups.sort((a, b) => versionCompare(a[0], b[0]));
+        return groups;
     } else {
         return currentSearchResults || allVersions;
     }
@@ -841,17 +1062,137 @@ function hasSearchMatchInHiddenVersions(versions, searchTerm, osType = 'winmac')
     return false;
 }
 
+function getVersionSize(versionData, os = currentOS) {
+    if (os === 'linux') {
+        if (versionData.architectures && versionData.architectures.length > 0) {
+            return versionData.architectures[0].size || '—';
+        }
+        return '—';
+    } else {
+        if (versionData.links && versionData.links[os]) {
+            const archs = Object.keys(versionData.links[os]);
+            if (archs.length > 0) {
+                const link = versionData.links[os][archs[0]];
+                if (headCache.has(link)) {
+                    return headCache.get(link).size;
+                }
+            }
+        }
+        return '—';
+    }
+}
+
+function sortAllVersionsFlat(versions, os = currentOS) {
+    if (os === 'linux') {
+        return versions.sort((a, b) => {
+            if (currentSortColumn === 'size') {
+                const sizeA = getVersionSize(a, os);
+                const sizeB = getVersionSize(b, os);
+                const sizeComp = sizeCompare(sizeA, sizeB);
+                return sizeComp !== 0 ? sizeComp : versionCompare(a.version.short, b.version.short);
+            }
+            return versionCompare(a.version.short, b.version.short);
+        });
+    } else {
+        return versions.sort((a, b) => {
+            if (currentSortColumn === 'size') {
+                const sizeA = getVersionSize(a[1], os);
+                const sizeB = getVersionSize(b[1], os);
+                const sizeComp = sizeCompare(sizeA, sizeB);
+                return sizeComp !== 0 ? sizeComp : versionCompare(a[0], b[0]);
+            }
+            return versionCompare(a[0], b[0]);
+        });
+    }
+}
+
 function loadMoreLinuxRows() {
     const dataSource = currentSearchResults || linuxVersionsData;
+    
+    if (currentSortColumn === 'size') {
+        let flatRows = [];
+        dataSource.forEach(version => {
+            if (currentLinuxVersionFilter && compareVersions(version.version.short, currentLinuxVersionFilter) > 0) {
+                return;
+            }
+            
+            version.architectures.forEach(arch => {
+                flatRows.push({
+                    version: version.version,
+                    arch: arch
+                });
+            });
+        });
+        
+        flatRows.sort((a, b) => {
+            const sizeComp = sizeCompare(a.arch.size, b.arch.size);
+            if (sizeComp !== 0) return sizeComp;
+            const versionComp = versionCompare(a.version.short, b.version.short);
+            if (versionComp !== 0) return versionComp;
+            return a.arch.arch.localeCompare(b.arch.arch);
+        });
+        
+        const endIndex = Math.min(currentIndex + ITEMS_PER_BATCH * 3, flatRows.length);
+        
+        for (let i = currentIndex; i < endIndex; i++) {
+            const item = flatRows[i];
+            const row = document.createElement('tr');
+            const { versionText, shortVersionElem } = createVersionElement(
+                { short: item.version.short, full: item.version.full },
+                currentSearchTerm
+            );
+            
+            const versionContainer = document.createElement('div');
+            versionContainer.className = 'version-container';
+            
+            const versionTextWrapper = document.createElement('div');
+            versionTextWrapper.className = 'version-text-wrapper';
+            
+            const commentBtn = createCommentButton(item.version.short);
+            
+            versionTextWrapper.appendChild(versionText);
+            shortVersionElem.after(commentBtn);
+            versionContainer.appendChild(versionTextWrapper);
+            
+            const versionCell = document.createElement('td');
+            versionCell.className = 'version-cell has-comments';
+            versionCell.appendChild(versionContainer);
+            row.appendChild(versionCell);
+            
+            const archCell = document.createElement('td');
+            archCell.textContent = item.arch.arch;
+            row.appendChild(archCell);
+            
+            const dateCell = document.createElement('td');
+            dateCell.textContent = item.arch.date;
+            row.appendChild(dateCell);
+            
+            const sizeCell = document.createElement('td');
+            sizeCell.textContent = item.arch.size;
+            row.appendChild(sizeCell);
+            
+            row.appendChild(createDownloadCell(item.arch.link, item.version.short, 'linux', item.arch.arch));
+            
+            container.appendChild(row);
+        }
+        
+        currentIndex = endIndex;
+        if (currentIndex < flatRows.length) {
+            container.appendChild(sentinel);
+        }
+        return;
+    }
+    
     const groupedVersions = groupLinuxVersions(dataSource);
     const groups = Object.entries(groupedVersions);
+    groups.sort((a, b) => versionCompare(a[0], b[0]));
 
     const endIndex = Math.min(currentIndex + ITEMS_PER_BATCH, groups.length);
 
     for (let i = currentIndex; i < endIndex; i++) {
         const [groupKey, versions] = groups[i];
 
-        versions.sort((a, b) => compareVersions(b.version.short, a.version.short));
+    versions.sort((a, b) => versionCompare(a.version.short, b.version.short));
 
         let visibleVersions = versions;
         if (currentLinuxVersionFilter) {
@@ -860,7 +1201,7 @@ function loadMoreLinuxRows() {
 
         if (visibleVersions.length === 0) continue;
 
-        visibleVersions.sort((a, b) => compareVersions(b.version.short, a.version.short));
+    visibleVersions.sort((a, b) => versionCompare(a.version.short, b.version.short));
 
         const displayVersion = visibleVersions[0];
 
@@ -987,16 +1328,131 @@ function loadMoreLinuxRows() {
 }
 function loadMoreWinMacRows() {
     const dataSource = currentSearchResults || allVersions;
-
+    
+    if (currentSortColumn === 'size') {
+        const currentVersionFilter = currentOS === 'win' ? currentWinVersionFilter : currentMacVersionFilter;
+        
+        if (!window.sizesPreloaded) {
+            window.sizesPreloaded = true;
+            preloadSizesForSorting(dataSource).then(() => {
+                if (currentSortColumn === 'size') {
+                    container.innerHTML = '';
+                    currentIndex = 0;
+                    loadMoreWinMacRows();
+                }
+            });
+        }
+        
+        let flatRows = [];
+        dataSource.forEach(([versionKey, versionData]) => {
+            if (currentVersionFilter && compareVersions(versionKey, currentVersionFilter) > 0) {
+                return;
+            }
+            
+            if (!versionData.links[currentOS]) return;
+            
+            Object.keys(versionData.links[currentOS]).forEach(arch => {
+                if (currentArch !== 'all' && arch !== currentArch) return;
+                
+                const link = versionData.links[currentOS][arch];
+                if (link) {
+                    let size = '—';
+                    let date = '—';
+                    if (headCache.has(link)) {
+                        const cached = headCache.get(link);
+                        size = cached.size;
+                        date = cached.date;
+                    }
+                    
+                    flatRows.push({
+                        versionKey: versionKey,
+                        versionData: versionData,
+                        arch: arch,
+                        link: link,
+                        size: size,
+                        date: date
+                    });
+                }
+            });
+        });
+        
+        flatRows.sort((a, b) => {
+            const sizeComp = sizeCompare(a.size, b.size);
+            if (sizeComp !== 0) return sizeComp;
+            const versionComp = versionCompare(a.versionKey, b.versionKey);
+            if (versionComp !== 0) return versionComp;
+            return a.arch.localeCompare(b.arch);
+        });
+        
+        const endIndex = Math.min(currentIndex + ITEMS_PER_BATCH * 3, flatRows.length);
+        
+        for (let i = currentIndex; i < endIndex; i++) {
+            const item = flatRows[i];
+            const row = document.createElement('tr');
+            const { versionText, shortVersionElem } = createVersionElement(
+                { short: item.versionKey, full: item.versionData.fullversion },
+                currentSearchTerm
+            );
+            
+            const versionContainer = document.createElement('div');
+            versionContainer.className = 'version-container';
+            
+            const versionTextWrapper = document.createElement('div');
+            versionTextWrapper.className = 'version-text-wrapper';
+            
+            const commentBtn = createCommentButton(item.versionKey);
+            
+            versionTextWrapper.appendChild(versionText);
+            shortVersionElem.after(commentBtn);
+            versionContainer.appendChild(versionTextWrapper);
+            
+            const versionCell = document.createElement('td');
+            versionCell.className = 'version-cell';
+            versionCell.appendChild(versionContainer);
+            row.appendChild(versionCell);
+            
+            const archCell = document.createElement('td');
+            archCell.textContent = item.arch;
+            row.appendChild(archCell);
+            
+            const dateCell = document.createElement('td');
+            dateCell.textContent = item.date;
+            row.appendChild(dateCell);
+            
+            const sizeCell = document.createElement('td');
+            sizeCell.textContent = item.size;
+            row.appendChild(sizeCell);
+            
+            const downloadCell = createDownloadCell(item.link, item.versionKey, currentOS, item.arch);
+            downloadCell.setAttribute('data-download-url', item.link);
+            row.appendChild(downloadCell);
+            
+            if (!headCache.has(item.link)) {
+                updateLinkInfo(dateCell, sizeCell, item.link, true);
+            }
+            
+            container.appendChild(row);
+        }
+        
+        currentIndex = endIndex;
+        if (currentIndex < flatRows.length) {
+            container.appendChild(sentinel);
+        } else if (container.childElementCount === 0) {
+            showNoResults();
+        }
+        return;
+    }
+    
     const groupedVersions = groupVersions(dataSource);
     const groups = Object.entries(groupedVersions);
+    groups.sort((a, b) => versionCompare(a[0], b[0]));
 
     const endIndex = Math.min(currentIndex + ITEMS_PER_BATCH, groups.length);
     let rowsAdded = 0;
 
     for (let i = currentIndex; i < endIndex; i++) {
         const [groupKey, versions] = groups[i];
-        versions.sort((a, b) => compareVersions(b[0], a[0]));
+    versions.sort((a, b) => versionCompare(a[0], b[0]));
 
         const currentVersionFilter = currentOS === 'win' ? currentWinVersionFilter : currentMacVersionFilter;
 
@@ -1007,7 +1463,7 @@ function loadMoreWinMacRows() {
 
         if (visibleVersions.length === 0) continue;
 
-        visibleVersions.sort((a, b) => compareVersions(b[0], a[0]));
+    visibleVersions.sort((a, b) => versionCompare(a[0], b[0]));
 
         const [displayVersionKey, displayVersionData] = visibleVersions[0];
         const displayVersionRows = createVersionRows(displayVersionKey, displayVersionData, currentSearchTerm);
@@ -1192,7 +1648,7 @@ function groupLinuxVersions(versions) {
 function createSpoiler(groupKey, hiddenCount) {
     const spoilerBtn = document.createElement('span');
     spoilerBtn.className = 'spoiler-toggle';
-    spoilerBtn.title = 'Show older builds';
+    spoilerBtn.title = (currentSortColumn === 'version' && !sortVersionAscending) ? 'Show older builds' : 'Show builds';
     spoilerBtn.dataset.groupKey = groupKey;
     spoilerBtn.addEventListener('click', () => toggleSpoiler(groupKey));
 
@@ -1268,15 +1724,48 @@ function startLazyLoading() {
 
     // если есть еще данные для загрузки, подключаем наблюдателя
     if (currentOS === 'linux') {
-        const currentSource = getCurrentDataSource();
-        if (currentIndex < currentSource.length) {
+        const dataSource = currentSearchResults || linuxVersionsData;
+        let totalItems;
+        
+        if (currentSortColumn === 'size') {
+            totalItems = dataSource.reduce((sum, version) => {
+                if (currentLinuxVersionFilter && compareVersions(version.version.short, currentLinuxVersionFilter) > 0) {
+                    return sum;
+                }
+                return sum + version.architectures.length;
+            }, 0);
+        } else {
+            const groupedVersions = groupLinuxVersions(dataSource);
+            totalItems = Object.keys(groupedVersions).length;
+        }
+        
+        if (currentIndex < totalItems) {
             observer.observe(sentinel);
         }
     } else {
         const dataSource = currentSearchResults || allVersions;
-        const groupedVersions = groupVersions(dataSource);
-        const groups = Object.entries(groupedVersions);
-        if (currentIndex < groups.length) {
+        let totalItems;
+        
+        if (currentSortColumn === 'size') {
+            const currentVersionFilter = currentOS === 'win' ? currentWinVersionFilter : currentMacVersionFilter;
+            totalItems = dataSource.reduce((sum, [versionKey, versionData]) => {
+                if (currentVersionFilter && compareVersions(versionKey, currentVersionFilter) > 0) {
+                    return sum;
+                }
+                if (!versionData.links[currentOS]) return sum;
+                
+                const archCount = Object.keys(versionData.links[currentOS]).filter(arch => {
+                    return currentArch === 'all' || arch === currentArch;
+                }).length;
+                
+                return sum + archCount;
+            }, 0);
+        } else {
+            const groupedVersions = groupVersions(dataSource);
+            totalItems = Object.keys(groupedVersions).length;
+        }
+        
+        if (currentIndex < totalItems) {
             observer.observe(sentinel);
         }
     }
@@ -1289,6 +1778,13 @@ function sortSearchResults(filtered, term) {
     return filtered.sort((a, b) => {
         const [versionKeyA, dataA] = a;
         const [versionKeyB, dataB] = b;
+
+        if (currentSortColumn === 'size') {
+            const sizeA = getVersionSize(dataA, currentOS);
+            const sizeB = getVersionSize(dataB, currentOS);
+            const sizeComp = sizeCompare(sizeA, sizeB);
+            return sizeComp !== 0 ? sizeComp : versionCompare(versionKeyA, versionKeyB);
+        }
 
         const fullVersionA = dataA.fullversion.toLowerCase();
         const fullVersionB = dataB.fullversion.toLowerCase();
@@ -1317,7 +1813,7 @@ function sortSearchResults(filtered, term) {
         if (!inMainA && inMainB) return 1;
 
         // сортируем по версии (сначала новые)
-        return versionKeyB.localeCompare(versionKeyA, undefined, { numeric: true, sensitivity: 'base' });
+        return getSortMultiplier() * versionKeyA.localeCompare(versionKeyB, undefined, { numeric: true, sensitivity: 'base' });
     });
 }
 
@@ -1351,6 +1847,13 @@ function performSearch(term) {
                 version.version.short.toLowerCase().includes(term) ||
                 version.version.full.toLowerCase().includes(term)
             ).sort((a, b) => {
+                if (currentSortColumn === 'size') {
+                    const sizeA = getVersionSize(a, 'linux');
+                    const sizeB = getVersionSize(b, 'linux');
+                    const sizeComp = sizeCompare(sizeA, sizeB);
+                    return sizeComp !== 0 ? sizeComp : versionCompare(a.version.short, b.version.short);
+                }
+                
                 const shortA = a.version.short.toLowerCase();
                 const shortB = b.version.short.toLowerCase();
                 const fullA = a.version.full.toLowerCase();
@@ -1375,8 +1878,7 @@ function performSearch(term) {
                 if (inMainA && !inMainB) return -1;
                 if (!inMainA && inMainB) return 1;
 
-                // сортируем по версии
-                return b.version.short.localeCompare(a.version.short, undefined, { numeric: true });
+                return getSortMultiplier() * a.version.short.localeCompare(b.version.short, undefined, { numeric: true });
             });
         } else {
             // поиск для Windows и Mac
@@ -1415,6 +1917,19 @@ function syncUrlWithState() {
     params.winVersion = currentWinVersionFilter;
     params.macVersion = currentMacVersionFilter;
     params.linuxVersion = currentLinuxVersionFilter;
+    
+    if (currentSortColumn === 'version') {
+        params.sortVersion = sortVersionAscending ? 'asc' : 'desc';
+        params.sortSize = null;
+    } else if (currentSortColumn === 'size') {
+        params.sortSize = sortSizeAscending ? 'asc' : 'desc';
+        params.sortVersion = null;
+    } else {
+        params.sortVersion = null;
+        params.sortSize = null;
+    }
+    
+    params.sort = null;
 
     const url = new URL(window.location);
 
@@ -1428,6 +1943,88 @@ function syncUrlWithState() {
 
     window.history.replaceState(null, '', url);
 }
+
+function updateSortUI() {
+    const versionArrow = document.getElementById('sortArrow');
+    const sizeArrow = document.getElementById('sizeSortArrow');
+    
+    if (versionArrow) {
+        const versionSvg = versionArrow.querySelector('svg');
+        if (versionSvg) {
+            if (currentSortColumn === 'version') {
+                versionArrow.style.opacity = '1';
+                versionSvg.style.transform = sortVersionAscending ? 'rotate(0deg)' : 'rotate(180deg)';
+            } else {
+                versionArrow.style.opacity = '0';
+            }
+        }
+    }
+    
+    if (sizeArrow) {
+        const sizeSvg = sizeArrow.querySelector('svg');
+        if (sizeSvg) {
+            if (currentSortColumn === 'size') {
+                sizeArrow.style.opacity = '1';
+                sizeSvg.style.transform = sortSizeAscending ? 'rotate(0deg)' : 'rotate(180deg)';
+            } else {
+                sizeArrow.style.opacity = '0';
+            }
+        }
+    }
+}
+
+function toggleVersionSort() {
+    if (currentSortColumn !== 'version') {
+        currentSortColumn = 'version';
+    } else {
+        sortVersionAscending = !sortVersionAscending;
+    }
+    updateSortUI();
+    syncUrlWithState();
+    reRenderVersions();
+}
+
+function toggleSizeSort() {
+    if (currentSortColumn !== 'size') {
+        currentSortColumn = 'size';
+        sortSizeAscending = true;
+    } else if (sortSizeAscending) {
+        sortSizeAscending = false;
+    } else {
+        currentSortColumn = 'version';
+        sortVersionAscending = false;
+    }
+    updateSortUI();
+    syncUrlWithState();
+    reRenderVersions();
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const versionControl = document.getElementById('versionSortControl');
+    if (versionControl) {
+        versionControl.addEventListener('click', toggleVersionSort);
+        versionControl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleVersionSort();
+            }
+        });
+    }
+    
+    const sizeControl = document.getElementById('sizeSortControl');
+    if (sizeControl) {
+        sizeControl.addEventListener('click', toggleSizeSort);
+        sizeControl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleSizeSort();
+            }
+        });
+    }
+    
+    updateSortUI();
+});
 
 // функция для обработки пустых строк в markdown
 function processMarkdownSpacing(mdText) {
@@ -1478,9 +2075,8 @@ async function loadLinuxPackages() {
             };
         });
 
-        // сортируем версии (новые первыми)
         linuxVersionsData.sort((a, b) => {
-            return b.version.short.localeCompare(a.version.short, undefined, { numeric: true });
+            return getSortMultiplier() * a.version.short.localeCompare(b.version.short, undefined, { numeric: true });
         });
 
         linuxDataLoaded = true;
@@ -1567,6 +2163,27 @@ document.querySelectorAll('.filter-button').forEach(button => {
         }
 
         currentOS = newOS;
+
+        window.sizesPreloaded = false;
+        
+        const loadingIndicator = document.getElementById('sizeLoadingIndicator');
+        const tbody = document.getElementById('versions-container');
+        const tableContainer = document.getElementById('tableContainer');
+        
+        if (loadingIndicator) {
+            loadingIndicator.style.display = 'none';
+        }
+        
+        if (tbody) {
+            tbody.classList.remove('table-skeleton-overlay');
+        }
+        
+        if (currentSortColumn !== 'size') {
+            if (tableContainer) {
+                tableContainer.style.overflow = '';
+            }
+            enableScroll();
+        }
 
         // сброс фильтра архитектуры при необходимости
         if (currentOS !== 'linux') {
