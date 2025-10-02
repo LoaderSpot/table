@@ -1953,7 +1953,7 @@ function updateSortUI() {
         if (versionSvg) {
             if (currentSortColumn === 'version') {
                 versionArrow.style.opacity = '1';
-                versionSvg.style.transform = sortVersionAscending ? 'rotate(0deg)' : 'rotate(180deg)';
+                versionSvg.style.transform = sortVersionAscending ? 'rotate(180deg)' : 'rotate(0deg)';
             } else {
                 versionArrow.style.opacity = '0';
             }
@@ -1965,7 +1965,7 @@ function updateSortUI() {
         if (sizeSvg) {
             if (currentSortColumn === 'size') {
                 sizeArrow.style.opacity = '1';
-                sizeSvg.style.transform = sortSizeAscending ? 'rotate(0deg)' : 'rotate(180deg)';
+                sizeSvg.style.transform = sortSizeAscending ? 'rotate(180deg)' : 'rotate(0deg)';
             } else {
                 sizeArrow.style.opacity = '0';
             }
