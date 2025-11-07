@@ -18,6 +18,7 @@ const osVersionFilters = {
         { version: '1.2.5.1006', label: '7-8.1', full: 'Windows 7-8.1' }
     ],
     mac: [
+        { version: '1.2.66.447', label: '11.x', full: 'macOS 11' },
         { version: '1.2.37.701', label: '10.15', full: 'macOS 10.15' },
         { version: '1.2.20.1218', label: '10.14/10.13', full: 'macOS 10.14 / 10.13' },
         { version: '1.1.89.862', label: '10.12/10.11', full: 'macOS 10.12 / OS X 10.11' }
