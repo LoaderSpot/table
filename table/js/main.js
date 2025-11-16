@@ -5,6 +5,7 @@ let currentSearchTerm = urlParams.get('search') || '';
 let currentWinVersionFilter = urlParams.get('winVersion') || null;
 let currentMacVersionFilter = urlParams.get('macVersion') || null;
 let currentLinuxVersionFilter = urlParams.get('linuxVersion') || null;
+let currentBuildFilter = (urlParams.get('build') || 'all').toLowerCase() === 'release' ? 'release' : 'all';
 let sortVersionAscending = urlParams.get('sortVersion') === 'asc' || (urlParams.get('sortVersion') === null && urlParams.get('sort') === 'asc');
 let sortSizeAscending = urlParams.get('sortSize') === 'asc';
 let currentSortColumn = urlParams.get('sortSize') !== null ? 'size' : 'version';
@@ -32,6 +33,14 @@ function closeAllOsVersionDropdowns() {
     document.querySelectorAll('.os-version-dropdown').forEach(dd => {
         dd.style.display = 'none';
     });
+}
+
+function closeAllDropdowns() {
+    closeAllOsVersionDropdowns();
+    const buildDropdown = document.querySelector('.build-type-dropdown');
+    if (buildDropdown) {
+        buildDropdown.style.display = 'none';
+    }
 }
 
 // обновляем активную вкладку в ui при загрузке страницы
@@ -142,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             if (dropdown.style.display === 'block') {
                                 dropdown.style.display = 'none';
                             } else {
-                                closeAllOsVersionDropdowns();
+                                closeAllDropdowns();
                                 dropdown.style.display = 'block';
                             }
                         }
@@ -151,9 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const dropdown = container.querySelector('.os-version-dropdown');
                 document.addEventListener('click', () => {
-                    if (dropdown) {
-                        dropdown.style.display = 'none';
-                    }
+                    closeAllDropdowns();
                 });
             }
         }
@@ -164,6 +171,47 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.classList.remove('active');
         }
     });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const buildFilterContainer = document.querySelector('.build-filter-container');
+    const buildToggleSwitch = document.getElementById('buildToggleSwitch');
+    
+    if (!buildToggleSwitch) return;
+
+    if (currentBuildFilter === 'release') {
+        buildToggleSwitch.classList.remove('active-all');
+        buildToggleSwitch.classList.add('active-release');
+    } else {
+        buildToggleSwitch.classList.remove('active-release');
+        buildToggleSwitch.classList.add('active-all');
+    }
+
+    buildToggleSwitch.addEventListener('click', () => {
+
+        buildToggleSwitch.classList.add('transitioning');
+        
+        if (currentBuildFilter === 'release') {
+
+            currentBuildFilter = 'all';
+            buildToggleSwitch.classList.remove('active-release');
+            buildToggleSwitch.classList.add('active-all');
+        } else {
+
+            currentBuildFilter = 'release';
+            buildToggleSwitch.classList.remove('active-all');
+            buildToggleSwitch.classList.add('active-release');
+        }
+        
+        setTimeout(() => {
+            buildToggleSwitch.classList.remove('transitioning');
+        }, 400);
+        
+        syncUrlWithState();
+        reRenderVersions();
+    });
+
+    updateBuildFilterVisibility();
 });
 
 function toggleOsVersionFilter(os, version, label, listItem) {
@@ -677,8 +725,212 @@ function updateDownloadCount(fileUrl, countElement, version, os, arch) {
     }
 }
 
+const MASTER_WARNING_KEY = 'table_master_warning_ack';
+let masterWarningResolver = null;
+let masterWarningScrollPosition = 0;
+let masterWarningBodyState = null;
+
+function hasDismissedMasterWarning() {
+    try {
+        return localStorage.getItem(MASTER_WARNING_KEY) === 'true';
+    } catch (err) {
+        console.warn('LocalStorage unavailable, falling back to always show master warning.', err);
+        return false;
+    }
+}
+
+function persistMasterWarningChoice(value) {
+    try {
+        localStorage.setItem(MASTER_WARNING_KEY, value ? 'true' : 'false');
+    } catch (err) {
+        console.warn('Failed to persist master warning preference.', err);
+    }
+}
+
+function lockBodyForMasterModal() {
+    if (masterWarningBodyState) {
+        return;
+    }
+
+    masterWarningScrollPosition = window.pageYOffset || document.documentElement.scrollTop || 0;
+    masterWarningBodyState = {
+        top: document.body.style.top,
+        position: document.body.style.position,
+        width: document.body.style.width,
+        overflow: document.body.style.overflow,
+        hadModalClass: document.body.classList.contains('modal-open')
+    };
+
+    document.body.classList.add('modal-open');
+    document.body.style.top = `-${masterWarningScrollPosition}px`;
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+}
+
+function unlockBodyForMasterModal() {
+    if (!masterWarningBodyState) {
+        return;
+    }
+
+    if (!masterWarningBodyState.hadModalClass) {
+        document.body.classList.remove('modal-open');
+    }
+
+    document.body.style.top = masterWarningBodyState.top;
+    document.body.style.position = masterWarningBodyState.position;
+    document.body.style.width = masterWarningBodyState.width;
+    document.body.style.overflow = masterWarningBodyState.overflow;
+
+    window.scrollTo(0, masterWarningScrollPosition);
+    masterWarningBodyState = null;
+}
+
+function ensureMasterWarningModal() {
+    let modal = document.getElementById('masterWarningModal');
+    if (modal) {
+        return modal;
+    }
+
+    modal = document.createElement('div');
+    modal.id = 'masterWarningModal';
+    modal.className = 'master-warning-modal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.innerHTML = `
+        <div class="master-warning-backdrop"></div>
+        <div class="master-warning-content" role="document">
+            <div class="master-warning-header">
+                <h3>Pre-release build warning</h3>
+                <button class="master-warning-close" aria-label="Close warning">&times;</button>
+            </div>
+            <div class="master-warning-body">
+                <div class="master-warning-message">
+                    <div class="master-warning-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" focusable="false" role="img">
+                            <path d="M13.414 2a2 2 0 0 1 1.789 1.106l7.211 14.422A2 2 0 0 1 20.632 20H3.368a2 2 0 0 1-1.782-2.472l7.211-14.422A2 2 0 0 1 10.586 2zm-.794 13.5h-1.24a.88.88 0 0 0-.88.88v1.24c0 .486.394.88.88.88h1.24c.486 0 .88-.394.88-.88v-1.24a.88.88 0 0 0-.88-.88m0-8.5h-1.24a.88.88 0 0 0-.88.88v6.2c0 .486.394.88.88.88h1.24c.486 0 .88-.394.88-.88v-6.2a.88.88 0 0 0-.88-.88" />
+                        </svg>
+                    </div>
+                    <div class="master-warning-copy">
+                        <p class="master-warning-lead">You are going to download a pre-release build, use it only for testing, continue?</p>
+                    </div>
+                </div>
+                <label class="master-warning-checkbox">
+                    <input type="checkbox" id="masterWarningDontShow" />
+                    <span>Don’t show again</span>
+                </label>
+            </div>
+            <div class="master-warning-actions">
+                <button type="button" class="btn-secondary" id="masterWarningCancel">Cancel</button>
+                <button type="button" class="btn-primary" id="masterWarningContinue">Download anyway</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    const closeModal = () => {
+        modal.classList.remove('visible');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            unlockBodyForMasterModal();
+        }, 250);
+    };
+
+    const cancelBtn = modal.querySelector('#masterWarningCancel');
+    const continueBtn = modal.querySelector('#masterWarningContinue');
+    const closeBtn = modal.querySelector('.master-warning-close');
+    const checkbox = modal.querySelector('#masterWarningDontShow');
+    const persistOptOutIfChecked = () => {
+        if (checkbox.checked) {
+            persistMasterWarningChoice(true);
+        }
+    };
+
+    cancelBtn.addEventListener('click', () => {
+        persistOptOutIfChecked();
+        if (masterWarningResolver) {
+            masterWarningResolver(false);
+            masterWarningResolver = null;
+        }
+        closeModal();
+    });
+
+    closeBtn.addEventListener('click', () => {
+        persistOptOutIfChecked();
+        if (masterWarningResolver) {
+            masterWarningResolver(false);
+            masterWarningResolver = null;
+        }
+        closeModal();
+    });
+
+    modal.querySelector('.master-warning-backdrop').addEventListener('click', () => {
+        persistOptOutIfChecked();
+        if (masterWarningResolver) {
+            masterWarningResolver(false);
+            masterWarningResolver = null;
+        }
+        closeModal();
+    });
+
+    continueBtn.addEventListener('click', () => {
+        persistMasterWarningChoice(checkbox.checked);
+        if (masterWarningResolver) {
+            masterWarningResolver(true);
+            masterWarningResolver = null;
+        }
+        closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (modal.style.display === 'flex' && e.key === 'Escape') {
+            persistOptOutIfChecked();
+            if (masterWarningResolver) {
+                masterWarningResolver(false);
+                masterWarningResolver = null;
+            }
+            closeModal();
+        }
+    });
+
+    return modal;
+}
+
+function showMasterWarningModal() {
+    const modal = ensureMasterWarningModal();
+    const checkbox = modal.querySelector('#masterWarningDontShow');
+    checkbox.checked = false;
+    modal.style.display = 'flex';
+    lockBodyForMasterModal();
+    setTimeout(() => {
+        modal.classList.add('visible');
+        const continueBtn = modal.querySelector('#masterWarningContinue');
+        if (continueBtn) continueBtn.focus();
+    }, 10);
+
+    return new Promise(resolve => {
+        masterWarningResolver = resolve;
+    });
+}
+
+async function confirmMasterDownload(buildType) {
+    if (!buildType || buildType.toLowerCase() !== 'master') {
+        return true;
+    }
+
+    if (hasDismissedMasterWarning()) {
+        return true;
+    }
+
+    return await showMasterWarningModal();
+}
+
 // функция для обработки событий скачивания
-function handleDownload(downloadLink, fileUrl, version, os, arch) {
+async function handleDownload(downloadLink, fileUrl, version, os, arch, buildType) {
+    const allowed = await confirmMasterDownload(buildType);
+    if (!allowed) {
+        return;
+    }
 
     const countElement = downloadLink.closest('.download-container').querySelector('div');
     const counterKey = generateCounterKey(version, os, arch);
@@ -719,6 +971,25 @@ function highlight(text, term) {
     }
 
     return text.replace(regexCache.get(term), '<mark>$1</mark>');
+}
+
+function updateBuildFilterVisibility() {
+    const container = document.querySelector('.build-filter-container');
+    const select = document.getElementById('buildTypeFilter');
+    if (!container) return;
+
+    if (currentOS === 'linux') {
+        container.classList.add('hidden');
+        if (select) {
+            select.disabled = true;
+        }
+    } else {
+        container.classList.remove('hidden');
+        if (select) {
+            select.disabled = false;
+            select.value = currentBuildFilter;
+        }
+    }
 }
 
 // функция обновления фильтров архитектур
@@ -786,6 +1057,14 @@ function compareVersions(version1, version2) {
     }
 
     return 0;
+}
+
+function matchesBuildFilter(buildType) {
+    if (currentOS === 'linux' || currentBuildFilter === 'all') {
+        return true;
+    }
+    const normalized = (buildType || 'release').toLowerCase();
+    return normalized === 'release';
 }
 
 function parseSizeToBytes(sizeStr) {
@@ -860,6 +1139,7 @@ function reRenderVersions() {
 
 function createVersionRows(versionKey, data, searchTerm = '', isVisible = true) {
     const shortVersion = versionKey;
+    const buildType = data.buildType || null;
     const archCombos = [];
     let totalRowsForVersion = 0;
 
@@ -875,6 +1155,10 @@ function createVersionRows(versionKey, data, searchTerm = '', isVisible = true) 
         if (compareVersions(shortVersion, currentLinuxVersionFilter) > 0) {
             return [];
         }
+    }
+
+    if (!matchesBuildFilter(buildType)) {
+        return [];
     }
 
     if (data.links[currentOS]) {
@@ -915,7 +1199,20 @@ function createVersionRows(versionKey, data, searchTerm = '', isVisible = true) 
             const commentBtn = createCommentButton(versionKey);
 
             versionTextWrapper.appendChild(versionText);
-            shortVersionElem.after(commentBtn);
+
+            if (buildType && currentBuildFilter === 'all') {
+                const buildTypeIndicator = document.createElement('span');
+                buildTypeIndicator.className = `build-type-indicator build-type-${buildType.toLowerCase()}`;
+                buildTypeIndicator.textContent = buildType.charAt(0);
+
+                buildTypeIndicator.title = `Build type: ${buildType}`;
+
+                shortVersionElem.after(buildTypeIndicator);
+            }
+
+            const lastElement = versionTextWrapper.querySelector('.build-type-indicator') || shortVersionElem;
+            lastElement.after(commentBtn);
+
             versionContainer.appendChild(versionTextWrapper);
 
             versionCell.appendChild(versionContainer);
@@ -935,7 +1232,7 @@ function createVersionRows(versionKey, data, searchTerm = '', isVisible = true) 
         sizeCell.textContent = '—';
         row.appendChild(sizeCell);
 
-        const downloadCell = createDownloadCell(combo.link, shortVersion, currentOS, combo.arch);
+        const downloadCell = createDownloadCell(combo.link, shortVersion, currentOS, combo.arch, buildType);
 
         downloadCell.setAttribute('data-download-url', combo.link);
         row.appendChild(downloadCell);
@@ -1351,6 +1648,8 @@ function loadMoreWinMacRows() {
             }
             
             if (!versionData.links[currentOS]) return;
+
+            if (!matchesBuildFilter(versionData.buildType)) return;
             
             Object.keys(versionData.links[currentOS]).forEach(arch => {
                 if (currentArch !== 'all' && arch !== currentArch) return;
@@ -1461,6 +1760,8 @@ function loadMoreWinMacRows() {
         if (currentVersionFilter) {
             visibleVersions = versions.filter(([v]) => compareVersions(v, currentVersionFilter) <= 0);
         }
+
+        visibleVersions = visibleVersions.filter(([, versionData]) => matchesBuildFilter(versionData.buildType));
 
         if (visibleVersions.length === 0) continue;
 
@@ -1697,17 +1998,17 @@ function startLazyLoading() {
 
             if (currentArch !== 'all' && !data.links[currentOS][currentArch]) return false;
 
-            if (currentOS === 'win' && currentWinVersionFilter) {
-                return compareVersions(versionKey, currentWinVersionFilter) <= 0;
+            if (currentOS === 'win' && currentWinVersionFilter && compareVersions(versionKey, currentWinVersionFilter) > 0) {
+                return false;
             }
-            if (currentOS === 'mac' && currentMacVersionFilter) {
-                return compareVersions(versionKey, currentMacVersionFilter) <= 0;
+            if (currentOS === 'mac' && currentMacVersionFilter && compareVersions(versionKey, currentMacVersionFilter) > 0) {
+                return false;
             }
-            if (currentOS === 'linux' && currentLinuxVersionFilter) {
-                return compareVersions(versionKey, currentLinuxVersionFilter) <= 0;
+            if (currentOS === 'linux' && currentLinuxVersionFilter && compareVersions(versionKey, currentLinuxVersionFilter) > 0) {
+                return false;
             }
 
-            return true;
+            return matchesBuildFilter(data.buildType);
         });
 
         if (filteredVersions.length === 0) {
@@ -1887,7 +2188,8 @@ function performSearch(term) {
                 return (versionKey.toLowerCase().includes(term) ||
                     data.fullversion.toLowerCase().includes(term)) &&
                     data.links[currentOS] &&
-                    (currentArch === 'all' || data.links[currentOS].hasOwnProperty(currentArch));
+                    (currentArch === 'all' || data.links[currentOS].hasOwnProperty(currentArch)) &&
+                    matchesBuildFilter(data.buildType);
             });
             const unique = new Map();
             filtered.forEach(([versionKey, data]) => {
@@ -1914,6 +2216,8 @@ function syncUrlWithState() {
     } else {
         params.arch = null;
     }
+
+    params.build = currentBuildFilter !== 'all' ? currentBuildFilter : null;
 
     params.winVersion = currentWinVersionFilter;
     params.macVersion = currentMacVersionFilter;
@@ -2204,6 +2508,7 @@ document.querySelectorAll('.filter-button').forEach(button => {
 
         // обновляем фильтры архитектур
         updateArchFilters();
+        updateBuildFilterVisibility();
 
         syncUrlWithState();
 
@@ -2622,7 +2927,7 @@ const downloadIcon = `
 `;
 
 // создание ячейки с кнопкой скачивания
-function createDownloadCell(link, version, os, arch) {
+function createDownloadCell(link, version, os, arch, buildType) {
     const actionCell = document.createElement('td');
     actionCell.className = 'action-cell';
 
@@ -2640,7 +2945,7 @@ function createDownloadCell(link, version, os, arch) {
 
     downloadLink.addEventListener('click', (e) => {
         e.preventDefault();
-        handleDownload(downloadLink, link, version, os, arch);
+        handleDownload(downloadLink, link, version, os, arch, buildType);
     });
 
     downloadLink.innerHTML = downloadIcon;

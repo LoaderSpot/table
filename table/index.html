@@ -50,8 +50,21 @@
         <!-- ряд фильтрации: разделяем на два ряда -->
         <tr class="arch-filters-row">
           <td colspan="5">
-            <!-- Фильтры архитектур над кнопками ОС -->
-            <div id="arch-filters" class="arch-filter-buttons">
+            <div class="filter-panel">
+              <!-- фильтры архитектур над кнопками ОС -->
+              <div id="arch-filters" class="arch-filter-buttons"></div>
+              <div class="build-filter-container">
+                <span class="filter-panel-divider" aria-hidden="true"></span>
+                <div class="build-toggle-wrapper">
+                  <span class="build-toggle-label">Builds</span>
+                  <div class="build-toggle-carousel" id="buildToggleSwitch">
+                    <div class="build-toggle-track">
+                      <span class="build-toggle-option">release</span>
+                      <span class="build-toggle-option">all</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </td>
         </tr>
