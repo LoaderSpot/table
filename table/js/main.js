@@ -174,43 +174,25 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const buildFilterContainer = document.querySelector('.build-filter-container');
-    const buildToggleSwitch = document.getElementById('buildToggleSwitch');
-    
-    if (!buildToggleSwitch) return;
+    const buildFilterContainer = document.getElementById('buildFilterContainer');
 
-    if (currentBuildFilter === 'release') {
-        buildToggleSwitch.classList.remove('active-all');
-        buildToggleSwitch.classList.add('active-release');
-    } else {
-        buildToggleSwitch.classList.remove('active-release');
-        buildToggleSwitch.classList.add('active-all');
+    if (!buildFilterContainer) return;
+
+    function updateBuildFilterState() {
+        buildFilterContainer.dataset.build = currentBuildFilter;
+        buildFilterContainer.title = currentBuildFilter === 'all'
+            ? "Switch to release type builds only"
+            : "Switch to all type builds";
     }
 
-    buildToggleSwitch.addEventListener('click', () => {
-
-        buildToggleSwitch.classList.add('transitioning');
-        
-        if (currentBuildFilter === 'release') {
-
-            currentBuildFilter = 'all';
-            buildToggleSwitch.classList.remove('active-release');
-            buildToggleSwitch.classList.add('active-all');
-        } else {
-
-            currentBuildFilter = 'release';
-            buildToggleSwitch.classList.remove('active-all');
-            buildToggleSwitch.classList.add('active-release');
-        }
-        
-        setTimeout(() => {
-            buildToggleSwitch.classList.remove('transitioning');
-        }, 400);
-        
+    buildFilterContainer.addEventListener('click', () => {
+        currentBuildFilter = currentBuildFilter === 'release' ? 'all' : 'release';
+        updateBuildFilterState();
         syncUrlWithState();
         reRenderVersions();
     });
 
+    updateBuildFilterState();
     updateBuildFilterVisibility();
 });
 
@@ -483,33 +465,33 @@ function enableScroll() {
 }
 async function preloadSizesForSorting(dataSource) {
     const linksToFetch = [];
-    
+
     dataSource.forEach(([versionKey, versionData]) => {
         if (!versionData.links[currentOS]) return;
-        
+
         Object.keys(versionData.links[currentOS]).forEach(arch => {
             if (currentArch !== 'all' && arch !== currentArch) return;
-            
+
             const link = versionData.links[currentOS][arch];
             if (link && !headCache.has(link)) {
                 linksToFetch.push(link);
             }
         });
     });
-    
-    if (linksToFetch.length === 0) return; 
-    
+
+    if (linksToFetch.length === 0) return;
+
     const loadingIndicator = document.getElementById('sizeLoadingIndicator');
     const loadingText = loadingIndicator?.querySelector('.loading-text');
     const tbody = document.getElementById('versions-container');
-    
+
     if (loadingIndicator) {
         loadingIndicator.style.display = 'flex';
         if (loadingText) {
             loadingText.textContent = `0%`;
         }
     }
-    
+
     // очищаем tbody и добавляем skeleton эффект
     if (tbody) {
         const skeletonRowsHTML = Array.from({ length: 15 }, () => `
@@ -527,35 +509,35 @@ async function preloadSizesForSorting(dataSource) {
                 </td>
             </tr>
         `).join('');
-        
+
         tbody.innerHTML = skeletonRowsHTML;
         tbody.classList.add('table-skeleton-overlay');
-        
+
         const tableContainer = document.getElementById('tableContainer');
         if (tableContainer) {
             tableContainer.style.overflow = 'hidden';
         }
         disableScroll();
     }
-    
+
     const maxConcurrent = 15;
     let completed = 0;
-    
-    const promises = linksToFetch.map(link => 
+
+    const promises = linksToFetch.map(link =>
         (async () => {
             try {
                 const response = await fetch(link, { method: 'HEAD' });
                 const lastModified = response.headers.get('Last-Modified');
                 const contentLength = response.headers.get('Content-Length');
-                
+
                 const formattedDate = formatDate(lastModified);
                 const sizeMb = formatSize(contentLength);
-                
+
                 headCache.set(link, { date: formattedDate, size: sizeMb });
             } catch (error) {
                 headCache.set(link, { date: '—', size: '—' });
             }
-            
+
             completed++;
             if (loadingText) {
                 const percent = Math.round((completed / linksToFetch.length) * 100);
@@ -563,22 +545,22 @@ async function preloadSizesForSorting(dataSource) {
             }
         })()
     );
-    
+
     for (let i = 0; i < promises.length; i += maxConcurrent) {
         await Promise.all(promises.slice(i, i + maxConcurrent));
     }
-    
+
     if (tbody) {
         tbody.classList.remove('table-skeleton-overlay');
-        tbody.innerHTML = ''; 
+        tbody.innerHTML = '';
     }
-    
+
     const tableContainer = document.getElementById('tableContainer');
     if (tableContainer) {
         tableContainer.style.overflow = '';
     }
     enableScroll();
-    
+
     if (loadingIndicator) {
         setTimeout(() => {
             loadingIndicator.style.display = 'none';
@@ -798,7 +780,6 @@ function ensureMasterWarningModal() {
     modal.setAttribute('role', 'dialog');
     modal.setAttribute('aria-modal', 'true');
     modal.innerHTML = `
-        <div class="master-warning-backdrop"></div>
         <div class="master-warning-content" role="document">
             <div class="master-warning-header">
                 <h3>Pre-release build warning</h3>
@@ -829,11 +810,19 @@ function ensureMasterWarningModal() {
     document.body.appendChild(modal);
 
     const closeModal = () => {
+        const content = modal.querySelector('.master-warning-content');
+        if (content) {
+            content.classList.add('micro-form-animate-out');
+        }
         modal.classList.remove('visible');
+        hideBlurOverlay();
         setTimeout(() => {
             modal.style.display = 'none';
+            if (content) {
+                content.classList.remove('micro-form-animate-out');
+            }
             unlockBodyForMasterModal();
-        }, 250);
+        }, 320);
     };
 
     const cancelBtn = modal.querySelector('#masterWarningCancel');
@@ -864,13 +853,15 @@ function ensureMasterWarningModal() {
         closeModal();
     });
 
-    modal.querySelector('.master-warning-backdrop').addEventListener('click', () => {
-        persistOptOutIfChecked();
-        if (masterWarningResolver) {
-            masterWarningResolver(false);
-            masterWarningResolver = null;
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            persistOptOutIfChecked();
+            if (masterWarningResolver) {
+                masterWarningResolver(false);
+                masterWarningResolver = null;
+            }
+            closeModal();
         }
-        closeModal();
     });
 
     continueBtn.addEventListener('click', () => {
@@ -901,9 +892,17 @@ function showMasterWarningModal() {
     const checkbox = modal.querySelector('#masterWarningDontShow');
     checkbox.checked = false;
     modal.style.display = 'flex';
+    showBlurOverlay();
     lockBodyForMasterModal();
+    const content = modal.querySelector('.master-warning-content');
+    if (content) {
+        content.classList.add('micro-form-animate-in');
+    }
     setTimeout(() => {
         modal.classList.add('visible');
+        if (content) {
+            content.classList.add('micro-form-animate-visible');
+        }
         const continueBtn = modal.querySelector('#masterWarningContinue');
         if (continueBtn) continueBtn.focus();
     }, 10);
@@ -994,55 +993,66 @@ function updateBuildFilterVisibility() {
 
 // функция обновления фильтров архитектур
 function updateArchFilters() {
+    const filterPanel = document.querySelector('.filter-panel');
     const archContainer = document.getElementById('arch-filters');
 
-    // для Linux скрываем фильтры архитектур, а не очищаем контейнер
-    if (currentOS === 'linux') {
-        archContainer.classList.add('hidden');
-        return;
+    if (filterPanel) {
+        filterPanel.classList.add('hidden');
     }
 
-    // для других OS показываем и заполняем фильтрами
-    archContainer.classList.remove('hidden');
-    archContainer.innerHTML = ''; // очистка содержимого
-
-    const archSet = new Set();
-    // собираем архитектуры из всех версий для текущей ОС
-    allVersions.forEach(([, data]) => {
-        if (data.links[currentOS]) {
-            Object.keys(data.links[currentOS]).forEach(arch => archSet.add(arch));
-        }
-    });
-    let archArr = [];
-    if (currentOS === 'win') {
-        // для Windows фиксированный порядок, если присутствуют в данных
-        const order = ["x86", "x64", "arm64"];
-        archArr = order.filter(arch => archSet.has(arch));
-    } else if (currentOS === 'mac') {
-        // для mac фиксированный порядок, если присутствуют в данных
-        const order = ["intel", "arm64"];
-        archArr = order.filter(arch => archSet.has(arch));
-    } else {
-        archArr = Array.from(archSet).sort();
-    }
-    // создаем по кнопке для каждой архитектуры
-    archArr.forEach(arch => {
-        const btn = document.createElement('button');
-        btn.className = 'arch-filter-button' + (currentArch === arch ? ' active' : '');
-        btn.textContent = arch;
-        btn.addEventListener('click', () => {
-            // если нажата уже активная кнопка, сбрасываем фильтр
-            if (currentArch === arch) {
-                currentArch = 'all';
-            } else {
-                currentArch = arch;
+    setTimeout(() => {
+        if (currentOS === 'linux') {
+            archContainer.innerHTML = '';
+            if (filterPanel) {
+                filterPanel.classList.add('hidden');
             }
-            syncUrlWithState();
-            updateArchFilters();
-            reRenderVersions();
+            return;
+        }
+
+        archContainer.innerHTML = '';
+
+        const archSet = new Set();
+
+        allVersions.forEach(([, data]) => {
+            if (data.links[currentOS]) {
+                Object.keys(data.links[currentOS]).forEach(arch => archSet.add(arch));
+            }
         });
-        archContainer.appendChild(btn);
-    });
+        let archArr = [];
+        if (currentOS === 'win') {
+
+            const order = ["x86", "x64", "arm64"];
+            archArr = order.filter(arch => archSet.has(arch));
+        } else if (currentOS === 'mac') {
+
+            const order = ["intel", "arm64"];
+            archArr = order.filter(arch => archSet.has(arch));
+        } else {
+            archArr = Array.from(archSet).sort();
+        }
+
+        archArr.forEach(arch => {
+            const btn = document.createElement('button');
+            btn.className = 'arch-filter-button' + (currentArch === arch ? ' active' : '');
+            btn.textContent = arch;
+            btn.addEventListener('click', () => {
+
+                if (currentArch === arch) {
+                    currentArch = 'all';
+                } else {
+                    currentArch = arch;
+                }
+                syncUrlWithState();
+                updateArchFilters();
+                reRenderVersions();
+            });
+            archContainer.appendChild(btn);
+        });
+
+        if (filterPanel) {
+            filterPanel.classList.remove('hidden');
+        }
+    }, 150);
 }
 
 // Функция для сравнения версий
@@ -1069,20 +1079,20 @@ function matchesBuildFilter(buildType) {
 
 function parseSizeToBytes(sizeStr) {
     if (!sizeStr || sizeStr === '—') return 0;
-    
+
     const match = sizeStr.match(/^([\d.]+)\s*(MB|GB|KB|B)?$/i);
     if (!match) return 0;
-    
+
     const value = parseFloat(match[1]);
     const unit = (match[2] || 'B').toUpperCase();
-    
+
     const multipliers = {
         'B': 1,
         'KB': 1024,
         'MB': 1024 * 1024,
         'GB': 1024 * 1024 * 1024
     };
-    
+
     return value * (multipliers[unit] || 1);
 }
 
@@ -1109,19 +1119,19 @@ function reRenderVersions() {
     observer.unobserve(sentinel);
 
     currentIndex = 0;
-    window.sizesPreloaded = false; 
-    
+    window.sizesPreloaded = false;
+
     const loadingIndicator = document.getElementById('sizeLoadingIndicator');
     const tableContainer = document.getElementById('tableContainer');
-    
+
     if (loadingIndicator) {
         loadingIndicator.style.display = 'none';
     }
-    
+
     if (container) {
         container.classList.remove('table-skeleton-overlay');
     }
-    
+
     if (tableContainer) {
         tableContainer.style.overflow = '';
     }
@@ -1276,7 +1286,7 @@ const observer = new IntersectionObserver((entries) => {
             if (currentOS === 'linux') {
                 const dataSource = currentSearchResults || linuxVersionsData;
                 let totalItems;
-                
+
                 if (currentSortColumn === 'size') {
                     totalItems = dataSource.reduce((sum, version) => {
                         if (currentLinuxVersionFilter && compareVersions(version.version.short, currentLinuxVersionFilter) > 0) {
@@ -1288,14 +1298,14 @@ const observer = new IntersectionObserver((entries) => {
                     const groupedVersions = groupLinuxVersions(dataSource);
                     totalItems = Object.keys(groupedVersions).length;
                 }
-                
+
                 if (currentIndex < totalItems) {
                     observer.observe(sentinel);
                 }
             } else {
                 const dataSource = currentSearchResults || allVersions;
                 let totalItems;
-                
+
                 if (currentSortColumn === 'size') {
                     const currentVersionFilter = currentOS === 'win' ? currentWinVersionFilter : currentMacVersionFilter;
                     totalItems = dataSource.reduce((sum, [versionKey, versionData]) => {
@@ -1303,18 +1313,18 @@ const observer = new IntersectionObserver((entries) => {
                             return sum;
                         }
                         if (!versionData.links[currentOS]) return sum;
-                        
+
                         const archCount = Object.keys(versionData.links[currentOS]).filter(arch => {
                             return currentArch === 'all' || arch === currentArch;
                         }).length;
-                        
+
                         return sum + archCount;
                     }, 0);
                 } else {
                     const groupedVersions = groupVersions(dataSource);
                     totalItems = Object.keys(groupedVersions).length;
                 }
-                
+
                 if (currentIndex < totalItems) {
                     observer.observe(sentinel);
                 }
@@ -1406,14 +1416,14 @@ function sortAllVersionsFlat(versions, os = currentOS) {
 
 function loadMoreLinuxRows() {
     const dataSource = currentSearchResults || linuxVersionsData;
-    
+
     if (currentSortColumn === 'size') {
         let flatRows = [];
         dataSource.forEach(version => {
             if (currentLinuxVersionFilter && compareVersions(version.version.short, currentLinuxVersionFilter) > 0) {
                 return;
             }
-            
+
             version.architectures.forEach(arch => {
                 flatRows.push({
                     version: version.version,
@@ -1421,7 +1431,7 @@ function loadMoreLinuxRows() {
                 });
             });
         });
-        
+
         flatRows.sort((a, b) => {
             const sizeComp = sizeCompare(a.arch.size, b.arch.size);
             if (sizeComp !== 0) return sizeComp;
@@ -1429,9 +1439,9 @@ function loadMoreLinuxRows() {
             if (versionComp !== 0) return versionComp;
             return a.arch.arch.localeCompare(b.arch.arch);
         });
-        
+
         const endIndex = Math.min(currentIndex + ITEMS_PER_BATCH * 3, flatRows.length);
-        
+
         for (let i = currentIndex; i < endIndex; i++) {
             const item = flatRows[i];
             const row = document.createElement('tr');
@@ -1439,48 +1449,48 @@ function loadMoreLinuxRows() {
                 { short: item.version.short, full: item.version.full },
                 currentSearchTerm
             );
-            
+
             const versionContainer = document.createElement('div');
             versionContainer.className = 'version-container';
-            
+
             const versionTextWrapper = document.createElement('div');
             versionTextWrapper.className = 'version-text-wrapper';
-            
+
             const commentBtn = createCommentButton(item.version.short);
-            
+
             versionTextWrapper.appendChild(versionText);
             shortVersionElem.after(commentBtn);
             versionContainer.appendChild(versionTextWrapper);
-            
+
             const versionCell = document.createElement('td');
             versionCell.className = 'version-cell has-comments';
             versionCell.appendChild(versionContainer);
             row.appendChild(versionCell);
-            
+
             const archCell = document.createElement('td');
             archCell.textContent = item.arch.arch;
             row.appendChild(archCell);
-            
+
             const dateCell = document.createElement('td');
             dateCell.textContent = item.arch.date;
             row.appendChild(dateCell);
-            
+
             const sizeCell = document.createElement('td');
             sizeCell.textContent = item.arch.size;
             row.appendChild(sizeCell);
-            
+
             row.appendChild(createDownloadCell(item.arch.link, item.version.short, 'linux', item.arch.arch));
-            
+
             container.appendChild(row);
         }
-        
+
         currentIndex = endIndex;
         if (currentIndex < flatRows.length) {
             container.appendChild(sentinel);
         }
         return;
     }
-    
+
     const groupedVersions = groupLinuxVersions(dataSource);
     const groups = Object.entries(groupedVersions);
     groups.sort((a, b) => versionCompare(a[0], b[0]));
@@ -1490,7 +1500,7 @@ function loadMoreLinuxRows() {
     for (let i = currentIndex; i < endIndex; i++) {
         const [groupKey, versions] = groups[i];
 
-    versions.sort((a, b) => versionCompare(a.version.short, b.version.short));
+        versions.sort((a, b) => versionCompare(a.version.short, b.version.short));
 
         let visibleVersions = versions;
         if (currentLinuxVersionFilter) {
@@ -1499,7 +1509,7 @@ function loadMoreLinuxRows() {
 
         if (visibleVersions.length === 0) continue;
 
-    visibleVersions.sort((a, b) => versionCompare(a.version.short, b.version.short));
+        visibleVersions.sort((a, b) => versionCompare(a.version.short, b.version.short));
 
         const displayVersion = visibleVersions[0];
 
@@ -1626,10 +1636,10 @@ function loadMoreLinuxRows() {
 }
 function loadMoreWinMacRows() {
     const dataSource = currentSearchResults || allVersions;
-    
+
     if (currentSortColumn === 'size') {
         const currentVersionFilter = currentOS === 'win' ? currentWinVersionFilter : currentMacVersionFilter;
-        
+
         if (!window.sizesPreloaded) {
             window.sizesPreloaded = true;
             preloadSizesForSorting(dataSource).then(() => {
@@ -1640,20 +1650,20 @@ function loadMoreWinMacRows() {
                 }
             });
         }
-        
+
         let flatRows = [];
         dataSource.forEach(([versionKey, versionData]) => {
             if (currentVersionFilter && compareVersions(versionKey, currentVersionFilter) > 0) {
                 return;
             }
-            
+
             if (!versionData.links[currentOS]) return;
 
             if (!matchesBuildFilter(versionData.buildType)) return;
-            
+
             Object.keys(versionData.links[currentOS]).forEach(arch => {
                 if (currentArch !== 'all' && arch !== currentArch) return;
-                
+
                 const link = versionData.links[currentOS][arch];
                 if (link) {
                     let size = '—';
@@ -1663,7 +1673,7 @@ function loadMoreWinMacRows() {
                         size = cached.size;
                         date = cached.date;
                     }
-                    
+
                     flatRows.push({
                         versionKey: versionKey,
                         versionData: versionData,
@@ -1675,7 +1685,7 @@ function loadMoreWinMacRows() {
                 }
             });
         });
-        
+
         flatRows.sort((a, b) => {
             const sizeComp = sizeCompare(a.size, b.size);
             if (sizeComp !== 0) return sizeComp;
@@ -1683,9 +1693,9 @@ function loadMoreWinMacRows() {
             if (versionComp !== 0) return versionComp;
             return a.arch.localeCompare(b.arch);
         });
-        
+
         const endIndex = Math.min(currentIndex + ITEMS_PER_BATCH * 3, flatRows.length);
-        
+
         for (let i = currentIndex; i < endIndex; i++) {
             const item = flatRows[i];
             const row = document.createElement('tr');
@@ -1693,47 +1703,47 @@ function loadMoreWinMacRows() {
                 { short: item.versionKey, full: item.versionData.fullversion },
                 currentSearchTerm
             );
-            
+
             const versionContainer = document.createElement('div');
             versionContainer.className = 'version-container';
-            
+
             const versionTextWrapper = document.createElement('div');
             versionTextWrapper.className = 'version-text-wrapper';
-            
+
             const commentBtn = createCommentButton(item.versionKey);
-            
+
             versionTextWrapper.appendChild(versionText);
             shortVersionElem.after(commentBtn);
             versionContainer.appendChild(versionTextWrapper);
-            
+
             const versionCell = document.createElement('td');
             versionCell.className = 'version-cell';
             versionCell.appendChild(versionContainer);
             row.appendChild(versionCell);
-            
+
             const archCell = document.createElement('td');
             archCell.textContent = item.arch;
             row.appendChild(archCell);
-            
+
             const dateCell = document.createElement('td');
             dateCell.textContent = item.date;
             row.appendChild(dateCell);
-            
+
             const sizeCell = document.createElement('td');
             sizeCell.textContent = item.size;
             row.appendChild(sizeCell);
-            
+
             const downloadCell = createDownloadCell(item.link, item.versionKey, currentOS, item.arch);
             downloadCell.setAttribute('data-download-url', item.link);
             row.appendChild(downloadCell);
-            
+
             if (!headCache.has(item.link)) {
                 updateLinkInfo(dateCell, sizeCell, item.link, true);
             }
-            
+
             container.appendChild(row);
         }
-        
+
         currentIndex = endIndex;
         if (currentIndex < flatRows.length) {
             container.appendChild(sentinel);
@@ -1742,7 +1752,7 @@ function loadMoreWinMacRows() {
         }
         return;
     }
-    
+
     const groupedVersions = groupVersions(dataSource);
     const groups = Object.entries(groupedVersions);
     groups.sort((a, b) => versionCompare(a[0], b[0]));
@@ -1752,7 +1762,7 @@ function loadMoreWinMacRows() {
 
     for (let i = currentIndex; i < endIndex; i++) {
         const [groupKey, versions] = groups[i];
-    versions.sort((a, b) => versionCompare(a[0], b[0]));
+        versions.sort((a, b) => versionCompare(a[0], b[0]));
 
         const currentVersionFilter = currentOS === 'win' ? currentWinVersionFilter : currentMacVersionFilter;
 
@@ -1765,7 +1775,7 @@ function loadMoreWinMacRows() {
 
         if (visibleVersions.length === 0) continue;
 
-    visibleVersions.sort((a, b) => versionCompare(a[0], b[0]));
+        visibleVersions.sort((a, b) => versionCompare(a[0], b[0]));
 
         const [displayVersionKey, displayVersionData] = visibleVersions[0];
         const displayVersionRows = createVersionRows(displayVersionKey, displayVersionData, currentSearchTerm);
@@ -2028,7 +2038,7 @@ function startLazyLoading() {
     if (currentOS === 'linux') {
         const dataSource = currentSearchResults || linuxVersionsData;
         let totalItems;
-        
+
         if (currentSortColumn === 'size') {
             totalItems = dataSource.reduce((sum, version) => {
                 if (currentLinuxVersionFilter && compareVersions(version.version.short, currentLinuxVersionFilter) > 0) {
@@ -2040,14 +2050,14 @@ function startLazyLoading() {
             const groupedVersions = groupLinuxVersions(dataSource);
             totalItems = Object.keys(groupedVersions).length;
         }
-        
+
         if (currentIndex < totalItems) {
             observer.observe(sentinel);
         }
     } else {
         const dataSource = currentSearchResults || allVersions;
         let totalItems;
-        
+
         if (currentSortColumn === 'size') {
             const currentVersionFilter = currentOS === 'win' ? currentWinVersionFilter : currentMacVersionFilter;
             totalItems = dataSource.reduce((sum, [versionKey, versionData]) => {
@@ -2055,18 +2065,18 @@ function startLazyLoading() {
                     return sum;
                 }
                 if (!versionData.links[currentOS]) return sum;
-                
+
                 const archCount = Object.keys(versionData.links[currentOS]).filter(arch => {
                     return currentArch === 'all' || arch === currentArch;
                 }).length;
-                
+
                 return sum + archCount;
             }, 0);
         } else {
             const groupedVersions = groupVersions(dataSource);
             totalItems = Object.keys(groupedVersions).length;
         }
-        
+
         if (currentIndex < totalItems) {
             observer.observe(sentinel);
         }
@@ -2155,7 +2165,7 @@ function performSearch(term) {
                     const sizeComp = sizeCompare(sizeA, sizeB);
                     return sizeComp !== 0 ? sizeComp : versionCompare(a.version.short, b.version.short);
                 }
-                
+
                 const shortA = a.version.short.toLowerCase();
                 const shortB = b.version.short.toLowerCase();
                 const fullA = a.version.full.toLowerCase();
@@ -2222,7 +2232,7 @@ function syncUrlWithState() {
     params.winVersion = currentWinVersionFilter;
     params.macVersion = currentMacVersionFilter;
     params.linuxVersion = currentLinuxVersionFilter;
-    
+
     if (currentSortColumn === 'version') {
         params.sortVersion = sortVersionAscending ? 'asc' : 'desc';
         params.sortSize = null;
@@ -2233,7 +2243,7 @@ function syncUrlWithState() {
         params.sortVersion = null;
         params.sortSize = null;
     }
-    
+
     params.sort = null;
 
     const url = new URL(window.location);
@@ -2252,7 +2262,7 @@ function syncUrlWithState() {
 function updateSortUI() {
     const versionArrow = document.getElementById('sortArrow');
     const sizeArrow = document.getElementById('sizeSortArrow');
-    
+
     if (versionArrow) {
         const versionSvg = versionArrow.querySelector('svg');
         if (versionSvg) {
@@ -2264,7 +2274,7 @@ function updateSortUI() {
             }
         }
     }
-    
+
     if (sizeArrow) {
         const sizeSvg = sizeArrow.querySelector('svg');
         if (sizeSvg) {
@@ -2316,7 +2326,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    
+
     const sizeControl = document.getElementById('sizeSortControl');
     if (sizeControl) {
         sizeControl.addEventListener('click', toggleSizeSort);
@@ -2327,7 +2337,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    
+
     updateSortUI();
 });
 
@@ -2470,19 +2480,19 @@ document.querySelectorAll('.filter-button').forEach(button => {
         currentOS = newOS;
 
         window.sizesPreloaded = false;
-        
+
         const loadingIndicator = document.getElementById('sizeLoadingIndicator');
         const tbody = document.getElementById('versions-container');
         const tableContainer = document.getElementById('tableContainer');
-        
+
         if (loadingIndicator) {
             loadingIndicator.style.display = 'none';
         }
-        
+
         if (tbody) {
             tbody.classList.remove('table-skeleton-overlay');
         }
-        
+
         if (currentSortColumn !== 'size') {
             if (tableContainer) {
                 tableContainer.style.overflow = '';
@@ -3031,6 +3041,23 @@ const microFormContainer = document.getElementById('microFormContainer');
 const blurOverlay = document.getElementById('blurOverlay');
 let microFormScrollPosition = 0;
 
+// управления размытием
+function showBlurOverlay() {
+    if (blurOverlay.style.display === 'block') return;
+    blurOverlay.style.display = 'block';
+    blurOverlay.style.opacity = "0";
+    setTimeout(() => {
+        blurOverlay.style.opacity = "1";
+    }, 10);
+}
+
+function hideBlurOverlay() {
+    blurOverlay.style.opacity = "0";
+    setTimeout(() => {
+        blurOverlay.style.display = 'none';
+    }, 350);
+}
+
 function showMicroForm() {
     if (microFormContainer.style.display === 'block') return;
     microFormContainer.innerHTML = `
@@ -3060,11 +3087,7 @@ function showMicroForm() {
     `;
     microFormContainer.style.display = 'block';
     microFormContainer.style.overflow = 'hidden';
-    blurOverlay.style.display = 'block';
-    blurOverlay.style.opacity = "0";
-    setTimeout(() => {
-        blurOverlay.style.opacity = "1";
-    }, 10);
+    showBlurOverlay();
     blurOverlay.addEventListener('click', hideMicroForm);
 
     const form = document.getElementById('microForm');
@@ -3209,10 +3232,7 @@ function hideMicroForm() {
         microFormContainer.style.display = 'none';
         microFormContainer.innerHTML = '';
     }
-    blurOverlay.style.opacity = "0";
-    setTimeout(() => {
-        blurOverlay.style.display = 'none';
-    }, 350);
+    hideBlurOverlay();
     blurOverlay.removeEventListener('click', hideMicroForm);
     document.body.classList.remove('modal-open');
     document.body.style.top = '';
