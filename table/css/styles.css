@@ -265,6 +265,7 @@ table.version-table thead th {
   padding: var(--spacing-sm);
   border-bottom: 1px solid #444;
   font-weight: 700;
+  cursor: default;
 }
 
 .sort-button {

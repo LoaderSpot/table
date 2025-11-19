@@ -37,4 +37,12 @@
   </div>
   </div>
 
+  <div class="faq-item">
+    <div class="question">What are "master" builds and should I use them?</div>
+    <div class="answer">
+    The master build is a pre-release version of the client. Despite this, please use this build type only for testing
+  
+  </div>
+  </div>
+
 </div>

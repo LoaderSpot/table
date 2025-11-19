@@ -10,6 +10,12 @@ let sortVersionAscending = urlParams.get('sortVersion') === 'asc' || (urlParams.
 let sortSizeAscending = urlParams.get('sortSize') === 'asc';
 let currentSortColumn = urlParams.get('sortSize') !== null ? 'size' : 'version';
 
+if (currentSearchTerm) {
+    sortVersionAscending = false;
+    sortSizeAscending = false;
+    currentSortColumn = 'version';
+}
+
 if (urlParams.get('sort') && !urlParams.get('sortVersion') && !urlParams.get('sortSize')) {
     sortVersionAscending = urlParams.get('sort') === 'asc';
 }
@@ -1417,7 +1423,7 @@ function sortAllVersionsFlat(versions, os = currentOS) {
 function loadMoreLinuxRows() {
     const dataSource = currentSearchResults || linuxVersionsData;
 
-    if (currentSortColumn === 'size') {
+    if (currentSortColumn === 'size' && !currentSearchResults) {
         let flatRows = [];
         dataSource.forEach(version => {
             if (currentLinuxVersionFilter && compareVersions(version.version.short, currentLinuxVersionFilter) > 0) {
@@ -1493,7 +1499,9 @@ function loadMoreLinuxRows() {
 
     const groupedVersions = groupLinuxVersions(dataSource);
     const groups = Object.entries(groupedVersions);
-    groups.sort((a, b) => versionCompare(a[0], b[0]));
+    if (!currentSearchResults) {
+        groups.sort((a, b) => versionCompare(a[0], b[0]));
+    }
 
     const endIndex = Math.min(currentIndex + ITEMS_PER_BATCH, groups.length);
 
@@ -1637,7 +1645,7 @@ function loadMoreLinuxRows() {
 function loadMoreWinMacRows() {
     const dataSource = currentSearchResults || allVersions;
 
-    if (currentSortColumn === 'size') {
+    if (currentSortColumn === 'size' && !currentSearchResults) {
         const currentVersionFilter = currentOS === 'win' ? currentWinVersionFilter : currentMacVersionFilter;
 
         if (!window.sizesPreloaded) {
@@ -1755,7 +1763,9 @@ function loadMoreWinMacRows() {
 
     const groupedVersions = groupVersions(dataSource);
     const groups = Object.entries(groupedVersions);
-    groups.sort((a, b) => versionCompare(a[0], b[0]));
+    if (!currentSearchResults) {
+        groups.sort((a, b) => versionCompare(a[0], b[0]));
+    }
 
     const endIndex = Math.min(currentIndex + ITEMS_PER_BATCH, groups.length);
     let rowsAdded = 0;
@@ -2091,12 +2101,12 @@ function sortSearchResults(filtered, term) {
         const [versionKeyA, dataA] = a;
         const [versionKeyB, dataB] = b;
 
-        if (currentSortColumn === 'size') {
-            const sizeA = getVersionSize(dataA, currentOS);
-            const sizeB = getVersionSize(dataB, currentOS);
-            const sizeComp = sizeCompare(sizeA, sizeB);
-            return sizeComp !== 0 ? sizeComp : versionCompare(versionKeyA, versionKeyB);
-        }
+        // if (currentSortColumn === 'size') {
+        //     const sizeA = getVersionSize(dataA, currentOS);
+        //     const sizeB = getVersionSize(dataB, currentOS);
+        //     const sizeComp = sizeCompare(sizeA, sizeB);
+        //     return sizeComp !== 0 ? sizeComp : versionCompare(versionKeyA, versionKeyB);
+        // }
 
         const fullVersionA = dataA.fullversion.toLowerCase();
         const fullVersionB = dataB.fullversion.toLowerCase();
@@ -2125,7 +2135,7 @@ function sortSearchResults(filtered, term) {
         if (!inMainA && inMainB) return 1;
 
         // сортируем по версии (сначала новые)
-        return getSortMultiplier() * versionKeyA.localeCompare(versionKeyB, undefined, { numeric: true, sensitivity: 'base' });
+        return -1 * versionKeyA.localeCompare(versionKeyB, undefined, { numeric: true, sensitivity: 'base' });
     });
 }
 
@@ -2136,6 +2146,7 @@ function performSearch(term) {
     currentSearchTerm = term;
     observer.unobserve(sentinel);
 
+    updateSortUI();
     syncUrlWithState();
 
     setTimeout(() => {
@@ -2159,12 +2170,6 @@ function performSearch(term) {
                 version.version.short.toLowerCase().includes(term) ||
                 version.version.full.toLowerCase().includes(term)
             ).sort((a, b) => {
-                if (currentSortColumn === 'size') {
-                    const sizeA = getVersionSize(a, 'linux');
-                    const sizeB = getVersionSize(b, 'linux');
-                    const sizeComp = sizeCompare(sizeA, sizeB);
-                    return sizeComp !== 0 ? sizeComp : versionCompare(a.version.short, b.version.short);
-                }
 
                 const shortA = a.version.short.toLowerCase();
                 const shortB = b.version.short.toLowerCase();
@@ -2190,7 +2195,7 @@ function performSearch(term) {
                 if (inMainA && !inMainB) return -1;
                 if (!inMainA && inMainB) return 1;
 
-                return getSortMultiplier() * a.version.short.localeCompare(b.version.short, undefined, { numeric: true });
+                return -1 * a.version.short.localeCompare(b.version.short, undefined, { numeric: true });
             });
         } else {
             // поиск для Windows и Mac
@@ -2244,6 +2249,11 @@ function syncUrlWithState() {
         params.sortSize = null;
     }
 
+    if (currentSearchTerm && currentSearchTerm.trim() !== '') {
+        params.sortVersion = null;
+        params.sortSize = null;
+    }
+
     params.sort = null;
 
     const url = new URL(window.location);
@@ -2262,6 +2272,35 @@ function syncUrlWithState() {
 function updateSortUI() {
     const versionArrow = document.getElementById('sortArrow');
     const sizeArrow = document.getElementById('sizeSortArrow');
+    const versionControl = document.getElementById('versionSortControl');
+    const sizeControl = document.getElementById('sizeSortControl');
+
+    const isSearchActive = currentSearchTerm && currentSearchTerm.trim() !== '';
+
+    if (isSearchActive) {
+        if (versionArrow) versionArrow.style.display = 'none';
+        if (sizeArrow) sizeArrow.style.display = 'none';
+        if (versionControl) {
+            versionControl.style.pointerEvents = 'none';
+            versionControl.style.cursor = 'default';
+        }
+        if (sizeControl) {
+            sizeControl.style.pointerEvents = 'none';
+            sizeControl.style.cursor = 'default';
+        }
+        return;
+    } else {
+        if (versionArrow) versionArrow.style.display = '';
+        if (sizeArrow) sizeArrow.style.display = '';
+        if (versionControl) {
+            versionControl.style.pointerEvents = '';
+            versionControl.style.cursor = 'pointer';
+        }
+        if (sizeControl) {
+            sizeControl.style.pointerEvents = '';
+            sizeControl.style.cursor = 'pointer';
+        }
+    }
 
     if (versionArrow) {
         const versionSvg = versionArrow.querySelector('svg');
@@ -2289,6 +2328,7 @@ function updateSortUI() {
 }
 
 function toggleVersionSort() {
+    if (currentSearchTerm && currentSearchTerm.trim() !== '') return;
     if (currentSortColumn !== 'version') {
         currentSortColumn = 'version';
     } else {
@@ -2300,6 +2340,7 @@ function toggleVersionSort() {
 }
 
 function toggleSizeSort() {
+    if (currentSearchTerm && currentSearchTerm.trim() !== '') return;
     if (currentSortColumn !== 'size') {
         currentSortColumn = 'size';
         sortSizeAscending = true;
