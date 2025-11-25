@@ -161,6 +161,84 @@
   <div class="toast-notification" id="toast">Copied to clipboard</div>
   <script defer src="js/main.js"></script>
 
+  <template id="download-icon-template">
+    <svg class="download-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M12 15.575c-.183 0-.36-.073-.49-.203l-4.095-4.095a.694.694 0 01.981-.981L12 13.901l3.604-3.604a.694.694 0 01.981.98l-4.095 4.095a.692.692 0 01-.49.203z"/>
+      <path d="M12 15.575a.694.694 0 01-.694-.694V3.694a.694.694 0 011.388 0v11.187c0 .383-.31.694-.694.694z"/>
+      <path d="M16.306 20.306H7.694a4.167 4.167 0 01-4.162-4.163v-2.777a.694.694 0 011.388 0v2.777a2.778 2.778 0 002.774 2.775h8.612a2.778 2.778 0 002.775-2.775v-2.777a.694.694 0 011.387 0v2.777a4.167 4.167 0 01-4.162 4.163z"/>
+    </svg>
+  </template>
+
+  <template id="comments-modal-template">
+    <div class="comments-modal" role="dialog" aria-modal="true" aria-labelledby="comments-modal-title">
+      <div class="comments-modal-content">
+        <div class="comments-modal-header">
+          <h3 class="comments-modal-title" id="comments-modal-title">Comments for version <span id="comment-version-title"></span></h3>
+          <button class="comments-close-button" aria-label="Close comments">&times;</button>
+        </div>
+        <div class="comments-modal-body" id="comments-container" role="main">
+          <!-- Здесь будет инициализирован giscus -->
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="master-warning-modal-template">
+      <div class="master-warning-modal" role="dialog" aria-modal="true">
+        <div class="master-warning-content" role="document">
+            <div class="master-warning-header">
+                <h3>Pre-release build warning</h3>
+                <button class="master-warning-close" aria-label="Close warning">&times;</button>
+            </div>
+            <div class="master-warning-body">
+                <div class="master-warning-message">
+                    <div class="master-warning-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" focusable="false" role="img">
+                            <path d="M13.414 2a2 2 0 0 1 1.789 1.106l7.211 14.422A2 2 0 0 1 20.632 20H3.368a2 2 0 0 1-1.782-2.472l7.211-14.422A2 2 0 0 1 10.586 2zm-.794 13.5h-1.24a.88.88 0 0 0-.88.88v1.24c0 .486.394.88.88.88h1.24c.486 0 .88-.394.88-.88v-1.24a.88.88 0 0 0-.88-.88m0-8.5h-1.24a.88.88 0 0 0-.88.88v6.2c0 .486.394.88.88.88h1.24c.486 0 .88-.394.88-.88v-6.2a.88.88 0 0 0-.88-.88" />
+                        </svg>
+                    </div>
+                    <div class="master-warning-copy">
+                        <p class="master-warning-lead">You are going to download a pre-release build, use it only for testing, continue?</p>
+                    </div>
+                </div>
+                <label class="master-warning-checkbox">
+                    <input type="checkbox" id="masterWarningDontShow" />
+                    <span>Don’t show again</span>
+                </label>
+            </div>
+            <div class="master-warning-actions">
+                <button type="button" class="btn-secondary" id="masterWarningCancel">Cancel</button>
+                <button type="button" class="btn-primary" id="masterWarningContinue">Download anyway</button>
+            </div>
+        </div>
+      </div>
+  </template>
+
+  <template id="micro-form-template">
+    <form id="microForm" autocomplete="off" class="micro-form-vertical micro-form-with-close">
+      <div class="micro-form-title">Add New Version</div>
+      <div class="micro-form-subtext">
+        This form is for adding new versions. You can also add outdated versions if they are missing from the table.
+        After sending, the version will be automatically checked within the next hour and, if successful, will be immediately added to the table.
+      </div>
+      <div class="micro-form-close-wrap">
+        <button type="button" class="close-micro-form" title="Close">&times;</button>
+      </div>
+      <div class="micro-form-field">
+        <label for="microFormInput" class="micro-form-label">Version</label>
+        <input type="text" id="microFormInput" class="micro-form-input micro-form-input-wide" placeholder="e.g. 1.2.62.580.gb27ad23e" maxlength="100" required />
+      </div>
+      <div id="microFormInputError"></div>
+      <div id="descBlock" class="micro-form-field">
+        <label for="microFormDesc" class="micro-form-label" id="descLabel" style="display:none;">Description</label>
+        <button type="button" id="showDescBtn" class="micro-form-desc-btn">Add description</button>
+        <textarea id="microFormDesc" class="micro-form-input micro-form-desc-textarea" placeholder="any useful information about the version" maxlength="300" style="display:none;resize:vertical;min-height:38px;"></textarea>
+      </div>
+      <div class="micro-form-actions">
+        <button type="submit" class="micro-form-send">Send</button>
+      </div>
+    </form>
+  </template>
 </body>
 
 </html>

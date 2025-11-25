@@ -780,115 +780,88 @@ function ensureMasterWarningModal() {
         return modal;
     }
 
-    modal = document.createElement('div');
-    modal.id = 'masterWarningModal';
-    modal.className = 'master-warning-modal';
-    modal.setAttribute('role', 'dialog');
-    modal.setAttribute('aria-modal', 'true');
-    modal.innerHTML = `
-        <div class="master-warning-content" role="document">
-            <div class="master-warning-header">
-                <h3>Pre-release build warning</h3>
-                <button class="master-warning-close" aria-label="Close warning">&times;</button>
-            </div>
-            <div class="master-warning-body">
-                <div class="master-warning-message">
-                    <div class="master-warning-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" focusable="false" role="img">
-                            <path d="M13.414 2a2 2 0 0 1 1.789 1.106l7.211 14.422A2 2 0 0 1 20.632 20H3.368a2 2 0 0 1-1.782-2.472l7.211-14.422A2 2 0 0 1 10.586 2zm-.794 13.5h-1.24a.88.88 0 0 0-.88.88v1.24c0 .486.394.88.88.88h1.24c.486 0 .88-.394.88-.88v-1.24a.88.88 0 0 0-.88-.88m0-8.5h-1.24a.88.88 0 0 0-.88.88v6.2c0 .486.394.88.88.88h1.24c.486 0 .88-.394.88-.88v-6.2a.88.88 0 0 0-.88-.88" />
-                        </svg>
-                    </div>
-                    <div class="master-warning-copy">
-                        <p class="master-warning-lead">You are going to download a pre-release build, use it only for testing, continue?</p>
-                    </div>
-                </div>
-                <label class="master-warning-checkbox">
-                    <input type="checkbox" id="masterWarningDontShow" />
-                    <span>Don’t show again</span>
-                </label>
-            </div>
-            <div class="master-warning-actions">
-                <button type="button" class="btn-secondary" id="masterWarningCancel">Cancel</button>
-                <button type="button" class="btn-primary" id="masterWarningContinue">Download anyway</button>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(modal);
+    const template = document.getElementById('master-warning-modal-template');
+    if (template) {
+        const modalClone = template.content.cloneNode(true);
+        modal = modalClone.querySelector('.master-warning-modal');
+        modal.id = 'masterWarningModal';
+        document.body.appendChild(modal);
 
-    const closeModal = () => {
-        const content = modal.querySelector('.master-warning-content');
-        if (content) {
-            content.classList.add('micro-form-animate-out');
-        }
-        modal.classList.remove('visible');
-        hideBlurOverlay();
-        setTimeout(() => {
-            modal.style.display = 'none';
+        const closeModal = () => {
+            const content = modal.querySelector('.master-warning-content');
             if (content) {
-                content.classList.remove('micro-form-animate-out');
+                content.classList.add('micro-form-animate-out');
             }
-            unlockBodyForMasterModal();
-        }, 320);
-    };
+            modal.classList.remove('visible');
+            hideBlurOverlay();
+            setTimeout(() => {
+                modal.style.display = 'none';
+                if (content) {
+                    content.classList.remove('micro-form-animate-out');
+                }
+                unlockBodyForMasterModal();
+            }, 320);
+        };
 
-    const cancelBtn = modal.querySelector('#masterWarningCancel');
-    const continueBtn = modal.querySelector('#masterWarningContinue');
-    const closeBtn = modal.querySelector('.master-warning-close');
-    const checkbox = modal.querySelector('#masterWarningDontShow');
-    const persistOptOutIfChecked = () => {
-        if (checkbox.checked) {
-            persistMasterWarningChoice(true);
-        }
-    };
+        const cancelBtn = modal.querySelector('#masterWarningCancel');
+        const continueBtn = modal.querySelector('#masterWarningContinue');
+        const closeBtn = modal.querySelector('.master-warning-close');
+        const checkbox = modal.querySelector('#masterWarningDontShow');
+        const persistOptOutIfChecked = () => {
+            if (checkbox.checked) {
+                persistMasterWarningChoice(true);
+            }
+        };
 
-    cancelBtn.addEventListener('click', () => {
-        persistOptOutIfChecked();
-        if (masterWarningResolver) {
-            masterWarningResolver(false);
-            masterWarningResolver = null;
-        }
-        closeModal();
-    });
-
-    closeBtn.addEventListener('click', () => {
-        persistOptOutIfChecked();
-        if (masterWarningResolver) {
-            masterWarningResolver(false);
-            masterWarningResolver = null;
-        }
-        closeModal();
-    });
-
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
+        cancelBtn.addEventListener('click', () => {
             persistOptOutIfChecked();
             if (masterWarningResolver) {
                 masterWarningResolver(false);
                 masterWarningResolver = null;
             }
             closeModal();
-        }
-    });
+        });
 
-    continueBtn.addEventListener('click', () => {
-        persistMasterWarningChoice(checkbox.checked);
-        if (masterWarningResolver) {
-            masterWarningResolver(true);
-            masterWarningResolver = null;
-        }
-        closeModal();
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (modal.style.display === 'flex' && e.key === 'Escape') {
+        closeBtn.addEventListener('click', () => {
             persistOptOutIfChecked();
             if (masterWarningResolver) {
                 masterWarningResolver(false);
                 masterWarningResolver = null;
             }
             closeModal();
-        }
-    });
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                persistOptOutIfChecked();
+                if (masterWarningResolver) {
+                    masterWarningResolver(false);
+                    masterWarningResolver = null;
+                }
+                closeModal();
+            }
+        });
+
+        continueBtn.addEventListener('click', () => {
+            persistMasterWarningChoice(checkbox.checked);
+            if (masterWarningResolver) {
+                masterWarningResolver(true);
+                masterWarningResolver = null;
+            }
+            closeModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (modal.style.display === 'flex' && e.key === 'Escape') {
+                persistOptOutIfChecked();
+                if (masterWarningResolver) {
+                    masterWarningResolver(false);
+                    masterWarningResolver = null;
+                }
+                closeModal();
+            }
+        });
+    }
 
     return modal;
 }
@@ -2660,23 +2633,35 @@ searchContainer.addEventListener('click', (e) => {
 initializeApp();
 
 // код для работы с комментариями по версиям
-const commentsModal = document.createElement('div');
-commentsModal.className = 'comments-modal';
-commentsModal.setAttribute('role', 'dialog');
-commentsModal.setAttribute('aria-modal', 'true');
-commentsModal.setAttribute('aria-labelledby', 'comments-modal-title');
-commentsModal.innerHTML = `
-<div class="comments-modal-content">
-  <div class="comments-modal-header">
-    <h3 class="comments-modal-title" id="comments-modal-title">Comments for version <span id="comment-version-title"></span></h3>
-    <button class="comments-close-button" aria-label="Close comments">&times;</button>
-  </div>
-  <div class="comments-modal-body" id="comments-container" role="main">
-    <!-- Здесь будет инициализирован giscus -->
-  </div>
-</div>
-`;
-document.body.appendChild(commentsModal);
+let commentsModal;
+function ensureCommentsModal() {
+    if (document.getElementById('commentsModal')) return document.getElementById('commentsModal');
+
+    const template = document.getElementById('comments-modal-template');
+    if (template) {
+        const modalClone = template.content.cloneNode(true);
+        const modalElement = modalClone.querySelector('.comments-modal');
+        modalElement.id = 'commentsModal';
+        document.body.appendChild(modalElement);
+        commentsModal = modalElement;
+
+        // Re-attach event listeners after creating the modal from template
+        modalElement.querySelector('.comments-close-button').addEventListener('click', closeModal);
+        modalElement.addEventListener('click', (e) => {
+            if (e.target === modalElement) {
+                closeModal();
+            }
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && commentsModal.style.display === 'flex') {
+                closeModal();
+            }
+        });
+
+        return modalElement;
+    }
+    return null;
+}
 
 // функция для удаления giscus фрейма и скрипта
 function cleanupGiscus() {
@@ -2704,6 +2689,10 @@ const commentRefreshTimers = new Map();
 
 // функция открытия модального окна с блокировкой прокрутки основной страницы
 function openModal() {
+    const modal = ensureCommentsModal();
+    if (!modal) return;
+    commentsModal = modal;
+
     scrollPosition = window.pageYOffset;
     document.body.classList.add('modal-open');
     document.body.style.top = `-${scrollPosition}px`;
@@ -2780,24 +2769,10 @@ window.addEventListener('message', function (e) {
     }
 });
 
-// обработчик закрытия модального окна
-document.querySelector('.comments-close-button').addEventListener('click', closeModal);
-
-// закрытие модального окна при клике вне содержимого
-window.addEventListener('click', (e) => {
-    if (e.target === commentsModal) {
-        closeModal();
-    }
-});
-
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && commentsModal.style.display === 'flex') {
-        closeModal();
-    }
-});
 
 // функция открытия модального окна с комментариями для версии
 function openComments(version) {
+    ensureCommentsModal();
     document.getElementById('comment-version-title').textContent = version;
     const commentsContainer = document.getElementById('comments-container');
     cleanupGiscus();
@@ -2969,14 +2944,6 @@ function createVersionPart(text, searchTerm, className, toastMessage) {
     return element;
 }
 
-const downloadIcon = `
-<svg class="download-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-  <path d="M12 15.575c-.183 0-.36-.073-.49-.203l-4.095-4.095a.694.694 0 01.981-.981L12 13.901l3.604-3.604a.694.694 0 01.981.98l-4.095 4.095a.692.692 0 01-.49.203z"/>
-  <path d="M12 15.575a.694.694 0 01-.694-.694V3.694a.694.694 0 011.388 0v11.187c0 .383-.31.694-.694.694z"/>
-  <path d="M16.306 20.306H7.694a4.167 4.167 0 01-4.162-4.163v-2.777a.694.694 0 011.388 0v2.777a2.778 2.778 0 002.774 2.775h8.612a2.778 2.778 0 002.775-2.775v-2.777a.694.694 0 011.387 0v2.777a4.167 4.167 0 01-4.162 4.163z"/>
-</svg>
-`;
-
 // создание ячейки с кнопкой скачивания
 function createDownloadCell(link, version, os, arch, buildType) {
     const actionCell = document.createElement('td');
@@ -2999,7 +2966,10 @@ function createDownloadCell(link, version, os, arch, buildType) {
         handleDownload(downloadLink, link, version, os, arch, buildType);
     });
 
-    downloadLink.innerHTML = downloadIcon;
+    const iconTemplate = document.getElementById('download-icon-template');
+    if (iconTemplate) {
+        downloadLink.appendChild(iconTemplate.content.cloneNode(true));
+    }
     downloadContainer.appendChild(downloadLink);
 
     const downloadCountSpan = document.createElement('div');
@@ -3101,31 +3071,14 @@ function hideBlurOverlay() {
 
 function showMicroForm() {
     if (microFormContainer.style.display === 'block') return;
-    microFormContainer.innerHTML = `
-      <form id="microForm" autocomplete="off" class="micro-form-vertical micro-form-with-close">
-        <div class="micro-form-title">Add New Version</div>
-        <div class="micro-form-subtext">
-          This form is for adding new versions. You can also add outdated versions if they are missing from the table.
-          After sending, the version will be automatically checked within the next hour and, if successful, will be immediately added to the table.
-        </div>
-        <div class="micro-form-close-wrap">
-          <button type="button" class="close-micro-form" title="Close">&times;</button>
-        </div>
-        <div class="micro-form-field">
-          <label for="microFormInput" class="micro-form-label">Version</label>
-          <input type="text" id="microFormInput" class="micro-form-input micro-form-input-wide" placeholder="e.g. 1.2.62.580.gb27ad23e" maxlength="100" required />
-        </div>
-        <div id="microFormInputError"></div>
-        <div id="descBlock" class="micro-form-field">
-          <label for="microFormDesc" class="micro-form-label" id="descLabel" style="display:none;">Description</label>
-          <button type="button" id="showDescBtn" class="micro-form-desc-btn">Add description</button>
-          <textarea id="microFormDesc" class="micro-form-input micro-form-desc-textarea" placeholder="any useful information about the version" maxlength="300" style="display:none;resize:vertical;min-height:38px;"></textarea>
-        </div>
-        <div class="micro-form-actions">
-          <button type="submit" class="micro-form-send">Send</button>
-        </div>
-      </form>
-    `;
+
+    const template = document.getElementById('micro-form-template');
+    if (!template) return;
+
+    microFormContainer.innerHTML = ''; // Clear previous content
+    const formClone = template.content.cloneNode(true);
+    microFormContainer.appendChild(formClone);
+    
     microFormContainer.style.display = 'block';
     microFormContainer.style.overflow = 'hidden';
     showBlurOverlay();
