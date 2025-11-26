@@ -5,7 +5,7 @@ let currentSearchTerm = urlParams.get('search') || '';
 let currentWinVersionFilter = urlParams.get('winVersion') || null;
 let currentMacVersionFilter = urlParams.get('macVersion') || null;
 let currentLinuxVersionFilter = urlParams.get('linuxVersion') || null;
-let currentBuildFilter = (urlParams.get('build') || 'all').toLowerCase() === 'release' ? 'release' : 'all';
+let currentBuildFilter = (urlParams.get('build') || 'release').toLowerCase() === 'all' ? 'all' : 'release';
 let sortVersionAscending = urlParams.get('sortVersion') === 'asc' || (urlParams.get('sortVersion') === null && urlParams.get('sort') === 'asc');
 let sortSizeAscending = urlParams.get('sortSize') === 'asc';
 let currentSortColumn = urlParams.get('sortSize') !== null ? 'size' : 'version';
@@ -2205,7 +2205,7 @@ function syncUrlWithState() {
         params.arch = null;
     }
 
-    params.build = currentBuildFilter !== 'all' ? currentBuildFilter : null;
+    params.build = currentBuildFilter !== 'release' ? currentBuildFilter : null;
 
     params.winVersion = currentWinVersionFilter;
     params.macVersion = currentMacVersionFilter;
