@@ -35,6 +35,19 @@ const osVersionFilters = {
     ]
 };
 
+const temporarilyUnavailableOs = new Set(['win', 'mac']);
+
+function isOsTemporarilyUnavailable(os) {
+    return temporarilyUnavailableOs.has(os);
+}
+
+function getOsDisplayName(os) {
+    if (os === 'win') return 'Windows';
+    if (os === 'mac') return 'macOS';
+    if (os === 'linux') return 'Linux';
+    return os;
+}
+
 function closeAllOsVersionDropdowns() {
     document.querySelectorAll('.os-version-dropdown').forEach(dd => {
         dd.style.display = 'none';
@@ -956,7 +969,7 @@ function updateBuildFilterVisibility() {
     const select = document.getElementById('buildTypeFilter');
     if (!container) return;
 
-    if (currentOS === 'linux') {
+    if (currentOS === 'linux' || isOsTemporarilyUnavailable(currentOS)) {
         container.classList.add('hidden');
         if (select) {
             select.disabled = true;
@@ -980,7 +993,7 @@ function updateArchFilters() {
     }
 
     setTimeout(() => {
-        if (currentOS === 'linux') {
+        if (currentOS === 'linux' || isOsTemporarilyUnavailable(currentOS)) {
             archContainer.innerHTML = '';
             if (filterPanel) {
                 filterPanel.classList.add('hidden');
@@ -1973,10 +1986,34 @@ function showNoResults() {
     container.style.opacity = "1";
 }
 
+function showTemporarilyUnavailableNotice(os = currentOS) {
+    const osLabel = getOsDisplayName(os);
+    container.innerHTML = `
+        <tr class="platform-unavailable-row">
+            <td colspan="5">
+                <div class="platform-unavailable-notice">
+                    <span class="platform-unavailable-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" focusable="false">
+                            <path d="M12 3.25a1.3 1.3 0 0 1 1.14.67l8.11 14.4A1.3 1.3 0 0 1 20.11 20H3.89a1.3 1.3 0 0 1-1.14-1.93l8.11-14.4A1.3 1.3 0 0 1 12 3.25Zm0 4.1a1 1 0 0 0-1 1V12a1 1 0 1 0 2 0V8.35a1 1 0 0 0-1-1Zm0 9.4a1.15 1.15 0 1 0 0-2.3 1.15 1.15 0 0 0 0 2.3Z"></path>
+                        </svg>
+                    </span>
+                    <strong>${osLabel} builds are temporarily unavailable.</strong>
+                </div>
+            </td>
+        </tr>
+    `;
+    container.style.opacity = "1";
+}
+
 // функция для запуска ленивой загрузки в зависимости от ОС
 function startLazyLoading() {
     container.innerHTML = '';
     currentIndex = 0;
+
+    if (isOsTemporarilyUnavailable(currentOS)) {
+        showTemporarilyUnavailableNotice(currentOS);
+        return;
+    }
 
     const dataSource = getCurrentDataSource();
 
@@ -2131,6 +2168,12 @@ function performSearch(term) {
 
         container.innerHTML = "";
         currentIndex = 0;
+
+        if (isOsTemporarilyUnavailable(currentOS)) {
+            currentSearchResults = null;
+            showTemporarilyUnavailableNotice(currentOS);
+            return;
+        }
 
         // проверяем, загружены ли данные для Linux, если это текущая ОС
         if (currentOS === 'linux' && !linuxDataLoaded) {

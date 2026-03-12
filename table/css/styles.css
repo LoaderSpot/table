@@ -523,6 +523,59 @@ table.version-table tbody td {
   font-size: 14px;
 }
 
+.platform-unavailable-row td {
+  padding: 28px 20px;
+  border-bottom: 1px solid var(--color-border);
+  text-align: center;
+}
+
+.platform-unavailable-notice {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 18px 20px;
+  border: 1px solid rgba(231, 167, 24, 0.35);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(231, 167, 24, 0.14), rgba(231, 167, 24, 0.06));
+  color: var(--color-text-light);
+  margin: 0 auto;
+}
+
+.platform-unavailable-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: #ffd27b;
+  flex: 0 0 auto;
+}
+
+.platform-unavailable-icon svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+  fill: currentColor;
+}
+
+.platform-unavailable-notice strong {
+  color: #ffd27b;
+  font-size: 15px;
+}
+
+@media (max-width: 640px) {
+  .platform-unavailable-notice {
+    gap: 8px;
+    padding: 16px 14px;
+  }
+
+  .platform-unavailable-notice strong {
+    font-size: 14px;
+  }
+}
+
 table.version-table tbody td:nth-child(2),
 table.version-table tbody td:nth-child(3),
 table.version-table tbody td:nth-child(4),
