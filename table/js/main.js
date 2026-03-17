@@ -5,7 +5,6 @@ let currentSearchTerm = urlParams.get('search') || '';
 let currentWinVersionFilter = urlParams.get('winVersion') || null;
 let currentMacVersionFilter = urlParams.get('macVersion') || null;
 let currentLinuxVersionFilter = urlParams.get('linuxVersion') || null;
-let currentBuildFilter = (urlParams.get('build') || 'release').toLowerCase() === 'all' ? 'all' : 'release';
 let sortVersionAscending = urlParams.get('sortVersion') === 'asc' || (urlParams.get('sortVersion') === null && urlParams.get('sort') === 'asc');
 let sortSizeAscending = urlParams.get('sortSize') === 'asc';
 let currentSortColumn = urlParams.get('sortSize') !== null ? 'size' : 'version';
@@ -27,15 +26,15 @@ const osVersionFilters = {
     mac: [
         { version: '1.2.66.447', label: '11.x', full: 'macOS 11' },
         { version: '1.2.37.701', label: '10.15', full: 'macOS 10.15' },
-        { version: '1.2.20.1218', label: '10.14/10.13', full: 'macOS 10.14 / 10.13' },
-        { version: '1.1.89.862', label: '10.12/10.11', full: 'macOS 10.12 / OS X 10.11' }
+        { version: '1.2.20.1218', label: '10.14/10.13', full: 'macOS 10.14 / 10.13' }
+        //   { version: '1.1.89.862', label: '10.12/10.11', full: 'macOS 10.12 / OS X 10.11' }
     ],
     linux: [
         // { version: '1.2.40.651', label: 'Latest', full: 'Latest stable' }
     ]
 };
 
-const temporarilyUnavailableOs = new Set(['win', 'mac']);
+const temporarilyUnavailableOs = new Set();
 
 function isOsTemporarilyUnavailable(os) {
     return temporarilyUnavailableOs.has(os);
@@ -51,15 +50,42 @@ function getOsDisplayName(os) {
 function closeAllOsVersionDropdowns() {
     document.querySelectorAll('.os-version-dropdown').forEach(dd => {
         dd.style.display = 'none';
+        dd.classList.remove('dropdown-up');
     });
+
+    const tableContainer = document.getElementById('tableContainer');
+    if (tableContainer) {
+        tableContainer.style.overflow = '';
+    }
 }
 
 function closeAllDropdowns() {
     closeAllOsVersionDropdowns();
-    const buildDropdown = document.querySelector('.build-type-dropdown');
-    if (buildDropdown) {
-        buildDropdown.style.display = 'none';
+}
+
+function positionOsVersionDropdown(container, dropdown) {
+    if (!container || !dropdown) return;
+
+    dropdown.classList.remove('dropdown-up');
+
+    const viewportPadding = 12;
+    const previousVisibility = dropdown.style.visibility;
+    const previousDisplay = dropdown.style.display;
+
+    dropdown.style.visibility = 'hidden';
+    dropdown.style.display = 'block';
+
+    const containerRect = container.getBoundingClientRect();
+    const dropdownRect = dropdown.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - containerRect.bottom - viewportPadding;
+    const spaceAbove = containerRect.top - viewportPadding;
+
+    if (dropdownRect.height > spaceBelow && spaceAbove > spaceBelow) {
+        dropdown.classList.add('dropdown-up');
     }
+
+    dropdown.style.display = previousDisplay;
+    dropdown.style.visibility = previousVisibility;
 }
 
 // обновляем активную вкладку в ui при загрузке страницы
@@ -171,6 +197,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                 dropdown.style.display = 'none';
                             } else {
                                 closeAllDropdowns();
+                                positionOsVersionDropdown(container, dropdown);
+                                const tableContainer = document.getElementById('tableContainer');
+                                if (tableContainer) {
+                                    tableContainer.style.overflow = 'visible';
+                                }
                                 dropdown.style.display = 'block';
                             }
                         }
@@ -190,29 +221,6 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.classList.remove('active');
         }
     });
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    const buildFilterContainer = document.getElementById('buildFilterContainer');
-
-    if (!buildFilterContainer) return;
-
-    function updateBuildFilterState() {
-        buildFilterContainer.dataset.build = currentBuildFilter;
-        buildFilterContainer.title = currentBuildFilter === 'all'
-            ? "Switch to release type builds only"
-            : "Switch to all type builds";
-    }
-
-    buildFilterContainer.addEventListener('click', () => {
-        currentBuildFilter = currentBuildFilter === 'release' ? 'all' : 'release';
-        updateBuildFilterState();
-        syncUrlWithState();
-        reRenderVersions();
-    });
-
-    updateBuildFilterState();
-    updateBuildFilterVisibility();
 });
 
 function toggleOsVersionFilter(os, version, label, listItem) {
@@ -426,38 +434,178 @@ function formatSize(sizeInBytes) {
     return (parseInt(sizeInBytes, 10) / (1024 * 1024)).toFixed(2) + ' MB';
 }
 
+function normalizeMetaDate(dateValue) {
+    if (!dateValue) return '—';
+    if (/^\d{2}\.\d{2}\.\d{4}$/.test(String(dateValue))) {
+        return String(dateValue);
+    }
+    return formatDate(dateValue);
+}
+
+function normalizeMetaSize(sizeValue) {
+    if (sizeValue == null || sizeValue === '') return '—';
+    if (typeof sizeValue === 'number' || /^\d+$/.test(String(sizeValue))) {
+        return formatSize(sizeValue);
+    }
+    return String(sizeValue);
+}
+
+const supportedPlatforms = ['win', 'mac', 'linux'];
+const architectureOrder = {
+    win: ['x86', 'x64', 'arm64'],
+    mac: ['intel', 'arm64'],
+    linux: ['amd64']
+};
+
+function getOrderedArchKeys(os, archMap) {
+    if (!archMap || typeof archMap !== 'object') return [];
+
+    const keys = Object.keys(archMap);
+    const preferred = architectureOrder[os] || [];
+    const ordered = preferred.filter(arch => keys.includes(arch));
+    const remaining = keys.filter(arch => !preferred.includes(arch)).sort();
+
+    return [...ordered, ...remaining];
+}
+
+function getOrderedArchEntries(os, archMap) {
+    return getOrderedArchKeys(os, archMap).map(arch => [arch, archMap[arch]]);
+}
+
+function compareArchNames(os, left, right) {
+    const preferred = architectureOrder[os] || [];
+    const leftIndex = preferred.indexOf(left);
+    const rightIndex = preferred.indexOf(right);
+    const normalizedLeft = leftIndex === -1 ? preferred.length + 100 : leftIndex;
+    const normalizedRight = rightIndex === -1 ? preferred.length + 100 : rightIndex;
+
+    if (normalizedLeft !== normalizedRight) {
+        return normalizedLeft - normalizedRight;
+    }
+
+    return left.localeCompare(right);
+}
+
+function normalizeVersionEntry(versionData) {
+    const normalized = {
+        fullversion: versionData?.fullversion || '',
+        links: {},
+        meta: {}
+    };
+
+    supportedPlatforms.forEach(os => {
+        const compactEntries = versionData?.[os];
+        const legacyLinks = versionData?.links?.[os];
+        const source = compactEntries && typeof compactEntries === 'object'
+            ? compactEntries
+            : legacyLinks && typeof legacyLinks === 'object'
+                ? legacyLinks
+                : null;
+
+        if (!source) return;
+
+        getOrderedArchEntries(os, source).forEach(([arch, value]) => {
+            let url = null;
+            let date = null;
+            let size = null;
+
+            if (typeof value === 'string') {
+                url = value;
+                date = versionData?.meta?.[os]?.[arch]?.date ?? null;
+                size = versionData?.meta?.[os]?.[arch]?.size ?? null;
+            } else if (value && typeof value === 'object') {
+                url = value.url || versionData?.links?.[os]?.[arch] || null;
+                date = value.date ?? versionData?.meta?.[os]?.[arch]?.date ?? null;
+                size = value.size ?? versionData?.meta?.[os]?.[arch]?.size ?? null;
+            }
+
+            if (!url) return;
+
+            if (!normalized.links[os]) normalized.links[os] = {};
+            if (!normalized.meta[os]) normalized.meta[os] = {};
+
+            normalized.links[os][arch] = url;
+            normalized.meta[os][arch] = {
+                date: normalizeMetaDate(date),
+                size: normalizeMetaSize(size)
+            };
+        });
+    });
+
+    return normalized;
+}
+
+function normalizeVersionsData(data) {
+    return Object.fromEntries(
+        Object.entries(data || {}).map(([versionKey, versionData]) => [versionKey, normalizeVersionEntry(versionData)])
+    );
+}
+
+function getLinkMeta(versionData, os, arch) {
+    const meta = versionData?.meta?.[os]?.[arch] || {};
+    return {
+        date: normalizeMetaDate(meta.date),
+        size: normalizeMetaSize(meta.size)
+    };
+}
+
+function primeMetadataCache(data) {
+    headCache.clear();
+
+    Object.values(data).forEach(versionData => {
+        if (!versionData?.links) return;
+
+        Object.entries(versionData.links).forEach(([os, archMap]) => {
+            if (!archMap || typeof archMap !== 'object') return;
+
+            getOrderedArchEntries(os, archMap).forEach(([arch, link]) => {
+                if (!link) return;
+                headCache.set(link, getLinkMeta(versionData, os, arch));
+            });
+        });
+    });
+}
+
+function buildLinuxVersionsData(data) {
+    return Object.entries(data)
+        .filter(([, versionData]) => versionData?.links?.linux)
+        .map(([versionKey, versionData]) => {
+            const architectures = getOrderedArchEntries('linux', versionData.links.linux)
+                .filter(([, link]) => !!link)
+                .map(([arch, link]) => {
+                    const meta = getLinkMeta(versionData, 'linux', arch);
+                    return {
+                        arch,
+                        link,
+                        date: meta.date,
+                        size: meta.size
+                    };
+                });
+
+            return {
+                version: {
+                    short: versionKey,
+                    full: versionData.fullversion
+                },
+                architectures
+            };
+        })
+        .filter(version => version.architectures.length > 0);
+}
+
 // функция для выполнения HEAD-запроса
 async function executeHeadRequest(dateCell, sizeCell, url) {
 
     const dateCellTarget = dateCell.querySelector('.cell-wrapper') || dateCell;
     const sizeCellTarget = sizeCell.querySelector('.cell-wrapper') || sizeCell;
 
-    if (headCache.has(url)) {
-        const cached = headCache.get(url);
-        dateCellTarget.textContent = cached.date;
-        sizeCellTarget.textContent = cached.size;
-        return;
+    const cached = headCache.get(url) || { date: '—', size: '—' };
+    if (!headCache.has(url)) {
+        headCache.set(url, cached);
     }
-    try {
-        const response = await fetch(url, { method: 'HEAD' });
-        const lastModified = response.headers.get('Last-Modified');
-        const contentLength = response.headers.get('Content-Length');
 
-        const formattedDate = formatDate(lastModified);
-        const sizeMb = formatSize(contentLength);
-
-        headCache.set(url, { date: formattedDate, size: sizeMb });
-
-        dateCellTarget.textContent = formattedDate;
-        sizeCellTarget.textContent = sizeMb;
-    } catch (error) {
-        console.error('Error getting headers', error);
-
-        dateCellTarget.textContent = '—';
-        sizeCellTarget.textContent = '—';
-
-        headCache.set(url, { date: '—', size: '—' });
-    }
+    dateCellTarget.textContent = cached.date;
+    sizeCellTarget.textContent = cached.size;
 }
 
 function preventScroll(e) {
@@ -488,7 +636,7 @@ async function preloadSizesForSorting(dataSource) {
     dataSource.forEach(([versionKey, versionData]) => {
         if (!versionData.links[currentOS]) return;
 
-        Object.keys(versionData.links[currentOS]).forEach(arch => {
+        getOrderedArchKeys(currentOS, versionData.links[currentOS]).forEach(arch => {
             if (currentArch !== 'all' && arch !== currentArch) return;
 
             const link = versionData.links[currentOS][arch];
@@ -500,91 +648,9 @@ async function preloadSizesForSorting(dataSource) {
 
     if (linksToFetch.length === 0) return;
 
-    const loadingIndicator = document.getElementById('sizeLoadingIndicator');
-    const loadingText = loadingIndicator?.querySelector('.loading-text');
-    const tbody = document.getElementById('versions-container');
-
-    if (loadingIndicator) {
-        loadingIndicator.style.display = 'flex';
-        if (loadingText) {
-            loadingText.textContent = `0%`;
-        }
-    }
-
-    // очищаем tbody и добавляем skeleton эффект
-    if (tbody) {
-        const skeletonRowsHTML = Array.from({ length: 15 }, () => `
-            <tr class="skeleton-row">
-                <td><div class="skeleton-box skeleton-version"></div></td>
-                <td><div class="skeleton-box skeleton-arch"></div></td>
-                <td><div class="skeleton-box skeleton-date"></div></td>
-                <td><div class="skeleton-box skeleton-size"></div></td>
-                <td class="skeleton-download-cell">
-                    <svg class="skeleton-download-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M12 15.575c-.183 0-.36-.073-.49-.203l-4.095-4.095a.694.694 0 01.981-.981L12 13.901l3.604-3.604a.694.694 0 01.981.98l-4.095 4.095a.692.692 0 01-.49.203z"/>
-                        <path d="M12 15.575a.694.694 0 01-.694-.694V3.694a.694.694 0 011.388 0v11.187c0 .383-.31.694-.694.694z"/>
-                        <path d="M16.306 20.306H7.694a4.167 4.167 0 01-4.162-4.163v-2.777a.694.694 0 011.388 0v2.777a2.778 2.778 0 002.774 2.775h8.612a2.778 2.778 0 002.775-2.775v-2.777a.694.694 0 011.387 0v2.777a4.167 4.167 0 01-4.162 4.163z"/>
-                    </svg>
-                </td>
-            </tr>
-        `).join('');
-
-        tbody.innerHTML = skeletonRowsHTML;
-        tbody.classList.add('table-skeleton-overlay');
-
-        const tableContainer = document.getElementById('tableContainer');
-        if (tableContainer) {
-            tableContainer.style.overflow = 'hidden';
-        }
-        disableScroll();
-    }
-
-    const maxConcurrent = 15;
-    let completed = 0;
-
-    const promises = linksToFetch.map(link =>
-        (async () => {
-            try {
-                const response = await fetch(link, { method: 'HEAD' });
-                const lastModified = response.headers.get('Last-Modified');
-                const contentLength = response.headers.get('Content-Length');
-
-                const formattedDate = formatDate(lastModified);
-                const sizeMb = formatSize(contentLength);
-
-                headCache.set(link, { date: formattedDate, size: sizeMb });
-            } catch (error) {
-                headCache.set(link, { date: '—', size: '—' });
-            }
-
-            completed++;
-            if (loadingText) {
-                const percent = Math.round((completed / linksToFetch.length) * 100);
-                loadingText.textContent = `${percent}%`;
-            }
-        })()
-    );
-
-    for (let i = 0; i < promises.length; i += maxConcurrent) {
-        await Promise.all(promises.slice(i, i + maxConcurrent));
-    }
-
-    if (tbody) {
-        tbody.classList.remove('table-skeleton-overlay');
-        tbody.innerHTML = '';
-    }
-
-    const tableContainer = document.getElementById('tableContainer');
-    if (tableContainer) {
-        tableContainer.style.overflow = '';
-    }
-    enableScroll();
-
-    if (loadingIndicator) {
-        setTimeout(() => {
-            loadingIndicator.style.display = 'none';
-        }, 300);
-    }
+    linksToFetch.forEach(link => {
+        headCache.set(link, { date: '—', size: '—' });
+    });
 }
 
 // функция для генерации ключа счетчика
@@ -598,6 +664,10 @@ let commentCountsLoaded = false;
 const pendingCounterElements = new Map();
 const MIN_UPDATE_INTERVAL = 10000; // минимальный интервал между обновлениями (10 секунд)
 let lastDataUpdate = 0;
+
+function buildVersionCommentKey(version) {
+    return `spotify-version-${version}`;
+}
 
 // функция для получения всех данных одним запросом
 async function loadAllData(forceUpdate = false, commentsOnly = false) {
@@ -726,204 +796,9 @@ function updateDownloadCount(fileUrl, countElement, version, os, arch) {
     }
 }
 
-const MASTER_WARNING_KEY = 'table_master_warning_ack';
-let masterWarningResolver = null;
-let masterWarningScrollPosition = 0;
-let masterWarningBodyState = null;
-
-function hasDismissedMasterWarning() {
-    try {
-        return localStorage.getItem(MASTER_WARNING_KEY) === 'true';
-    } catch (err) {
-        console.warn('LocalStorage unavailable, falling back to always show master warning.', err);
-        return false;
-    }
-}
-
-function persistMasterWarningChoice(value) {
-    try {
-        localStorage.setItem(MASTER_WARNING_KEY, value ? 'true' : 'false');
-    } catch (err) {
-        console.warn('Failed to persist master warning preference.', err);
-    }
-}
-
-function lockBodyForMasterModal() {
-    if (masterWarningBodyState) {
-        return;
-    }
-
-    masterWarningScrollPosition = window.pageYOffset || document.documentElement.scrollTop || 0;
-    masterWarningBodyState = {
-        top: document.body.style.top,
-        position: document.body.style.position,
-        width: document.body.style.width,
-        overflow: document.body.style.overflow,
-        hadModalClass: document.body.classList.contains('modal-open')
-    };
-
-    document.body.classList.add('modal-open');
-    document.body.style.top = `-${masterWarningScrollPosition}px`;
-    document.body.style.position = 'fixed';
-    document.body.style.width = '100%';
-    document.body.style.overflow = 'hidden';
-}
-
-function unlockBodyForMasterModal() {
-    if (!masterWarningBodyState) {
-        return;
-    }
-
-    if (!masterWarningBodyState.hadModalClass) {
-        document.body.classList.remove('modal-open');
-    }
-
-    document.body.style.top = masterWarningBodyState.top;
-    document.body.style.position = masterWarningBodyState.position;
-    document.body.style.width = masterWarningBodyState.width;
-    document.body.style.overflow = masterWarningBodyState.overflow;
-
-    window.scrollTo(0, masterWarningScrollPosition);
-    masterWarningBodyState = null;
-}
-
-function ensureMasterWarningModal() {
-    let modal = document.getElementById('masterWarningModal');
-    if (modal) {
-        return modal;
-    }
-
-    const template = document.getElementById('master-warning-modal-template');
-    if (template) {
-        const modalClone = template.content.cloneNode(true);
-        modal = modalClone.querySelector('.master-warning-modal');
-        modal.id = 'masterWarningModal';
-        document.body.appendChild(modal);
-
-        const closeModal = () => {
-            const content = modal.querySelector('.master-warning-content');
-            if (content) {
-                content.classList.add('micro-form-animate-out');
-            }
-            modal.classList.remove('visible');
-            hideBlurOverlay();
-            setTimeout(() => {
-                modal.style.display = 'none';
-                if (content) {
-                    content.classList.remove('micro-form-animate-out');
-                }
-                unlockBodyForMasterModal();
-            }, 320);
-        };
-
-        const cancelBtn = modal.querySelector('#masterWarningCancel');
-        const continueBtn = modal.querySelector('#masterWarningContinue');
-        const closeBtn = modal.querySelector('.master-warning-close');
-        const checkbox = modal.querySelector('#masterWarningDontShow');
-        const persistOptOutIfChecked = () => {
-            if (checkbox.checked) {
-                persistMasterWarningChoice(true);
-            }
-        };
-
-        cancelBtn.addEventListener('click', () => {
-            persistOptOutIfChecked();
-            if (masterWarningResolver) {
-                masterWarningResolver(false);
-                masterWarningResolver = null;
-            }
-            closeModal();
-        });
-
-        closeBtn.addEventListener('click', () => {
-            persistOptOutIfChecked();
-            if (masterWarningResolver) {
-                masterWarningResolver(false);
-                masterWarningResolver = null;
-            }
-            closeModal();
-        });
-
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                persistOptOutIfChecked();
-                if (masterWarningResolver) {
-                    masterWarningResolver(false);
-                    masterWarningResolver = null;
-                }
-                closeModal();
-            }
-        });
-
-        continueBtn.addEventListener('click', () => {
-            persistMasterWarningChoice(checkbox.checked);
-            if (masterWarningResolver) {
-                masterWarningResolver(true);
-                masterWarningResolver = null;
-            }
-            closeModal();
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (modal.style.display === 'flex' && e.key === 'Escape') {
-                persistOptOutIfChecked();
-                if (masterWarningResolver) {
-                    masterWarningResolver(false);
-                    masterWarningResolver = null;
-                }
-                closeModal();
-            }
-        });
-    }
-
-    return modal;
-}
-
-function showMasterWarningModal() {
-    const modal = ensureMasterWarningModal();
-    const checkbox = modal.querySelector('#masterWarningDontShow');
-    checkbox.checked = false;
-    modal.style.display = 'flex';
-    showBlurOverlay();
-    lockBodyForMasterModal();
-    const content = modal.querySelector('.master-warning-content');
-    if (content) {
-        content.classList.add('micro-form-animate-in');
-    }
-    setTimeout(() => {
-        modal.classList.add('visible');
-        if (content) {
-            content.classList.add('micro-form-animate-visible');
-        }
-        const continueBtn = modal.querySelector('#masterWarningContinue');
-        if (continueBtn) continueBtn.focus();
-    }, 10);
-
-    return new Promise(resolve => {
-        masterWarningResolver = resolve;
-    });
-}
-
-async function confirmMasterDownload(buildType) {
-    if (!buildType || buildType.toLowerCase() !== 'master') {
-        return true;
-    }
-
-    if (hasDismissedMasterWarning()) {
-        return true;
-    }
-
-    return await showMasterWarningModal();
-}
-
 // функция для обработки событий скачивания
-async function handleDownload(downloadLink, fileUrl, version, os, arch, buildType) {
-    const allowed = await confirmMasterDownload(buildType);
-    if (!allowed) {
-        return;
-    }
-
-    const countElement = downloadLink.closest('.download-container').querySelector('div');
+async function handleDownload(downloadLink, fileUrl, version, os, arch) {
+    const countElement = downloadLink.closest('.download-container').querySelector('.download-count-slot');
     const counterKey = generateCounterKey(version, os, arch);
 
     // увеличиваем счетчик в глобальном объекте
@@ -934,17 +809,9 @@ async function handleDownload(downloadLink, fileUrl, version, os, arch, buildTyp
     countElement.innerHTML = newCount === "0" ? "" :
         `<span class="download-counter">${formatDownloadCount(newCount)}</span>`;
 
-    // скачивание файла не дожидаясь ответа от воркера
+    // скачивание файла не дожидаясь ответа от воркера;
+    // сам воркер теперь и стримит файл, и увеличивает счетчик
     window.open(fileUrl, '_blank');
-
-    fetch(`https://broad-pine-bbc0.amd64fox1.workers.dev/?counter=${encodeURIComponent(counterKey)}`, {
-        method: 'GET',
-        cache: 'no-store', // не кэшировать запрос
-        mode: 'cors',      // CORS режим
-        redirect: 'manual' // не следовать редиректам
-    }).catch(err => {
-        console.error('Worker counter update error:', err);
-    });
 }
 
 // кэш для регулярных выражений
@@ -962,25 +829,6 @@ function highlight(text, term) {
     }
 
     return text.replace(regexCache.get(term), '<mark>$1</mark>');
-}
-
-function updateBuildFilterVisibility() {
-    const container = document.querySelector('.build-filter-container');
-    const select = document.getElementById('buildTypeFilter');
-    if (!container) return;
-
-    if (currentOS === 'linux' || isOsTemporarilyUnavailable(currentOS)) {
-        container.classList.add('hidden');
-        if (select) {
-            select.disabled = true;
-        }
-    } else {
-        container.classList.remove('hidden');
-        if (select) {
-            select.disabled = false;
-            select.value = currentBuildFilter;
-        }
-    }
 }
 
 // функция обновления фильтров архитектур
@@ -1007,7 +855,7 @@ function updateArchFilters() {
 
         allVersions.forEach(([, data]) => {
             if (data.links[currentOS]) {
-                Object.keys(data.links[currentOS]).forEach(arch => archSet.add(arch));
+                getOrderedArchKeys(currentOS, data.links[currentOS]).forEach(arch => archSet.add(arch));
             }
         });
         let archArr = [];
@@ -1061,12 +909,24 @@ function compareVersions(version1, version2) {
     return 0;
 }
 
-function matchesBuildFilter(buildType) {
-    if (currentOS === 'linux' || currentBuildFilter === 'all') {
-        return true;
+function getCurrentVersionFilter(os = currentOS) {
+    if (os === 'win') return currentWinVersionFilter;
+    if (os === 'mac') return currentMacVersionFilter;
+    if (os === 'linux') return currentLinuxVersionFilter;
+    return null;
+}
+
+function hasVisibleWinMacRows(versionKey, data, os = currentOS) {
+    if (!data.links[os]) return false;
+
+    const currentVersionFilter = getCurrentVersionFilter(os);
+    if (currentVersionFilter && compareVersions(versionKey, currentVersionFilter) > 0) {
+        return false;
     }
-    const normalized = (buildType || 'release').toLowerCase();
-    return normalized === 'release';
+
+    return getOrderedArchKeys(os, data.links[os]).some(arch => {
+        return currentArch === 'all' || arch === currentArch;
+    });
 }
 
 function parseSizeToBytes(sizeStr) {
@@ -1141,7 +1001,6 @@ function reRenderVersions() {
 
 function createVersionRows(versionKey, data, searchTerm = '', isVisible = true) {
     const shortVersion = versionKey;
-    const buildType = data.buildType || null;
     const archCombos = [];
     let totalRowsForVersion = 0;
 
@@ -1159,12 +1018,8 @@ function createVersionRows(versionKey, data, searchTerm = '', isVisible = true) 
         }
     }
 
-    if (!matchesBuildFilter(buildType)) {
-        return [];
-    }
-
     if (data.links[currentOS]) {
-        for (const arch of Object.keys(data.links[currentOS])) {
+        for (const arch of getOrderedArchKeys(currentOS, data.links[currentOS])) {
             if (currentArch !== 'all' && arch !== currentArch) continue;
             const link = data.links[currentOS][arch];
             if (link) {
@@ -1179,7 +1034,7 @@ function createVersionRows(versionKey, data, searchTerm = '', isVisible = true) 
     const rows = [];
     let isFirstVersionRow = true;
 
-    archCombos.forEach((combo) => {
+    archCombos.forEach((combo, comboIndex) => {
         const row = document.createElement('tr');
 
         if (isFirstVersionRow) {
@@ -1193,27 +1048,14 @@ function createVersionRows(versionKey, data, searchTerm = '', isVisible = true) 
             const versionTextWrapper = document.createElement('div');
             versionTextWrapper.className = 'version-text-wrapper';
 
-            const { versionText, shortVersionElem } = createVersionElement(
+            const { versionText } = createVersionElement(
                 { short: shortVersion, full: data.fullversion },
-                searchTerm
+                searchTerm,
+                versionKey,
+                currentOS
             );
 
-            const commentBtn = createCommentButton(versionKey);
-
             versionTextWrapper.appendChild(versionText);
-
-            if (buildType && currentBuildFilter === 'all') {
-                const buildTypeIndicator = document.createElement('span');
-                buildTypeIndicator.className = `build-type-indicator build-type-${buildType.toLowerCase()}`;
-                buildTypeIndicator.textContent = buildType.charAt(0);
-
-                buildTypeIndicator.title = `Build type: ${buildType}`;
-
-                shortVersionElem.after(buildTypeIndicator);
-            }
-
-            const lastElement = versionTextWrapper.querySelector('.build-type-indicator') || shortVersionElem;
-            lastElement.after(commentBtn);
 
             versionContainer.appendChild(versionTextWrapper);
 
@@ -1234,7 +1076,7 @@ function createVersionRows(versionKey, data, searchTerm = '', isVisible = true) 
         sizeCell.textContent = '—';
         row.appendChild(sizeCell);
 
-        const downloadCell = createDownloadCell(combo.link, shortVersion, currentOS, combo.arch, buildType);
+        const downloadCell = createDownloadCell(combo.link, shortVersion, currentOS, combo.arch);
 
         downloadCell.setAttribute('data-download-url', combo.link);
         row.appendChild(downloadCell);
@@ -1252,6 +1094,14 @@ const ITEMS_PER_BATCH = 5; // по 5 версий за раз для ленив�
 let currentIndex = 0;
 let currentSearchResults = null;
 const container = document.getElementById('versions-container');
+let versionsAppInitialized = false;
+let versionsAppInitPromise = null;
+const ROUTE_PATHS = {
+    versions: '/versions',
+    faq: '/faq',
+    links: '/links'
+};
+const VERSIONS_ROUTE_STATE_KEY = 'loadspot:last-versions-search';
 
 // глобальная переменная для хранения Linux-пакетов
 let linuxVersionsData = [];
@@ -1370,7 +1220,7 @@ function getVersionSize(versionData, os = currentOS) {
         return '—';
     } else {
         if (versionData.links && versionData.links[os]) {
-            const archs = Object.keys(versionData.links[os]);
+            const archs = getOrderedArchKeys(os, versionData.links[os]);
             if (archs.length > 0) {
                 const link = versionData.links[os][archs[0]];
                 if (headCache.has(link)) {
@@ -1429,7 +1279,7 @@ function loadMoreLinuxRows() {
             if (sizeComp !== 0) return sizeComp;
             const versionComp = versionCompare(a.version.short, b.version.short);
             if (versionComp !== 0) return versionComp;
-            return a.arch.arch.localeCompare(b.arch.arch);
+            return compareArchNames('linux', a.arch.arch, b.arch.arch);
         });
 
         const endIndex = Math.min(currentIndex + ITEMS_PER_BATCH * 3, flatRows.length);
@@ -1437,9 +1287,11 @@ function loadMoreLinuxRows() {
         for (let i = currentIndex; i < endIndex; i++) {
             const item = flatRows[i];
             const row = document.createElement('tr');
-            const { versionText, shortVersionElem } = createVersionElement(
+            const { versionText } = createVersionElement(
                 { short: item.version.short, full: item.version.full },
-                currentSearchTerm
+                currentSearchTerm,
+                item.version.short,
+                'linux'
             );
 
             const versionContainer = document.createElement('div');
@@ -1448,10 +1300,7 @@ function loadMoreLinuxRows() {
             const versionTextWrapper = document.createElement('div');
             versionTextWrapper.className = 'version-text-wrapper';
 
-            const commentBtn = createCommentButton(item.version.short);
-
             versionTextWrapper.appendChild(versionText);
-            shortVersionElem.after(commentBtn);
             versionContainer.appendChild(versionTextWrapper);
 
             const versionCell = document.createElement('td');
@@ -1507,9 +1356,11 @@ function loadMoreLinuxRows() {
 
         const displayVersion = visibleVersions[0];
 
-        const { versionText, shortVersionElem } = createVersionElement(
+        const { versionText, spoilerSlot } = createVersionElement(
             { short: displayVersion.version.short, full: displayVersion.version.full },
-            currentSearchTerm
+            currentSearchTerm,
+            displayVersion.version.short,
+            'linux'
         );
 
         const versionContainer = document.createElement('div');
@@ -1518,10 +1369,7 @@ function loadMoreLinuxRows() {
         const versionTextWrapper = document.createElement('div');
         versionTextWrapper.className = 'version-text-wrapper';
 
-        const commentBtn = createCommentButton(displayVersion.version.short);
-
         versionTextWrapper.appendChild(versionText);
-        shortVersionElem.after(commentBtn);
         versionContainer.appendChild(versionTextWrapper);
 
         const hiddenVersions = visibleVersions.slice(1);
@@ -1537,7 +1385,7 @@ function loadMoreLinuxRows() {
                 spoilerBtn.classList.add('expanded');
             }
 
-            versionContainer.appendChild(spoilerBtn);
+            spoilerSlot.appendChild(spoilerBtn);
         }
 
         displayVersion.architectures.forEach((arch, index) => {
@@ -1589,7 +1437,9 @@ function loadMoreLinuxRows() {
                     if (index === 0) {
                         const { versionText: oldVersionText } = createVersionElement(
                             { short: olderVersion.version.short, full: olderVersion.version.full },
-                            currentSearchTerm
+                            currentSearchTerm,
+                            olderVersion.version.short,
+                            'linux'
                         );
 
                         const versionCell = document.createElement('td');
@@ -1653,9 +1503,7 @@ function loadMoreWinMacRows() {
 
             if (!versionData.links[currentOS]) return;
 
-            if (!matchesBuildFilter(versionData.buildType)) return;
-
-            Object.keys(versionData.links[currentOS]).forEach(arch => {
+            getOrderedArchKeys(currentOS, versionData.links[currentOS]).forEach(arch => {
                 if (currentArch !== 'all' && arch !== currentArch) return;
 
                 const link = versionData.links[currentOS][arch];
@@ -1685,7 +1533,7 @@ function loadMoreWinMacRows() {
             if (sizeComp !== 0) return sizeComp;
             const versionComp = versionCompare(a.versionKey, b.versionKey);
             if (versionComp !== 0) return versionComp;
-            return a.arch.localeCompare(b.arch);
+            return compareArchNames(currentOS, a.arch, b.arch);
         });
 
         const endIndex = Math.min(currentIndex + ITEMS_PER_BATCH * 3, flatRows.length);
@@ -1693,9 +1541,11 @@ function loadMoreWinMacRows() {
         for (let i = currentIndex; i < endIndex; i++) {
             const item = flatRows[i];
             const row = document.createElement('tr');
-            const { versionText, shortVersionElem } = createVersionElement(
+            const { versionText } = createVersionElement(
                 { short: item.versionKey, full: item.versionData.fullversion },
-                currentSearchTerm
+                currentSearchTerm,
+                item.versionKey,
+                currentOS
             );
 
             const versionContainer = document.createElement('div');
@@ -1704,10 +1554,7 @@ function loadMoreWinMacRows() {
             const versionTextWrapper = document.createElement('div');
             versionTextWrapper.className = 'version-text-wrapper';
 
-            const commentBtn = createCommentButton(item.versionKey);
-
             versionTextWrapper.appendChild(versionText);
-            shortVersionElem.after(commentBtn);
             versionContainer.appendChild(versionTextWrapper);
 
             const versionCell = document.createElement('td');
@@ -1767,8 +1614,6 @@ function loadMoreWinMacRows() {
             visibleVersions = versions.filter(([v]) => compareVersions(v, currentVersionFilter) <= 0);
         }
 
-        visibleVersions = visibleVersions.filter(([, versionData]) => matchesBuildFilter(versionData.buildType));
-
         if (visibleVersions.length === 0) continue;
 
         visibleVersions.sort((a, b) => versionCompare(a[0], b[0]));
@@ -1780,8 +1625,8 @@ function loadMoreWinMacRows() {
             const hiddenVersions = visibleVersions.slice(1);
 
             if (hiddenVersions.length > 0) {
-                const versionContainer = displayVersionRows[0].querySelector('.version-cell .version-container');
-                if (versionContainer) {
+                const spoilerControls = displayVersionRows[0].querySelector('.version-cell .version-spoiler-slot');
+                if (spoilerControls) {
                     const hiddenCount = hiddenVersions.length;
                     const spoilerBtn = createSpoiler(groupKey, hiddenCount);
                     const hasMatchInHidden = hasSearchMatchInHiddenVersions(visibleVersions, currentSearchTerm, 'winmac');
@@ -1791,7 +1636,7 @@ function loadMoreWinMacRows() {
                         spoilerBtn.classList.add('expanded');
                     }
 
-                    versionContainer.appendChild(spoilerBtn);
+                    spoilerControls.appendChild(spoilerBtn);
                 }
             }
 
@@ -1925,6 +1770,10 @@ function wrapSpoilerCells(row) {
 function groupVersions(versions) {
     const groups = {};
     versions.forEach(([versionKey, data]) => {
+        if (!hasVisibleWinMacRows(versionKey, data)) {
+            return;
+        }
+
         const groupKey = versionKey.split('.').slice(0, 3).join('.');
         if (!groups[groupKey]) {
             groups[groupKey] = new Map();
@@ -1959,11 +1808,11 @@ function createSpoiler(groupKey, hiddenCount) {
     spoilerBtn.title = (currentSortColumn === 'version' && !sortVersionAscending) ? 'Show older builds' : 'Show builds';
     spoilerBtn.dataset.groupKey = groupKey;
     spoilerBtn.addEventListener('click', () => toggleSpoiler(groupKey));
+    spoilerBtn.setAttribute('aria-label', hiddenCount === 1 ? 'Show one more build' : `Show ${hiddenCount} more builds`);
 
     const counterText = document.createElement('span');
     counterText.className = 'spoiler-counter-text';
-    const plural = hiddenCount > 1 ? 's' : '';
-    counterText.textContent = `${hiddenCount} more build${plural}`;
+    counterText.textContent = hiddenCount === 1 ? '+1 build' : `+${hiddenCount} builds`;
 
     const spoilerIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     spoilerIcon.setAttribute('class', 'spoiler-arrow-icon');
@@ -2038,7 +1887,7 @@ function startLazyLoading() {
                 return false;
             }
 
-            return matchesBuildFilter(data.buildType);
+            return true;
         });
 
         if (filteredVersions.length === 0) {
@@ -2219,8 +2068,7 @@ function performSearch(term) {
                 return (versionKey.toLowerCase().includes(term) ||
                     data.fullversion.toLowerCase().includes(term)) &&
                     data.links[currentOS] &&
-                    (currentArch === 'all' || data.links[currentOS].hasOwnProperty(currentArch)) &&
-                    matchesBuildFilter(data.buildType);
+                    (currentArch === 'all' || data.links[currentOS].hasOwnProperty(currentArch));
             });
             const unique = new Map();
             filtered.forEach(([versionKey, data]) => {
@@ -2237,6 +2085,10 @@ function performSearch(term) {
 }
 
 function syncUrlWithState() {
+    if (getCurrentPageKey() !== 'versions') {
+        return;
+    }
+
     const params = {};
 
     params.os = currentOS;
@@ -2247,8 +2099,6 @@ function syncUrlWithState() {
     } else {
         params.arch = null;
     }
-
-    params.build = currentBuildFilter !== 'release' ? currentBuildFilter : null;
 
     params.winVersion = currentWinVersionFilter;
     params.macVersion = currentMacVersionFilter;
@@ -2273,6 +2123,8 @@ function syncUrlWithState() {
     params.sort = null;
 
     const url = new URL(window.location);
+    url.pathname = ROUTE_PATHS.versions;
+    url.hash = '';
 
     Object.entries(params).forEach(([key, value]) => {
         if (value == null || value === undefined || value === '') {
@@ -2418,34 +2270,7 @@ function processMarkdownSpacing(mdText) {
 // функция для Linux ленивой загрузки
 async function loadLinuxPackages() {
     try {
-        const response = await fetch('versions_deb.json');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const linuxData = await response.json();
-
-        linuxVersionsData = Object.entries(linuxData).map(([versionKey, data]) => {
-            return {
-                version: {
-                    short: versionKey,
-                    full: data.fullversion
-                },
-                architectures: Object.entries(data.links).map(([arch, link]) => {
-                    // Рассчитываем размер в MB
-                    const sizeInMB = data.size ?
-                        (parseInt(data.size, 10) / (1024 * 1024)).toFixed(2) + ' MB' :
-                        '—';
-
-                    return {
-                        arch,
-                        link,
-                        date: data.data || '—',
-                        size: sizeInMB
-                    };
-                })
-            };
-        });
+        linuxVersionsData = buildLinuxVersionsData(Object.fromEntries(allVersions));
 
         linuxVersionsData.sort((a, b) => {
             return getSortMultiplier() * a.version.short.localeCompare(b.version.short, undefined, { numeric: true });
@@ -2466,33 +2291,24 @@ async function loadLinuxPackages() {
     }
 }
 
-async function initializeApp() {
-    // Проверяем хэш перед загрузкой данных таблицы
-    const hash = window.location.hash;
-    if (hash === "#faq" || hash === "#links") {
-        return; // Не инициализируем таблицу, если это markdown-страница
-    }
-
+async function loadVersionsApp() {
     try {
         const response = await fetch('versions.json');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json();
+        const rawData = await response.json();
+        const data = normalizeVersionsData(rawData);
 
         container.innerHTML = '';
+        primeMetadataCache(data);
         allVersions = Object.entries(data);
+        linuxVersionsData = buildLinuxVersionsData(data);
+        linuxDataLoaded = true;
 
         // запускаем загрузку всех данных
         loadAllData().catch(err => console.error('Data fetch error:', err));
-
-        // устанавливаем таймер для запуска HEAD-запросов если Worker не отвечает
-        if (headRequestsTimer) {
-            clearTimeout(headRequestsTimer);
-        }
-        headRequestsTimer = setTimeout(() => {
-            startHeadRequests();
-        }, 2000);
+        startHeadRequests();
 
         // отображаем первую партию данных для текущей ОС, только если это не markdown страница
         if (currentSearchTerm) {
@@ -2507,16 +2323,131 @@ async function initializeApp() {
             performSearch(currentSearchTerm);
         } else {
             if (currentOS === 'linux') {
-                loadLinuxPackages();
+                startLazyLoading();
             } else {
                 startLazyLoading();
                 updateArchFilters();
             }
         }
+
+        versionsAppInitialized = true;
     } catch (err) {
+        versionsAppInitialized = false;
         console.error('Error loading version data:', err);
         container.innerHTML = '<tr><td colspan="5">Failed to load version data.</td></tr>';
+        throw err;
     }
+}
+
+function ensureVersionsAppInitialized() {
+    if (versionsAppInitialized) {
+        return Promise.resolve();
+    }
+
+    if (!versionsAppInitPromise) {
+        versionsAppInitPromise = loadVersionsApp()
+            .catch((err) => {
+                versionsAppInitPromise = null;
+                throw err;
+            });
+    }
+
+    return versionsAppInitPromise;
+}
+
+function normalizePathname(pathname = window.location.pathname) {
+    if (!pathname || pathname === '/') return '/';
+    return pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
+}
+
+function getCurrentPageKey() {
+    const hash = window.location.hash;
+    if (hash === '#faq') return 'faq';
+    if (hash === '#links') return 'links';
+    if (hash === '#versions') return 'versions';
+
+    const pathname = normalizePathname();
+    if (pathname === ROUTE_PATHS.faq) return 'faq';
+    if (pathname === ROUTE_PATHS.links) return 'links';
+    return 'versions';
+}
+
+function rememberVersionsSearch(search = window.location.search) {
+    try {
+        sessionStorage.setItem(VERSIONS_ROUTE_STATE_KEY, search || '');
+    } catch (_) {
+        // sessionStorage may be unavailable in private mode or restricted contexts
+    }
+}
+
+function getRememberedVersionsSearch() {
+    try {
+        return sessionStorage.getItem(VERSIONS_ROUTE_STATE_KEY) || '';
+    } catch (_) {
+        return '';
+    }
+}
+
+function buildRouteUrl(pageKey) {
+    const url = new URL(window.location.origin);
+    url.pathname = ROUTE_PATHS[pageKey] || ROUTE_PATHS.versions;
+    url.hash = '';
+
+    if (pageKey === 'versions') {
+        url.search = getCurrentPageKey() === 'versions'
+            ? window.location.search
+            : getRememberedVersionsSearch();
+    } else {
+        url.search = '';
+    }
+
+    return url;
+}
+
+function navigateToPage(pageKey, replace = false) {
+    const targetKey = ROUTE_PATHS[pageKey] ? pageKey : 'versions';
+    const currentKey = getCurrentPageKey();
+
+    if (currentKey === 'versions') {
+        rememberVersionsSearch(window.location.search);
+    }
+
+    const url = buildRouteUrl(targetKey);
+    const currentUrl = `${normalizePathname()}${window.location.search}`;
+    const targetUrl = `${normalizePathname(url.pathname)}${url.search}`;
+    const method = replace ? 'replaceState' : 'pushState';
+
+    if (currentUrl !== targetUrl) {
+        window.history[method](null, '', url);
+    } else if (replace && window.location.hash) {
+        window.history.replaceState(null, '', url);
+    }
+
+    loadMarkdownPage();
+    updateNavActive();
+}
+
+function migrateLegacyRoute() {
+    const hash = window.location.hash;
+    if (hash === '#faq') {
+        if (window.location.search) rememberVersionsSearch(window.location.search);
+        navigateToPage('faq', true);
+    } else if (hash === '#links') {
+        if (window.location.search) rememberVersionsSearch(window.location.search);
+        navigateToPage('links', true);
+    } else if (hash === '#versions') {
+        navigateToPage('versions', true);
+    } else if (getCurrentPageKey() === 'versions' && normalizePathname() !== ROUTE_PATHS.versions) {
+        navigateToPage('versions', true);
+    }
+}
+
+async function initializeApp() {
+    if (getCurrentPageKey() !== 'versions') {
+        return;
+    }
+
+    return ensureVersionsAppInitialized();
 }
 
 // обработчик для переключения вкладок (фильтрации по ОС)
@@ -2562,7 +2493,7 @@ document.querySelectorAll('.filter-button').forEach(button => {
             let availableArch = new Set();
             allVersions.forEach(([, data]) => {
                 if (data.links[currentOS]) {
-                    Object.keys(data.links[currentOS]).forEach(arch => availableArch.add(arch));
+                    getOrderedArchKeys(currentOS, data.links[currentOS]).forEach(arch => availableArch.add(arch));
                 }
             });
             if (!availableArch.has(currentArch)) {
@@ -2575,7 +2506,6 @@ document.querySelectorAll('.filter-button').forEach(button => {
 
         // обновляем фильтры архитектур
         updateArchFilters();
-        updateBuildFilterVisibility();
 
         syncUrlWithState();
 
@@ -2673,8 +2603,6 @@ searchContainer.addEventListener('click', (e) => {
     e.stopPropagation();
 });
 
-initializeApp();
-
 // код для работы с комментариями по версиям
 let commentsModal;
 function ensureCommentsModal() {
@@ -2726,7 +2654,7 @@ function cleanupGiscus() {
 
 // отслеживаем загрузку giscus
 let giscusLoaded = false;
-let currentCommentVersion = '';
+let currentCommentKey = '';
 let scrollPosition = 0;
 const commentRefreshTimers = new Map();
 
@@ -2768,13 +2696,13 @@ function closeModal() {
 
         // обновляем счетчики комментариев после закрытия модального окна
         // используем запрос только для комментариев
-        if (currentCommentVersion) {
-            const t = commentRefreshTimers.get(currentCommentVersion);
+        if (currentCommentKey) {
+            const t = commentRefreshTimers.get(currentCommentKey);
             if (t) {
                 clearTimeout(t);
-                commentRefreshTimers.delete(currentCommentVersion);
+                commentRefreshTimers.delete(currentCommentKey);
             }
-            refreshCommentCountForVersion(currentCommentVersion);
+            refreshCommentCountForKey(currentCommentKey);
         }
     }, 300); // задержка должна соответствовать времени transition для opacity
 }
@@ -2795,14 +2723,14 @@ window.addEventListener('message', function (e) {
 
                 if (data.giscus.eventName === 'comment' ||
                     data.giscus.eventName === 'reply') {
-                    if (currentCommentVersion) {
-                        const prev = commentRefreshTimers.get(currentCommentVersion);
+                    if (currentCommentKey) {
+                        const prev = commentRefreshTimers.get(currentCommentKey);
                         if (prev) clearTimeout(prev);
                         const timer = setTimeout(() => {
-                            commentRefreshTimers.delete(currentCommentVersion);
-                            refreshCommentCountForVersion(currentCommentVersion);
+                            commentRefreshTimers.delete(currentCommentKey);
+                            refreshCommentCountForKey(currentCommentKey);
                         }, 800);
-                        commentRefreshTimers.set(currentCommentVersion, timer);
+                        commentRefreshTimers.set(currentCommentKey, timer);
                     }
                 }
             }
@@ -2813,21 +2741,20 @@ window.addEventListener('message', function (e) {
 });
 
 
-// функция открытия модального окна с комментариями для версии
-function openComments(version) {
+function openComments(target) {
     ensureCommentsModal();
-    document.getElementById('comment-version-title').textContent = version;
+    document.getElementById('comment-version-title').textContent = target.modalLabel;
     const commentsContainer = document.getElementById('comments-container');
     cleanupGiscus();
 
-    // ссылка на версию в шапке дискуссии 
+    // ссылка в шапке дискуссии
     let backlink = document.querySelector('meta[name="giscus:backlink"]');
     if (!backlink) {
         backlink = document.createElement('meta');
         backlink.setAttribute('name', 'giscus:backlink');
         document.head.appendChild(backlink);
     }
-    backlink.setAttribute('content', `https://loadspot.pages.dev/?os=win&winVersion=${version}`);
+    backlink.setAttribute('content', target.backlink);
 
     // giscus config
     const giscusScript = document.createElement('script');
@@ -2838,7 +2765,7 @@ function openComments(version) {
     giscusScript.setAttribute('data-category', 'Comments');
     giscusScript.setAttribute('data-category-id', 'DIC_kwDOOANMec4Cn2gF');
     giscusScript.setAttribute('data-mapping', 'specific');
-    giscusScript.setAttribute('data-term', `spotify-version-${version}`);
+    giscusScript.setAttribute('data-term', target.commentKey);
     giscusScript.setAttribute('data-strict', '0');
     giscusScript.setAttribute('data-reactions-enabled', '1');
     giscusScript.setAttribute('data-emit-metadata', '1');
@@ -2854,7 +2781,7 @@ function openComments(version) {
     };
 
     commentsContainer.appendChild(giscusScript);
-    currentCommentVersion = version;
+    currentCommentKey = target.commentKey;
     giscusLoaded = false;
 
     openModal();
@@ -2865,114 +2792,170 @@ function processDiscussionData(discussions) {
     if (!discussions) return;
 
     discussions.forEach(discussion => {
-        if (discussion.title && discussion.title.startsWith('spotify-version-')) {
-            const version = discussion.title.replace('spotify-version-', '');
-            const newCount = discussion.commentCount;
+        if (!discussion.title) return;
 
-            if (commentCountCache[version] !== newCount) {
-                commentCountCache[version] = newCount;
-                updateCommentCountForVersion(version, newCount);
-            }
+        const commentKey = discussion.title;
+        const newCount = discussion.commentCount;
+
+        if (commentCountCache[commentKey] !== newCount) {
+            commentCountCache[commentKey] = newCount;
+            updateCommentCountForKey(commentKey, newCount);
         }
     });
 }
 
-//  функция для обновления счетчика комментариев для конкретной версии
-async function refreshCommentCountForVersion(version) {
+async function refreshCommentCountForKey(commentKey) {
     // используем запрос только для комментариев
     await loadAllData(true, true);
 
-    // после обновления счетчиков комментариев, обновляем UI для конкретной версии
-    updateCommentCountForVersion(version, commentCountCache[version] || 0);
+    // после обновления счетчиков комментариев, обновляем UI для конкретной цели
+    updateCommentCountForKey(commentKey, commentCountCache[commentKey] || 0);
 }
 
 // функция для обновления существующих кнопок комментариев после загрузки данных
 function updateExistingCommentButtons() {
     document.querySelectorAll('.comment-button').forEach(button => {
-        const version = button.dataset.version;
-        if (!version) return;
-        const count = Number(commentCountCache[version] || 0);
-        const existing = button.querySelector('.comment-count');
-        if (count > 0) {
-            const badge = existing || document.createElement('span');
-            if (!existing) {
-                badge.className = 'comment-count';
-                button.appendChild(badge);
-            }
-            badge.textContent = count;
-            button.classList.add('has-comments');
-        } else {
-            if (existing) existing.remove();
-            button.classList.remove('has-comments');
-        }
+        const commentKey = button.dataset.commentKey;
+        if (!commentKey) return;
+        applyCommentCountToButton(button, commentCountCache[commentKey] || 0);
     });
 }
 
-// функция для обновления счетчика комментариев для конкретной версии
-function updateCommentCountForVersion(version, count) {
-    // находим все кнопки комментариев для данной версии
-    document.querySelectorAll(`.comment-button[data-version="${version}"]`).forEach(button => {
-        const numeric = Number(count || 0);
-        const existing = button.querySelector('.comment-count');
-        if (numeric > 0) {
-            const badge = existing || document.createElement('span');
-            if (!existing) {
-                badge.className = 'comment-count';
-                button.appendChild(badge);
-            }
-            badge.textContent = numeric;
-            button.classList.add('has-comments');
-        } else {
-            if (existing) existing.remove();
-            button.classList.remove('has-comments');
-        }
+function updateCommentCountForKey(commentKey, count) {
+    document.querySelectorAll(`.comment-button[data-comment-key="${commentKey}"]`).forEach(button => {
+        applyCommentCountToButton(button, count);
     });
 }
 
-// функция для создания кнопки комментариев с отображением количества
-function createCommentButton(version) {
+function formatCommentCount(count) {
+    const numeric = Number(count || 0);
+    if (numeric <= 0) return '';
+    if (numeric > 99) return '99+';
+    return `+${numeric}`;
+}
+
+function applyCommentCountToButton(button, count) {
+    const numeric = Number(count || 0);
+    const existing = button.querySelector('.comment-count');
+
+    if (numeric > 0) {
+        const badge = existing || document.createElement('span');
+        if (!existing) {
+            badge.className = 'comment-count';
+            button.appendChild(badge);
+        }
+        badge.textContent = formatCommentCount(numeric);
+        badge.title = `${numeric} comments`;
+        button.classList.add('has-comments');
+        return;
+    }
+
+    if (existing) existing.remove();
+    button.classList.remove('has-comments');
+}
+
+function buildVersionBacklink(version, os) {
+    const versionParamNames = {
+        win: 'winVersion',
+        mac: 'macVersion',
+        linux: 'linuxVersion'
+    };
+    const origin = window.location.origin || 'https://loadspot.pages.dev';
+    const url = new URL(`${origin}${ROUTE_PATHS.versions}`);
+    url.searchParams.set('os', os);
+
+    const versionParam = versionParamNames[os];
+    if (versionParam) {
+        url.searchParams.set(versionParam, version);
+    }
+
+    return url.toString();
+}
+
+function createCommentButton(target, options = {}) {
+    const logicalId = String(target);
+    const commentKey = options.commentKey || buildVersionCommentKey(logicalId);
+    const modalLabel = options.modalLabel || `version ${logicalId}`;
+    const backlink = options.backlink || buildVersionBacklink(logicalId, options.os || currentOS);
+
     const commentButton = document.createElement('button');
-    commentButton.className = 'comment-button';
-    commentButton.dataset.version = version;
-    commentButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>`;
-    commentButton.title = `Comments for version ${version}`;
+    commentButton.className = 'comment-button comment-button-compact';
+    commentButton.dataset.commentKey = commentKey;
+    commentButton.type = 'button';
+    commentButton.title = `Open comments for ${modalLabel}`;
+    commentButton.setAttribute('aria-label', `Open comments for ${modalLabel}`);
 
-    // если данные о комментариях уже загружены, добавляем счетчик
-    if (commentCountCache[version]) {
-        const countBadge = document.createElement('span');
-        countBadge.className = 'comment-count';
-        countBadge.textContent = commentCountCache[version];
-        commentButton.appendChild(countBadge);
+    const commentIconTemplate = document.getElementById('comment-icon-template');
+    if (commentIconTemplate) {
+        commentButton.appendChild(commentIconTemplate.content.cloneNode(true));
+    } else {
+        commentButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 17.5H6l-2.5 2v-3.244A5.9 5.9 0 0 1 2.5 13a6.5 6.5 0 0 1 6.5-6.5h6A6.5 6.5 0 0 1 21.5 13a6.5 6.5 0 0 1-6.5 6.5H10"/><path d="M8.5 11h7"/><path d="M8.5 14h4.5"/></svg>`;
+    }
 
-        // если есть комментарии, делаем бейдж более заметным
-        if (commentCountCache[version] > 0) {
-            commentButton.classList.add('has-comments');
-        }
+    if (commentCountCache[commentKey]) {
+        applyCommentCountToButton(commentButton, commentCountCache[commentKey]);
     }
 
     commentButton.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        openComments(version);
+        openComments({ commentKey, modalLabel, backlink });
     });
 
     return commentButton;
 }
 
 // функция для создания элементов версий
-function createVersionElement(version, searchTerm) {
+function createVersionElement(version, searchTerm, commentTarget = null, commentOs = currentOS) {
     const versionText = document.createElement('div');
     versionText.className = 'version-text';
 
+    const topRow = document.createElement('div');
+    topRow.className = 'version-line version-line-top';
+
     const shortVersionElem = createVersionPart(version.short || version, searchTerm, 'short-version', 'Short version copied to clipboard');
-    versionText.appendChild(shortVersionElem);
+    topRow.appendChild(shortVersionElem);
+
+    const controlsSlot = document.createElement('div');
+    controlsSlot.className = 'version-controls-slot';
+
+    const commentSlot = document.createElement('div');
+    commentSlot.className = 'version-control-slot version-comment-slot';
+    controlsSlot.appendChild(commentSlot);
+
+    const spoilerSlot = document.createElement('div');
+    spoilerSlot.className = 'version-control-slot version-spoiler-slot';
+    controlsSlot.appendChild(spoilerSlot);
+
+    const bottomRow = document.createElement('div');
+    bottomRow.className = 'version-line version-line-bottom';
 
     if (version.full) {
         const fullVersionElem = createVersionPart(version.full, searchTerm, 'full-version', 'Full version copied to clipboard');
-        versionText.appendChild(fullVersionElem);
+        bottomRow.appendChild(fullVersionElem);
+    } else {
+        const fullVersionPlaceholder = document.createElement('span');
+        fullVersionPlaceholder.className = 'full-version full-version-placeholder';
+        fullVersionPlaceholder.setAttribute('aria-hidden', 'true');
+        bottomRow.appendChild(fullVersionPlaceholder);
     }
 
-    return { versionText, shortVersionElem };
+    if (commentTarget) {
+        commentSlot.appendChild(createCommentButton(commentTarget, {
+            os: commentOs,
+            modalLabel: `version ${commentTarget}`,
+            backlink: buildVersionBacklink(commentTarget, commentOs)
+        }));
+    }
+
+    if (commentTarget) {
+        topRow.appendChild(controlsSlot);
+    }
+
+    versionText.appendChild(topRow);
+    versionText.appendChild(bottomRow);
+
+    return { versionText, shortVersionElem, topRow, controlsSlot, spoilerSlot, commentSlot };
 }
 
 function createVersionPart(text, searchTerm, className, toastMessage) {
@@ -2988,7 +2971,7 @@ function createVersionPart(text, searchTerm, className, toastMessage) {
 }
 
 // создание ячейки с кнопкой скачивания
-function createDownloadCell(link, version, os, arch, buildType) {
+function createDownloadCell(link, version, os, arch) {
     const actionCell = document.createElement('td');
     actionCell.className = 'action-cell';
 
@@ -3006,7 +2989,7 @@ function createDownloadCell(link, version, os, arch, buildType) {
 
     downloadLink.addEventListener('click', (e) => {
         e.preventDefault();
-        handleDownload(downloadLink, link, version, os, arch, buildType);
+        handleDownload(downloadLink, link, version, os, arch);
     });
 
     const iconTemplate = document.getElementById('download-icon-template');
@@ -3015,7 +2998,27 @@ function createDownloadCell(link, version, os, arch, buildType) {
     }
     downloadContainer.appendChild(downloadLink);
 
+    const copyLinkButton = document.createElement('button');
+    copyLinkButton.type = 'button';
+    copyLinkButton.className = 'copy-download-link';
+    copyLinkButton.title = `copy download link for ${version}-${arch}${extension}`;
+    copyLinkButton.setAttribute('aria-label', `Copy download link for ${version} ${arch}`);
+
+    const copyIconTemplate = document.getElementById('copy-link-icon-template');
+    if (copyIconTemplate) {
+        copyLinkButton.appendChild(copyIconTemplate.content.cloneNode(true));
+    }
+
+    copyLinkButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        copyTextToClipboard(link, 'Download link copied to clipboard');
+    });
+
+    downloadContainer.appendChild(copyLinkButton);
+
     const downloadCountSpan = document.createElement('div');
+    downloadCountSpan.className = 'download-count-slot';
     downloadCountSpan.style.fontSize = 'small';
     downloadContainer.appendChild(downloadCountSpan);
 
@@ -3027,56 +3030,85 @@ function createDownloadCell(link, version, os, arch, buildType) {
     return actionCell;
 }
 
-// загрузка markdown страниц по hash
-function loadMarkdownPage() {
-    updateNavActive();
-    const hash = window.location.hash;
-    const mdContainer = document.getElementById('markdownContainer');
-    const tableContainer = document.getElementById('tableContainer');
+const markdownPageCache = new Map();
+const markdownPageRequests = new Map();
+let markdownNavigationToken = 0;
 
-    if (hash === "#faq" || hash === "#links") {
-        // скрываем таблицу и показываем контейнер для markdown
-        tableContainer.style.display = "none";
-        mdContainer.style.display = "block"; // Показываем контейнер, чтобы было куда грузить
+function loadMarkdownContent(mdFile) {
+    if (markdownPageCache.has(mdFile)) {
+        return Promise.resolve(markdownPageCache.get(mdFile));
+    }
 
-        currentArch = null;
-        currentOS = null;
-        currentSearchTerm = null;
-        syncUrlWithState();
-
-        let mdFile = hash === "#faq" ? "content/faq.md" : "content/links.md";
-        fetch(mdFile)
+    if (!markdownPageRequests.has(mdFile)) {
+        const request = fetch(mdFile)
             .then(response => {
                 if (!response.ok) throw new Error("Error loading " + mdFile);
                 return response.text();
             })
             .then(mdText => {
-                // Преобразуем markdown в HTML с помощью marked.js
                 const processedMd = processMarkdownSpacing(mdText);
-                mdContainer.innerHTML = marked.parse(processedMd);
+                const html = marked.parse(processedMd);
+                markdownPageCache.set(mdFile, html);
+                markdownPageRequests.delete(mdFile);
+                return html;
             })
             .catch(err => {
+                markdownPageRequests.delete(mdFile);
+                throw err;
+            });
+
+        markdownPageRequests.set(mdFile, request);
+    }
+
+    return markdownPageRequests.get(mdFile);
+}
+
+// загрузка markdown страниц по текущему route
+function loadMarkdownPage() {
+    updateNavActive();
+    const pageKey = getCurrentPageKey();
+    const mdContainer = document.getElementById('markdownContainer');
+    const tableContainer = document.getElementById('tableContainer');
+
+    if (pageKey === 'faq' || pageKey === 'links') {
+        // скрываем таблицу и показываем контейнер для markdown
+        tableContainer.style.display = "none";
+        mdContainer.style.display = "block"; // Показываем контейнер, чтобы было куда грузить
+
+        let mdFile = pageKey === 'faq' ? "content/faq.md" : "content/links.md";
+        const currentToken = ++markdownNavigationToken;
+
+        loadMarkdownContent(mdFile)
+            .then(html => {
+                if (currentToken !== markdownNavigationToken) return;
+                mdContainer.innerHTML = html;
+            })
+            .catch(err => {
+                if (currentToken !== markdownNavigationToken) return;
                 mdContainer.innerHTML = "<p>Error loading page</p>";
                 console.error(err);
             });
     } else {
         // Показываем таблицу и скрываем контейнер markdown
+        markdownNavigationToken++;
         mdContainer.style.display = "none";
         tableContainer.style.display = "block";
+        ensureVersionsAppInitialized().catch(err => console.error('Error loading version data:', err));
     }
 }
 
-// Обработчик изменения hash
-window.addEventListener('hashchange', () => {
+// Обработчик навигации по истории браузера
+window.addEventListener('popstate', () => {
     loadMarkdownPage();
     updateNavActive();
 });
 
-// Новая функция для обновления active-состояния навигационных ссылок по hash
+// обновление active-состояния навигационных ссылок по route
 function updateNavActive() {
-    const hash = window.location.hash;
+    const currentPage = getCurrentPageKey();
     document.querySelectorAll('.nav-center a').forEach(link => {
-        if ((hash === "" && link.getAttribute("href") === "index.html") || link.getAttribute("href") === hash) {
+        const targetPage = link.dataset.page;
+        if (targetPage === currentPage) {
             link.classList.add("active");
         } else {
             link.classList.remove("active");
@@ -3086,7 +3118,20 @@ function updateNavActive() {
 
 // Вызываем при первой загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
+    migrateLegacyRoute();
+    initializeApp().catch(err => console.error('Error loading version data:', err));
     loadMarkdownPage(); // Сначала проверяем и загружаем markdown
+
+    document.querySelectorAll('.nav-center a[data-page]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+                return;
+            }
+
+            e.preventDefault();
+            navigateToPage(link.dataset.page);
+        });
+    });
 });
 
 // Кнопка плюс и микроформа
@@ -3121,7 +3166,7 @@ function showMicroForm() {
     microFormContainer.innerHTML = ''; // Clear previous content
     const formClone = template.content.cloneNode(true);
     microFormContainer.appendChild(formClone);
-    
+
     microFormContainer.style.display = 'block';
     microFormContainer.style.overflow = 'hidden';
     showBlurOverlay();

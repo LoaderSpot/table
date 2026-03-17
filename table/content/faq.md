@@ -7,8 +7,7 @@
   <div class="faq-item">
     <div class="question">Am I definitely downloading the official installer?</div>
     <div class="answer">
-    Yes, direct links to Spotify's servers are used for the Windows and Mac builds. The Linux builds are stored in our separate GitHub repo, since they do not accumulate builds on their server
-  
+    Yes. Downloads are streamed through our Cloudflare Worker from our private archive, so the public site does not expose the upstream storage URL
   </div>
   </div>
 
@@ -33,14 +32,6 @@
     Linux builds are released with delays, and some versions may also be skipped. This is because compiling the Linux builds is handled by a limited number of developers
 
     Additionally, they only store a few recent Linux builds on their server, removing the oldest one when a new version is released. Therefore, I archive the builds as they come out in a GitHub repo to maintain access to older versions
-  
-  </div>
-  </div>
-
-  <div class="faq-item">
-    <div class="question">What are "master" builds and should I use them?</div>
-    <div class="answer">
-    The master build is a pre-release version of the client. Despite this, please use this build type only for testing
   
   </div>
   </div>
