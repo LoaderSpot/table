@@ -7,7 +7,7 @@
   <div class="faq-item">
     <div class="question">Am I definitely downloading the official installer?</div>
     <div class="answer">
-    Yes. Downloads are streamed through our Cloudflare Worker from our private archive, so the public site does not expose the upstream storage URL
+    Yes, you can verify the signature of every installer downloaded from this website
   </div>
   </div>
 
