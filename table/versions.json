@@ -58,6 +58,11 @@
   "1.2.83.461": {
     "fullversion": "1.2.83.461.g4d9c3dae",
     "win": {
+      "x64": {
+        "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.83.461.g4d9c3dae-x64.exe",
+        "date": "15.03.2026",
+        "size": "121.30 MB"
+      },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.83.461.g4d9c3dae-arm64.exe",
         "date": "15.03.2026",
