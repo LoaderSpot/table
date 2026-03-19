@@ -957,6 +957,11 @@ table.version-table td:nth-child(5) {
   background: #ffffff12;
 }
 
+.download-link.download-cooldown {
+  pointer-events: none;
+  opacity: 0.45;
+}
+
 .download-icon {
   width: 16px;
   height: 16px;

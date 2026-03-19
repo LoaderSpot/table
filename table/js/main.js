@@ -797,22 +797,191 @@ function updateDownloadCount(fileUrl, countElement, version, os, arch) {
     }
 }
 
+// cooldown для кнопок скачивания (предотвращает повторные запросы)
+const downloadCooldowns = new WeakSet();
+const pendingDownloadRequests = new Map();
+let downloadRequestSeq = 0;
+const DOWNLOAD_IFRAME_SETTLE_MS = 15000;
+
+function getDownloadFileName(fileUrl, fallback = 'download') {
+    try {
+        const url = new URL(fileUrl, window.location.href);
+        const pathName = url.pathname.split('/').pop() || '';
+        const decoded = decodeURIComponent(pathName);
+        return decoded || fallback;
+    } catch {
+        return fallback;
+    }
+}
+
+function escapeToastText(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function createDownloadErrorMessage(status, message, fileName) {
+    const safeStatus = Number(status) > 0 ? Number(status) : null;
+    const trimmedMessage = escapeToastText(String(message || '').trim());
+    const safeFileName = escapeToastText(fileName);
+
+    if (safeStatus === 429) {
+        return `Download blocked for ${safeFileName}.\nToo many requests. Please wait and try again.`;
+    }
+
+    if (safeStatus === 404) {
+        return `File not found: ${safeFileName}`;
+    }
+
+    if (safeStatus === 403) {
+        return `Access denied for ${safeFileName}`;
+    }
+
+    if (safeStatus && trimmedMessage) {
+        return `Download failed (${safeStatus}): ${trimmedMessage}`;
+    }
+
+    if (safeStatus) {
+        return `Download failed (${safeStatus}) for ${safeFileName}`;
+    }
+
+    if (trimmedMessage) {
+        return `Download failed for ${safeFileName}.\n${trimmedMessage}`;
+    }
+
+    return `Download failed for ${safeFileName}`;
+}
+
+function rollbackDownloadCounter(counterKey, previousCount, countElement) {
+    const safePreviousCount = Math.max(0, Number(previousCount) || 0);
+    allDownloadCounters[counterKey] = String(safePreviousCount);
+
+    if (countElement) {
+        countElement.innerHTML = safePreviousCount === 0
+            ? ''
+            : `<span class="download-counter">${formatDownloadCount(String(safePreviousCount))}</span>`;
+    }
+}
+
+function cleanupDownloadRequest(requestId, reason = 'done') {
+    const pending = pendingDownloadRequests.get(requestId);
+    if (!pending) return null;
+
+    pendingDownloadRequests.delete(requestId);
+
+    if (pending.timeoutId) {
+        clearTimeout(pending.timeoutId);
+    }
+
+    if (pending.frame) {
+        pending.frame.src = 'about:blank';
+        if (pending.frame.parentNode) {
+            pending.frame.parentNode.removeChild(pending.frame);
+        }
+    }
+
+    if (reason === 'error') {
+        rollbackDownloadCounter(pending.counterKey, pending.previousCount, pending.countElement);
+    }
+
+    return pending;
+}
+
+function createDownloadFrame(requestId) {
+    const frame = document.createElement('iframe');
+    frame.name = `download-bridge-${requestId}`;
+    frame.title = 'download bridge';
+    frame.setAttribute('aria-hidden', 'true');
+    frame.style.position = 'fixed';
+    frame.style.left = '-9999px';
+    frame.style.top = '0';
+    frame.style.width = '0';
+    frame.style.height = '0';
+    frame.style.border = '0';
+    frame.style.opacity = '0';
+    frame.style.pointerEvents = 'none';
+    return frame;
+}
+
+function buildDownloadFrameUrl(fileUrl, requestId) {
+    const url = new URL(fileUrl, window.location.href);
+    url.searchParams.set('dl_frame', '1');
+    url.searchParams.set('dl_req', requestId);
+    return url.toString();
+}
+
+window.addEventListener('message', (event) => {
+    if (!event.data || typeof event.data !== 'object') return;
+    if (event.data.type !== 'download-error') return;
+
+    const pendingEntry = [...pendingDownloadRequests.entries()].find(([, pending]) => {
+        return pending.frame?.contentWindow
+            && event.source === pending.frame.contentWindow
+            && event.origin === pending.downloadOrigin;
+    });
+    if (!pendingEntry) return;
+
+    const [requestId, pending] = pendingEntry;
+    cleanupDownloadRequest(requestId, 'error');
+
+    const message = createDownloadErrorMessage(
+        event.data.status,
+        event.data.message,
+        pending.fileName
+    );
+    showToast(message, 5000, 'error');
+});
+
 // функция для обработки событий скачивания
 async function handleDownload(downloadLink, fileUrl, version, os, arch) {
+    // блокируем повторные клики в течение cooldown
+    if (downloadCooldowns.has(downloadLink)) return;
+    downloadCooldowns.add(downloadLink);
+    downloadLink.classList.add('download-cooldown');
+    setTimeout(() => {
+        downloadCooldowns.delete(downloadLink);
+        downloadLink.classList.remove('download-cooldown');
+    }, 5000);
+
     const countElement = downloadLink.closest('.download-container').querySelector('.download-count-slot');
     const counterKey = generateCounterKey(version, os, arch);
+    const previousCount = parseInt(allDownloadCounters[counterKey] || "0", 10);
 
     // увеличиваем счетчик в глобальном объекте
-    const newCount = (parseInt(allDownloadCounters[counterKey] || "0", 10) + 1).toString();
+    const newCount = (previousCount + 1).toString();
     allDownloadCounters[counterKey] = newCount;
 
     // обновляем UI с новым значением
     countElement.innerHTML = newCount === "0" ? "" :
         `<span class="download-counter">${formatDownloadCount(newCount)}</span>`;
 
-    // скачивание файла не дожидаясь ответа от воркера;
-    // сам воркер теперь и стримит файл, и увеличивает счетчик
-    window.open(fileUrl, '_blank');
+    const requestId = `${Date.now()}-${++downloadRequestSeq}`;
+    const downloadOrigin = new URL(fileUrl, window.location.href).origin;
+    const fileName = getDownloadFileName(fileUrl, `${version}-${os}-${arch}`);
+    const frame = createDownloadFrame(requestId);
+    document.body.appendChild(frame);
+
+    // Если воркер не прислал iframe-ошибку в течение этого окна,
+    // считаем, что скачивание стартовало успешно, и просто убираем bridge
+    const timeoutId = setTimeout(() => {
+        cleanupDownloadRequest(requestId, 'done');
+    }, DOWNLOAD_IFRAME_SETTLE_MS);
+
+    pendingDownloadRequests.set(requestId, {
+        requestId,
+        frame,
+        timeoutId,
+        counterKey,
+        previousCount,
+        countElement,
+        downloadOrigin,
+        fileName
+    });
+
+    frame.src = buildDownloadFrameUrl(fileUrl, requestId);
 }
 
 // кэш для регулярных выражений
