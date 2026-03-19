@@ -430,8 +430,9 @@ function formatDate(dateString) {
 
 // функция для форматирования размера в MB
 function formatSize(sizeInBytes) {
-    if (!sizeInBytes) return '—';
-    return (parseInt(sizeInBytes, 10) / (1024 * 1024)).toFixed(2) + ' MB';
+    const bytes = Number(sizeInBytes);
+    if (!Number.isFinite(bytes) || bytes <= 0) return '—';
+    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
 }
 
 function normalizeMetaDate(dateValue) {
@@ -930,9 +931,13 @@ function hasVisibleWinMacRows(versionKey, data, os = currentOS) {
 }
 
 function parseSizeToBytes(sizeStr) {
-    if (!sizeStr || sizeStr === '—') return 0;
+    if (sizeStr == null || sizeStr === '' || sizeStr === '—') return 0;
 
-    const match = sizeStr.match(/^([\d.]+)\s*(MB|GB|KB|B)?$/i);
+    if (typeof sizeStr === 'number') {
+        return sizeStr;
+    }
+
+    const match = String(sizeStr).match(/^([\d.]+)\s*(MB|GB|KB|B)?$/i);
     if (!match) return 0;
 
     const value = parseFloat(match[1]);

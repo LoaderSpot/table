@@ -4,25 +4,25 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.85.519.g549a528b-x64.exe",
-        "date": "16.03.2026",
-        "size": "121.95 MB"
+        "date": "13.03.2026",
+        "size": 127874744
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.85.519.g549a528b-arm64.exe",
-        "date": "16.03.2026",
-        "size": "111.90 MB"
+        "date": "13.03.2026",
+        "size": 117331872
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.85.519.g549a528b-x86_64.tbz",
-        "date": "16.03.2026",
-        "size": "150.87 MB"
+        "date": "13.03.2026",
+        "size": 158194053
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.85.519.g549a528b-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "138.34 MB"
+        "date": "13.03.2026",
+        "size": 145057897
       }
     }
   },
@@ -31,27 +31,27 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.84.476.ga1ff6607-x64.exe",
-        "date": "14.03.2026",
-        "size": "121.68 MB"
+        "date": "25.02.2026",
+        "size": 127589504
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.84.476.ga1ff6607-arm64.exe",
-        "date": "16.03.2026",
-        "size": "111.78 MB"
+        "date": "25.02.2026",
+        "size": 117210096
       }
     },
     "mac": {
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.84.476.ga1ff6607-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "138.20 MB"
+        "date": "25.02.2026",
+        "size": 144909395
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.84.476.ga1ff6607_amd64.deb",
-        "date": "15.03.2026",
-        "size": "150.34 MB"
+        "date": "09.03.2026",
+        "size": 157643240
       }
     }
   },
@@ -60,20 +60,20 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.83.461.g4d9c3dae-x64.exe",
-        "date": "15.03.2026",
-        "size": "121.30 MB"
+        "date": "15.02.2026",
+        "size": 127197248
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.83.461.g4d9c3dae-arm64.exe",
-        "date": "15.03.2026",
-        "size": "111.63 MB"
+        "date": "15.02.2026",
+        "size": 117051304
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.83.461.g4d9c3dae-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "150.56 MB"
+        "date": "15.02.2026",
+        "size": 157872873
       }
     }
   },
@@ -82,13 +82,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.83.456.g111afea6-x64.exe",
-        "date": "14.03.2026",
-        "size": "121.67 MB"
+        "date": "10.02.2026",
+        "size": 127584312
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.83.456.g111afea6-arm64.exe",
-        "date": "15.03.2026",
-        "size": "111.63 MB"
+        "date": "10.02.2026",
+        "size": 117047560
       }
     }
   },
@@ -97,13 +97,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.83.453.g1fae877b-x64.exe",
-        "date": "14.03.2026",
-        "size": "121.52 MB"
+        "date": "07.02.2026",
+        "size": 127423752
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.83.453.g1fae877b-arm64.exe",
-        "date": "15.03.2026",
-        "size": "111.62 MB"
+        "date": "07.02.2026",
+        "size": 117039680
       }
     }
   },
@@ -112,27 +112,27 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.82.428.g0ac8be2b-x64.exe",
-        "date": "14.03.2026",
-        "size": "120.21 MB"
+        "date": "27.01.2026",
+        "size": 126045200
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.82.428.g0ac8be2b-arm64.exe",
-        "date": "15.03.2026",
-        "size": "111.17 MB"
+        "date": "27.01.2026",
+        "size": 116567784
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.82.428.g0ac8be2b-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "149.62 MB"
+        "date": "27.01.2026",
+        "size": 156888301
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.82.428.g0ac8be2b_amd64.deb",
-        "date": "15.03.2026",
-        "size": "149.13 MB"
+        "date": "27.01.2026",
+        "size": 156375346
       }
     }
   },
@@ -141,25 +141,25 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.81.264.gb4ad4efa-x64.exe",
-        "date": "14.03.2026",
-        "size": "120.19 MB"
+        "date": "13.01.2026",
+        "size": 126032008
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.81.264.gb4ad4efa-arm64.exe",
-        "date": "15.03.2026",
-        "size": "110.94 MB"
+        "date": "13.01.2026",
+        "size": 116327608
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.81.264.gb4ad4efa-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "149.51 MB"
+        "date": "13.01.2026",
+        "size": 156776287
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.81.264.gb4ad4efa-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "137.52 MB"
+        "date": "13.01.2026",
+        "size": 144196029
       }
     }
   },
@@ -168,13 +168,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.80.358.g74e46c21-x64.exe",
-        "date": "14.03.2026",
-        "size": "120.25 MB"
+        "date": "03.01.2026",
+        "size": 126089680
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.80.358.g74e46c21-arm64.exe",
-        "date": "15.03.2026",
-        "size": "110.94 MB"
+        "date": "03.01.2026",
+        "size": 116332768
       }
     }
   },
@@ -183,15 +183,15 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.79.427.g80eb4a07-x64.exe",
-        "date": "14.03.2026",
-        "size": "120.19 MB"
+        "date": "19.12.2025",
+        "size": 126027248
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.79.427.g80eb4a07_amd64.deb",
-        "date": "15.03.2026",
-        "size": "148.26 MB"
+        "date": "19.12.2025",
+        "size": 155456648
       }
     }
   },
@@ -200,8 +200,8 @@
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.79.425.g1d0fcf61_amd64.deb",
-        "date": "15.03.2026",
-        "size": "148.18 MB"
+        "date": "16.12.2025",
+        "size": 155381166
       }
     }
   },
@@ -210,8 +210,8 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.78.418.gaeeb5ebd-x64.exe",
-        "date": "14.03.2026",
-        "size": "120.19 MB"
+        "date": "03.12.2025",
+        "size": 126029976
       }
     }
   },
@@ -220,13 +220,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.78.410.g8ed2b60a-x64.exe",
-        "date": "14.03.2026",
-        "size": "119.91 MB"
+        "date": "01.12.2025",
+        "size": 125739392
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.78.410.g8ed2b60a-arm64.exe",
-        "date": "15.03.2026",
-        "size": "110.39 MB"
+        "date": "01.12.2025",
+        "size": 115756992
       }
     }
   },
@@ -235,20 +235,20 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.77.358.g4339a634-x64.exe",
-        "date": "14.03.2026",
-        "size": "119.55 MB"
+        "date": "19.11.2025",
+        "size": 125361184
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.77.358.g4339a634-arm64.exe",
-        "date": "15.03.2026",
-        "size": "109.50 MB"
+        "date": "19.11.2025",
+        "size": 114816488
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.77.358.g4339a634_amd64.deb",
-        "date": "15.03.2026",
-        "size": "148.31 MB"
+        "date": "19.11.2025",
+        "size": 155510286
       }
     }
   },
@@ -257,13 +257,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.77.357.g6a28e474-x64.exe",
-        "date": "14.03.2026",
-        "size": "119.34 MB"
+        "date": "18.11.2025",
+        "size": 125141328
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.77.357.g6a28e474-arm64.exe",
-        "date": "15.03.2026",
-        "size": "109.49 MB"
+        "date": "18.11.2025",
+        "size": 114810248
       }
     }
   },
@@ -272,13 +272,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.77.352.g26264c50-x64.exe",
-        "date": "14.03.2026",
-        "size": "119.51 MB"
+        "date": "16.11.2025",
+        "size": 125317016
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.77.352.g26264c50-arm64.exe",
-        "date": "15.03.2026",
-        "size": "109.51 MB"
+        "date": "16.11.2025",
+        "size": 114831784
       }
     }
   },
@@ -287,8 +287,8 @@
     "win": {
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.77.351.geb47b01f-arm64.exe",
-        "date": "15.03.2026",
-        "size": "109.49 MB"
+        "date": "16.11.2025",
+        "size": 114812792
       }
     }
   },
@@ -297,8 +297,8 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.76.298.g2316a870-x64.exe",
-        "date": "14.03.2026",
-        "size": "119.09 MB"
+        "date": "06.11.2025",
+        "size": 124879304
       }
     }
   },
@@ -307,13 +307,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.76.297.ga70a30a3-x64.exe",
-        "date": "14.03.2026",
-        "size": "119.14 MB"
+        "date": "05.11.2025",
+        "size": 124930824
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.76.297.ga70a30a3-arm64.exe",
-        "date": "15.03.2026",
-        "size": "109.39 MB"
+        "date": "05.11.2025",
+        "size": 114699352
       }
     }
   },
@@ -322,13 +322,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.76.286.g733f9d86-x64.exe",
-        "date": "14.03.2026",
-        "size": "119.18 MB"
+        "date": "03.11.2025",
+        "size": 124966720
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.76.286.g733f9d86-arm64.exe",
-        "date": "15.03.2026",
-        "size": "109.39 MB"
+        "date": "03.11.2025",
+        "size": 114708808
       }
     }
   },
@@ -337,13 +337,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.75.510.g8f748905-x64.exe",
-        "date": "14.03.2026",
-        "size": "119.15 MB"
+        "date": "24.10.2025",
+        "size": 124934384
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.75.510.g8f748905-arm64.exe",
-        "date": "15.03.2026",
-        "size": "109.34 MB"
+        "date": "24.10.2025",
+        "size": 114655120
       }
     }
   },
@@ -352,8 +352,8 @@
     "win": {
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.75.508.g2079da61-arm64.exe",
-        "date": "15.03.2026",
-        "size": "109.32 MB"
+        "date": "21.10.2025",
+        "size": 114626568
       }
     }
   },
@@ -362,13 +362,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.75.507.gee6e6c93-x64.exe",
-        "date": "14.03.2026",
-        "size": "119.15 MB"
+        "date": "17.10.2025",
+        "size": 124933944
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.75.507.gee6e6c93-arm64.exe",
-        "date": "15.03.2026",
-        "size": "109.32 MB"
+        "date": "17.10.2025",
+        "size": 114631056
       }
     }
   },
@@ -377,13 +377,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.75.506.g38295b74-x64.exe",
-        "date": "14.03.2026",
-        "size": "119.17 MB"
+        "date": "14.10.2025",
+        "size": 124958888
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.75.506.g38295b74-arm64.exe",
-        "date": "15.03.2026",
-        "size": "109.31 MB"
+        "date": "14.10.2025",
+        "size": 114617824
       }
     }
   },
@@ -392,13 +392,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.75.499.g0c61121f-x64.exe",
-        "date": "14.03.2026",
-        "size": "119.32 MB"
+        "date": "10.10.2025",
+        "size": 125114448
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.75.499.g0c61121f-arm64.exe",
-        "date": "15.03.2026",
-        "size": "109.34 MB"
+        "date": "10.10.2025",
+        "size": 114652512
       }
     }
   },
@@ -407,13 +407,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.75.391.g6c85102e-x64.exe",
-        "date": "14.03.2026",
-        "size": "118.99 MB"
+        "date": "07.10.2025",
+        "size": 124774496
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.75.391.g6c85102e-arm64.exe",
-        "date": "15.03.2026",
-        "size": "109.23 MB"
+        "date": "07.10.2025",
+        "size": 114537232
       }
     }
   },
@@ -422,13 +422,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.75.280.gb8d7ae93-x64.exe",
-        "date": "14.03.2026",
-        "size": "118.89 MB"
+        "date": "03.10.2025",
+        "size": 124661136
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.75.280.gb8d7ae93-arm64.exe",
-        "date": "15.03.2026",
-        "size": "109.22 MB"
+        "date": "03.10.2025",
+        "size": 114523776
       }
     }
   },
@@ -437,20 +437,20 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.74.477.g3be53afe-x64.exe",
-        "date": "14.03.2026",
-        "size": "117.76 MB"
+        "date": "30.09.2025",
+        "size": 123478880
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.74.477.g3be53afe-arm64.exe",
-        "date": "15.03.2026",
-        "size": "108.02 MB"
+        "date": "30.09.2025",
+        "size": 113272016
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.74.477.g3be53afe_amd64.deb",
-        "date": "15.03.2026",
-        "size": "147.49 MB"
+        "date": "20.10.2025",
+        "size": 154653044
       }
     }
   },
@@ -459,13 +459,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.74.471.g95134d25-x64.exe",
-        "date": "14.03.2026",
-        "size": "117.93 MB"
+        "date": "26.09.2025",
+        "size": 123661336
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.74.471.g95134d25-arm64.exe",
-        "date": "15.03.2026",
-        "size": "107.99 MB"
+        "date": "26.09.2025",
+        "size": 113234408
       }
     }
   },
@@ -474,13 +474,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.74.462.g16b80659-x64.exe",
-        "date": "14.03.2026",
-        "size": "117.94 MB"
+        "date": "23.09.2025",
+        "size": 123669960
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.74.462.g16b80659-arm64.exe",
-        "date": "15.03.2026",
-        "size": "108.00 MB"
+        "date": "23.09.2025",
+        "size": 113244912
       }
     }
   },
@@ -489,13 +489,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.73.474.g7b30bb2b-x64.exe",
-        "date": "14.03.2026",
-        "size": "117.87 MB"
+        "date": "19.09.2025",
+        "size": 123593848
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.73.474.g7b30bb2b-arm64.exe",
-        "date": "15.03.2026",
-        "size": "107.82 MB"
+        "date": "19.09.2025",
+        "size": 113061808
       }
     }
   },
@@ -504,13 +504,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.73.468.ga3576127-x64.exe",
-        "date": "14.03.2026",
-        "size": "117.52 MB"
+        "date": "15.09.2025",
+        "size": 123223800
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.73.468.ga3576127-arm64.exe",
-        "date": "15.03.2026",
-        "size": "107.84 MB"
+        "date": "15.09.2025",
+        "size": 113073648
       }
     }
   },
@@ -519,13 +519,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.73.466.gd9dcf250-x64.exe",
-        "date": "14.03.2026",
-        "size": "117.82 MB"
+        "date": "12.09.2025",
+        "size": 123545536
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.73.466.gd9dcf250-arm64.exe",
-        "date": "15.03.2026",
-        "size": "107.83 MB"
+        "date": "12.09.2025",
+        "size": 113064984
       }
     }
   },
@@ -534,13 +534,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.73.465.g421365a8-x64.exe",
-        "date": "14.03.2026",
-        "size": "117.57 MB"
+        "date": "08.09.2025",
+        "size": 123278880
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.73.465.g421365a8-arm64.exe",
-        "date": "15.03.2026",
-        "size": "107.87 MB"
+        "date": "08.09.2025",
+        "size": 113107264
       }
     }
   },
@@ -549,13 +549,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.73.451.g3cd20529-x64.exe",
-        "date": "14.03.2026",
-        "size": "117.78 MB"
+        "date": "05.09.2025",
+        "size": 123500040
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.73.451.g3cd20529-arm64.exe",
-        "date": "15.03.2026",
-        "size": "107.85 MB"
+        "date": "05.09.2025",
+        "size": 113084304
       }
     }
   },
@@ -564,13 +564,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.72.438.g8c88c31c-x64.exe",
-        "date": "14.03.2026",
-        "size": "117.65 MB"
+        "date": "01.09.2025",
+        "size": 123367448
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.72.438.g8c88c31c-arm64.exe",
-        "date": "15.03.2026",
-        "size": "107.78 MB"
+        "date": "01.09.2025",
+        "size": 113012544
       }
     }
   },
@@ -579,13 +579,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.72.437.gaf82ef12-x64.exe",
-        "date": "14.03.2026",
-        "size": "117.72 MB"
+        "date": "29.08.2025",
+        "size": 123434632
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.72.437.gaf82ef12-arm64.exe",
-        "date": "15.03.2026",
-        "size": "107.81 MB"
+        "date": "29.08.2025",
+        "size": 113042624
       }
     }
   },
@@ -594,13 +594,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.72.435.ge33795c7-x64.exe",
-        "date": "14.03.2026",
-        "size": "117.51 MB"
+        "date": "25.08.2025",
+        "size": 123214168
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.72.435.ge33795c7-arm64.exe",
-        "date": "15.03.2026",
-        "size": "107.79 MB"
+        "date": "25.08.2025",
+        "size": 113029096
       }
     }
   },
@@ -609,20 +609,20 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.71.421.g794ff5e5-x64.exe",
-        "date": "14.03.2026",
-        "size": "117.47 MB"
+        "date": "22.08.2025",
+        "size": 123179968
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.71.421.g794ff5e5-arm64.exe",
-        "date": "15.03.2026",
-        "size": "107.67 MB"
+        "date": "22.08.2025",
+        "size": 112902416
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.71.421.g794ff5e5-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "145.28 MB"
+        "date": "22.08.2025",
+        "size": 152335453
       }
     }
   },
@@ -631,13 +631,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.70.409.gd4fa4141-x64.exe",
-        "date": "14.03.2026",
-        "size": "114.24 MB"
+        "date": "18.08.2025",
+        "size": 119793200
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.70.409.gd4fa4141-arm64.exe",
-        "date": "15.03.2026",
-        "size": "106.25 MB"
+        "date": "18.08.2025",
+        "size": 111408424
       }
     }
   },
@@ -646,13 +646,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.70.407.g122a4669-x64.exe",
-        "date": "14.03.2026",
-        "size": "114.29 MB"
+        "date": "15.08.2025",
+        "size": 119842248
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.70.407.g122a4669-arm64.exe",
-        "date": "15.03.2026",
-        "size": "106.26 MB"
+        "date": "15.08.2025",
+        "size": 111420504
       }
     }
   },
@@ -661,13 +661,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.70.406.g090b09ce-x64.exe",
-        "date": "14.03.2026",
-        "size": "114.23 MB"
+        "date": "11.08.2025",
+        "size": 119783032
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.70.406.g090b09ce-arm64.exe",
-        "date": "15.03.2026",
-        "size": "106.25 MB"
+        "date": "11.08.2025",
+        "size": 111414648
       }
     }
   },
@@ -676,13 +676,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.70.404.g35f790a1-x64.exe",
-        "date": "14.03.2026",
-        "size": "114.27 MB"
+        "date": "08.08.2025",
+        "size": 119822424
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.70.404.g35f790a1-arm64.exe",
-        "date": "15.03.2026",
-        "size": "106.25 MB"
+        "date": "08.08.2025",
+        "size": 111409184
       }
     }
   },
@@ -691,13 +691,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.69.449.gfda8591a-x64.exe",
-        "date": "14.03.2026",
-        "size": "111.19 MB"
+        "date": "04.08.2025",
+        "size": 116594312
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.69.449.gfda8591a-arm64.exe",
-        "date": "15.03.2026",
-        "size": "103.99 MB"
+        "date": "04.08.2025",
+        "size": 109045608
       }
     }
   },
@@ -706,13 +706,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.69.448.ge76b8882-x64.exe",
-        "date": "14.03.2026",
-        "size": "111.25 MB"
+        "date": "30.07.2025",
+        "size": 116658896
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.69.448.ge76b8882-arm64.exe",
-        "date": "15.03.2026",
-        "size": "104.00 MB"
+        "date": "30.07.2025",
+        "size": 109051704
       }
     }
   },
@@ -721,13 +721,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.68.528.g50f97d42-x64.exe",
-        "date": "14.03.2026",
-        "size": "111.21 MB"
+        "date": "25.07.2025",
+        "size": 116611280
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.68.528.g50f97d42-arm64.exe",
-        "date": "15.03.2026",
-        "size": "104.00 MB"
+        "date": "25.07.2025",
+        "size": 109057136
       }
     }
   },
@@ -736,13 +736,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.68.525.g48fbf8fd-x64.exe",
-        "date": "14.03.2026",
-        "size": "111.22 MB"
+        "date": "21.07.2025",
+        "size": 116623608
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.68.525.g48fbf8fd-arm64.exe",
-        "date": "15.03.2026",
-        "size": "104.00 MB"
+        "date": "21.07.2025",
+        "size": 109047248
       }
     }
   },
@@ -751,13 +751,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.67.560.g46a15f6b-x64.exe",
-        "date": "14.03.2026",
-        "size": "111.30 MB"
+        "date": "16.07.2025",
+        "size": 116703128
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.67.560.g46a15f6b-arm64.exe",
-        "date": "15.03.2026",
-        "size": "104.03 MB"
+        "date": "16.07.2025",
+        "size": 109082136
       }
     }
   },
@@ -766,13 +766,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.67.557.g2d9c92d2-x64.exe",
-        "date": "14.03.2026",
-        "size": "111.41 MB"
+        "date": "12.07.2025",
+        "size": 116818928
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.67.557.g2d9c92d2-arm64.exe",
-        "date": "15.03.2026",
-        "size": "104.01 MB"
+        "date": "12.07.2025",
+        "size": 109063464
       }
     }
   },
@@ -781,13 +781,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.67.556.g7023c791-x64.exe",
-        "date": "14.03.2026",
-        "size": "111.41 MB"
+        "date": "07.07.2025",
+        "size": 116823496
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.67.556.g7023c791-arm64.exe",
-        "date": "15.03.2026",
-        "size": "104.00 MB"
+        "date": "07.07.2025",
+        "size": 109048304
       }
     }
   },
@@ -796,13 +796,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.67.555.gaf416c8c-x64.exe",
-        "date": "14.03.2026",
-        "size": "111.31 MB"
+        "date": "03.07.2025",
+        "size": 116720528
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.67.555.gaf416c8c-arm64.exe",
-        "date": "15.03.2026",
-        "size": "103.99 MB"
+        "date": "03.07.2025",
+        "size": 109040032
       }
     }
   },
@@ -811,13 +811,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.67.553.gf85dc202-x64.exe",
-        "date": "14.03.2026",
-        "size": "111.44 MB"
+        "date": "29.06.2025",
+        "size": 116855032
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.67.553.gf85dc202-arm64.exe",
-        "date": "15.03.2026",
-        "size": "103.99 MB"
+        "date": "29.06.2025",
+        "size": 109045112
       }
     }
   },
@@ -826,13 +826,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.66.447.g4e37e896-x64.exe",
-        "date": "14.03.2026",
-        "size": "111.03 MB"
+        "date": "24.06.2025",
+        "size": 116419280
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.66.447.g4e37e896-arm64.exe",
-        "date": "15.03.2026",
-        "size": "103.66 MB"
+        "date": "24.06.2025",
+        "size": 108697800
       }
     }
   },
@@ -841,13 +841,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.66.445.ge795b717-x64.exe",
-        "date": "14.03.2026",
-        "size": "111.06 MB"
+        "date": "20.06.2025",
+        "size": 116451736
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.66.445.ge795b717-arm64.exe",
-        "date": "15.03.2026",
-        "size": "103.66 MB"
+        "date": "20.06.2025",
+        "size": 108690936
       }
     }
   },
@@ -856,13 +856,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.66.444.gf7d4ad52-x64.exe",
-        "date": "14.03.2026",
-        "size": "111.01 MB"
+        "date": "15.06.2025",
+        "size": 116407512
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.66.444.gf7d4ad52-arm64.exe",
-        "date": "15.03.2026",
-        "size": "103.66 MB"
+        "date": "15.06.2025",
+        "size": 108694384
       }
     }
   },
@@ -871,13 +871,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.65.255.g85e641b4-x64.exe",
-        "date": "14.03.2026",
-        "size": "110.83 MB"
+        "date": "11.06.2025",
+        "size": 116211960
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.65.255.g85e641b4-arm64.exe",
-        "date": "15.03.2026",
-        "size": "103.58 MB"
+        "date": "11.06.2025",
+        "size": 108613896
       }
     }
   },
@@ -886,13 +886,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.64.408.g0a9b557c-x64.exe",
-        "date": "14.03.2026",
-        "size": "110.96 MB"
+        "date": "05.06.2025",
+        "size": 116350584
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.64.408.g0a9b557c-arm64.exe",
-        "date": "15.03.2026",
-        "size": "103.55 MB"
+        "date": "05.06.2025",
+        "size": 108575928
       }
     }
   },
@@ -901,13 +901,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.64.407.g14ea11a6-x64.exe",
-        "date": "14.03.2026",
-        "size": "110.76 MB"
+        "date": "31.05.2025",
+        "size": 116142408
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.64.407.g14ea11a6-arm64.exe",
-        "date": "15.03.2026",
-        "size": "103.54 MB"
+        "date": "31.05.2025",
+        "size": 108566608
       }
     }
   },
@@ -916,20 +916,20 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.63.394.g126b0d89-x64.exe",
-        "date": "14.03.2026",
-        "size": "111.67 MB"
+        "date": "25.05.2025",
+        "size": 117090880
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.63.394.g126b0d89-arm64.exe",
-        "date": "15.03.2026",
-        "size": "103.92 MB"
+        "date": "25.05.2025",
+        "size": 108968392
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.63.394.g126b0d89_amd64.deb",
-        "date": "15.03.2026",
-        "size": "141.13 MB"
+        "date": "19.05.2025",
+        "size": 147984434
       }
     }
   },
@@ -938,13 +938,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.63.392.g7bc0a62b-x64.exe",
-        "date": "14.03.2026",
-        "size": "111.60 MB"
+        "date": "20.05.2025",
+        "size": 117021048
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.63.392.g7bc0a62b-arm64.exe",
-        "date": "15.03.2026",
-        "size": "103.91 MB"
+        "date": "20.05.2025",
+        "size": 108962064
       }
     }
   },
@@ -953,13 +953,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.63.390.g633c71cd-x64.exe",
-        "date": "14.03.2026",
-        "size": "111.75 MB"
+        "date": "14.05.2025",
+        "size": 117176248
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.63.390.g633c71cd-arm64.exe",
-        "date": "15.03.2026",
-        "size": "103.88 MB"
+        "date": "14.05.2025",
+        "size": 108928360
       }
     }
   },
@@ -968,13 +968,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.63.380.g54ef49eb-x64.exe",
-        "date": "14.03.2026",
-        "size": "111.74 MB"
+        "date": "08.05.2025",
+        "size": 117162824
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.63.380.g54ef49eb-arm64.exe",
-        "date": "15.03.2026",
-        "size": "103.89 MB"
+        "date": "08.05.2025",
+        "size": 108938152
       }
     }
   },
@@ -983,13 +983,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.62.580.gb27ad23e-x64.exe",
-        "date": "14.03.2026",
-        "size": "111.49 MB"
+        "date": "03.05.2025",
+        "size": 116900600
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.62.580.gb27ad23e-arm64.exe",
-        "date": "15.03.2026",
-        "size": "103.76 MB"
+        "date": "03.05.2025",
+        "size": 108803704
       }
     }
   },
@@ -998,20 +998,20 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.62.578.g7b42a3bb-x64.exe",
-        "date": "14.03.2026",
-        "size": "111.56 MB"
+        "date": "27.04.2025",
+        "size": 116982136
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.62.578.g7b42a3bb-arm64.exe",
-        "date": "15.03.2026",
-        "size": "103.74 MB"
+        "date": "27.04.2025",
+        "size": 108782464
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.62.578.g7b42a3bb-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "138.33 MB"
+        "date": "27.04.2025",
+        "size": 145051837
       }
     }
   },
@@ -1020,13 +1020,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.62.575.ge8b4160e-x64.exe",
-        "date": "14.03.2026",
-        "size": "111.55 MB"
+        "date": "22.04.2025",
+        "size": 116969440
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.62.575.ge8b4160e-arm64.exe",
-        "date": "15.03.2026",
-        "size": "103.75 MB"
+        "date": "22.04.2025",
+        "size": 108791872
       }
     }
   },
@@ -1035,13 +1035,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.61.443.gc51c574b-x64.exe",
-        "date": "14.03.2026",
-        "size": "109.43 MB"
+        "date": "16.04.2025",
+        "size": 114747960
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.61.443.gc51c574b-arm64.exe",
-        "date": "15.03.2026",
-        "size": "102.56 MB"
+        "date": "16.04.2025",
+        "size": 107537712
       }
     }
   },
@@ -1050,13 +1050,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.61.431.g05f88175-x64.exe",
-        "date": "14.03.2026",
-        "size": "109.32 MB"
+        "date": "11.04.2025",
+        "size": 114634416
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.61.431.g05f88175-arm64.exe",
-        "date": "15.03.2026",
-        "size": "102.56 MB"
+        "date": "11.04.2025",
+        "size": 107541488
       }
     }
   },
@@ -1065,13 +1065,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.61.430.gbef83518-x64.exe",
-        "date": "14.03.2026",
-        "size": "109.34 MB"
+        "date": "05.04.2025",
+        "size": 114652488
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.61.430.gbef83518-arm64.exe",
-        "date": "15.03.2026",
-        "size": "102.54 MB"
+        "date": "05.04.2025",
+        "size": 107524024
       }
     }
   },
@@ -1080,13 +1080,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.61.427.g5b75eb06-x64.exe",
-        "date": "14.03.2026",
-        "size": "109.42 MB"
+        "date": "31.03.2025",
+        "size": 114731776
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.61.427.g5b75eb06-arm64.exe",
-        "date": "15.03.2026",
-        "size": "102.56 MB"
+        "date": "31.03.2025",
+        "size": 107544896
       }
     }
   },
@@ -1095,20 +1095,20 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.60.564.gcc6305cb-x64.exe",
-        "date": "14.03.2026",
-        "size": "109.63 MB"
+        "date": "26.03.2025",
+        "size": 114953312
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.60.564.gcc6305cb-arm64.exe",
-        "date": "15.03.2026",
-        "size": "102.80 MB"
+        "date": "26.03.2025",
+        "size": 107798736
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.60.564.gcc6305cb_amd64.deb",
-        "date": "15.03.2026",
-        "size": "137.73 MB"
+        "date": "26.03.2025",
+        "size": 144421884
       }
     }
   },
@@ -1117,13 +1117,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.59.518.g42b3652d-x64.exe",
-        "date": "14.03.2026",
-        "size": "108.53 MB"
+        "date": "24.03.2025",
+        "size": 113803312
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.59.518.g42b3652d-arm64.exe",
-        "date": "15.03.2026",
-        "size": "101.74 MB"
+        "date": "24.03.2025",
+        "size": 106677520
       }
     }
   },
@@ -1132,13 +1132,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.59.517.g16b54919-x64.exe",
-        "date": "14.03.2026",
-        "size": "108.54 MB"
+        "date": "23.03.2025",
+        "size": 113807280
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.59.517.g16b54919-arm64.exe",
-        "date": "15.03.2026",
-        "size": "101.76 MB"
+        "date": "23.03.2025",
+        "size": 106705952
       }
     }
   },
@@ -1147,13 +1147,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.59.515.g1e7f93a9-x64.exe",
-        "date": "14.03.2026",
-        "size": "108.42 MB"
+        "date": "21.03.2025",
+        "size": 113684872
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.59.515.g1e7f93a9-arm64.exe",
-        "date": "15.03.2026",
-        "size": "101.75 MB"
+        "date": "21.03.2025",
+        "size": 106692512
       }
     }
   },
@@ -1162,20 +1162,20 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.59.514.g834e17d4-x64.exe",
-        "date": "14.03.2026",
-        "size": "108.48 MB"
+        "date": "20.03.2025",
+        "size": 113746160
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.59.514.g834e17d4-arm64.exe",
-        "date": "15.03.2026",
-        "size": "101.74 MB"
+        "date": "20.03.2025",
+        "size": 106677072
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.59.514.g834e17d4_amd64.deb",
-        "date": "15.03.2026",
-        "size": "136.84 MB"
+        "date": "13.03.2025",
+        "size": 143491584
       }
     }
   },
@@ -1184,20 +1184,20 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.59.513.g9e00425b-x64.exe",
-        "date": "14.03.2026",
-        "size": "108.57 MB"
+        "date": "18.03.2025",
+        "size": 113839336
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.59.513.g9e00425b-arm64.exe",
-        "date": "15.03.2026",
-        "size": "101.75 MB"
+        "date": "18.03.2025",
+        "size": 106696800
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.59.513.g9e00425b_amd64.deb",
-        "date": "15.03.2026",
-        "size": "136.82 MB"
+        "date": "12.03.2025",
+        "size": 143470202
       }
     }
   },
@@ -1206,13 +1206,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.59.510.gb8e30f45-x64.exe",
-        "date": "14.03.2026",
-        "size": "108.42 MB"
+        "date": "17.03.2025",
+        "size": 113690160
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.59.510.gb8e30f45-arm64.exe",
-        "date": "15.03.2026",
-        "size": "101.77 MB"
+        "date": "17.03.2025",
+        "size": 106709864
       }
     }
   },
@@ -1221,13 +1221,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.59.508.gba71e9f7-x64.exe",
-        "date": "14.03.2026",
-        "size": "108.55 MB"
+        "date": "15.03.2025",
+        "size": 113822728
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.59.508.gba71e9f7-arm64.exe",
-        "date": "15.03.2026",
-        "size": "101.76 MB"
+        "date": "15.03.2025",
+        "size": 106699024
       }
     }
   },
@@ -1236,13 +1236,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.58.498.g6afe77b7-x64.exe",
-        "date": "14.03.2026",
-        "size": "108.25 MB"
+        "date": "14.03.2025",
+        "size": 113511920
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.58.498.g6afe77b7-arm64.exe",
-        "date": "15.03.2026",
-        "size": "101.61 MB"
+        "date": "14.03.2025",
+        "size": 106543944
       }
     }
   },
@@ -1251,13 +1251,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.58.496.g82a757a5-x64.exe",
-        "date": "14.03.2026",
-        "size": "108.39 MB"
+        "date": "06.03.2025",
+        "size": 113654840
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.58.496.g82a757a5-arm64.exe",
-        "date": "15.03.2026",
-        "size": "101.60 MB"
+        "date": "06.03.2025",
+        "size": 106532456
       }
     }
   },
@@ -1266,13 +1266,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.58.492.g5e7cd836-x64.exe",
-        "date": "14.03.2026",
-        "size": "108.22 MB"
+        "date": "27.02.2025",
+        "size": 113476920
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.58.492.g5e7cd836-arm64.exe",
-        "date": "15.03.2026",
-        "size": "101.60 MB"
+        "date": "27.02.2025",
+        "size": 106535264
       }
     }
   },
@@ -1281,13 +1281,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.57.463.g4f748c64-x64.exe",
-        "date": "14.03.2026",
-        "size": "108.44 MB"
+        "date": "19.02.2025",
+        "size": 113711192
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.57.463.g4f748c64-arm64.exe",
-        "date": "15.03.2026",
-        "size": "101.54 MB"
+        "date": "19.02.2025",
+        "size": 106471264
       }
     }
   },
@@ -1296,13 +1296,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.57.460.gf31c26a7-x64.exe",
-        "date": "14.03.2026",
-        "size": "108.36 MB"
+        "date": "12.02.2025",
+        "size": 113625632
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.57.460.gf31c26a7-arm64.exe",
-        "date": "15.03.2026",
-        "size": "101.55 MB"
+        "date": "12.02.2025",
+        "size": 106486320
       }
     }
   },
@@ -1311,32 +1311,32 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.56.502.ga68d2d4f-x64.exe",
-        "date": "14.03.2026",
-        "size": "108.00 MB"
+        "date": "04.02.2025",
+        "size": 113246064
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.56.502.ga68d2d4f-arm64.exe",
-        "date": "15.03.2026",
-        "size": "101.28 MB"
+        "date": "04.02.2025",
+        "size": 106196576
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.56.502.ga68d2d4f-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "131.57 MB"
+        "date": "04.02.2025",
+        "size": 137964987
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.56.502.ga68d2d4f-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "125.39 MB"
+        "date": "04.02.2025",
+        "size": 131479872
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.56.502.ga68d2d4f_amd64.deb",
-        "date": "15.03.2026",
-        "size": "136.37 MB"
+        "date": "28.01.2025",
+        "size": 142990750
       }
     }
   },
@@ -1345,13 +1345,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.56.497.g3da60fab-x64.exe",
-        "date": "14.03.2026",
-        "size": "108.06 MB"
+        "date": "28.01.2025",
+        "size": 113310568
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.56.497.g3da60fab-arm64.exe",
-        "date": "15.03.2026",
-        "size": "101.25 MB"
+        "date": "28.01.2025",
+        "size": 106165552
       }
     }
   },
@@ -1360,13 +1360,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.55.235.g5eaa0904-x64.exe",
-        "date": "14.03.2026",
-        "size": "107.89 MB"
+        "date": "20.01.2025",
+        "size": 113129024
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.55.235.g5eaa0904-arm64.exe",
-        "date": "15.03.2026",
-        "size": "101.08 MB"
+        "date": "20.01.2025",
+        "size": 105992192
       }
     }
   },
@@ -1375,13 +1375,13 @@
     "win": {
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.54.304.gcc3c7f45-x64.exe",
-        "date": "14.03.2026",
-        "size": "107.69 MB"
+        "date": "20.01.2025",
+        "size": 112922976
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.54.304.gcc3c7f45-arm64.exe",
-        "date": "15.03.2026",
-        "size": "101.06 MB"
+        "date": "20.01.2025",
+        "size": 105969752
       }
     }
   },
@@ -1390,32 +1390,32 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.53.440.g7b2f582a-x86.exe",
-        "date": "15.03.2026",
-        "size": "100.41 MB"
+        "date": "10.02.2025",
+        "size": 105290384
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.53.440.g7b2f582a-x64.exe",
-        "date": "14.03.2026",
-        "size": "108.65 MB"
+        "date": "10.02.2025",
+        "size": 113931752
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.53.440.g7b2f582a-arm64.exe",
-        "date": "15.03.2026",
-        "size": "101.77 MB"
+        "date": "10.02.2025",
+        "size": 106714960
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.53.440.g7b2f582a-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "132.17 MB"
+        "date": "10.02.2025",
+        "size": 138589167
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.53.440.g7b2f582a_amd64.deb",
-        "date": "15.03.2026",
-        "size": "136.86 MB"
+        "date": "10.02.2025",
+        "size": 143507202
       }
     }
   },
@@ -1424,25 +1424,25 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.53.438.g246d60c9-x86.exe",
-        "date": "15.03.2026",
-        "size": "100.47 MB"
+        "date": "20.01.2025",
+        "size": 105345256
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.53.438.g246d60c9-x64.exe",
-        "date": "14.03.2026",
-        "size": "108.64 MB"
+        "date": "20.01.2025",
+        "size": 113919112
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.53.438.g246d60c9-arm64.exe",
-        "date": "15.03.2026",
-        "size": "101.76 MB"
+        "date": "20.01.2025",
+        "size": 106701952
       }
     },
     "mac": {
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.53.438.g246d60c9-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "125.94 MB"
+        "date": "20.01.2025",
+        "size": 132057875
       }
     }
   },
@@ -1451,18 +1451,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.53.437.gd3a938d4-x86.exe",
-        "date": "15.03.2026",
-        "size": "100.28 MB"
+        "date": "31.12.2024",
+        "size": 105152384
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.53.437.gd3a938d4-x64.exe",
-        "date": "14.03.2026",
-        "size": "108.65 MB"
+        "date": "31.12.2024",
+        "size": 113930928
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.53.437.gd3a938d4-arm64.exe",
-        "date": "15.03.2026",
-        "size": "101.76 MB"
+        "date": "31.12.2024",
+        "size": 106700112
       }
     }
   },
@@ -1471,32 +1471,32 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.52.442.g01893f92-x86.exe",
-        "date": "15.03.2026",
-        "size": "99.84 MB"
+        "date": "10.12.2024",
+        "size": 104693064
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.52.442.g01893f92-x64.exe",
-        "date": "14.03.2026",
-        "size": "108.07 MB"
+        "date": "10.12.2024",
+        "size": 113319152
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.52.442.g01893f92-arm64.exe",
-        "date": "15.03.2026",
-        "size": "101.26 MB"
+        "date": "10.12.2024",
+        "size": 106175672
       }
     },
     "mac": {
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.52.442.g01893f92-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "125.76 MB"
+        "date": "10.12.2024",
+        "size": 131871334
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.52.442.g01893f92_amd64.deb",
-        "date": "15.03.2026",
-        "size": "136.87 MB"
+        "date": "10.12.2024",
+        "size": 143523470
       }
     }
   },
@@ -1505,25 +1505,25 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.51.345.gcc39d911-x86.exe",
-        "date": "15.03.2026",
-        "size": "99.74 MB"
+        "date": "01.12.2024",
+        "size": 104586880
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.51.345.gcc39d911-x64.exe",
-        "date": "14.03.2026",
-        "size": "107.75 MB"
+        "date": "01.12.2024",
+        "size": 112979248
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.51.345.gcc39d911-arm64.exe",
-        "date": "15.03.2026",
-        "size": "101.00 MB"
+        "date": "01.12.2024",
+        "size": 105907000
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.51.345.gcc39d911-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "135.36 MB"
+        "date": "01.12.2024",
+        "size": 141938851
       }
     }
   },
@@ -1532,25 +1532,25 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.50.335.g5e2860a8-x86.exe",
-        "date": "15.03.2026",
-        "size": "99.46 MB"
+        "date": "21.11.2024",
+        "size": 104290272
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.50.335.g5e2860a8-x64.exe",
-        "date": "14.03.2026",
-        "size": "107.79 MB"
+        "date": "21.11.2024",
+        "size": 113028792
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.50.335.g5e2860a8-arm64.exe",
-        "date": "15.03.2026",
-        "size": "100.75 MB"
+        "date": "21.11.2024",
+        "size": 105649136
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.50.335.g5e2860a8_amd64.deb",
-        "date": "15.03.2026",
-        "size": "136.96 MB"
+        "date": "11.11.2024",
+        "size": 143617148
       }
     }
   },
@@ -1559,18 +1559,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.50.334.g0bd5c2a4-x86.exe",
-        "date": "15.03.2026",
-        "size": "99.46 MB"
+        "date": "12.11.2024",
+        "size": 104291984
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.50.334.g0bd5c2a4-x64.exe",
-        "date": "14.03.2026",
-        "size": "107.76 MB"
+        "date": "12.11.2024",
+        "size": 112993760
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.50.334.g0bd5c2a4-arm64.exe",
-        "date": "15.03.2026",
-        "size": "100.77 MB"
+        "date": "12.11.2024",
+        "size": 105662304
       }
     }
   },
@@ -1579,18 +1579,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.50.333.g77514274-x86.exe",
-        "date": "15.03.2026",
-        "size": "99.43 MB"
+        "date": "02.11.2024",
+        "size": 104258688
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.50.333.g77514274-x64.exe",
-        "date": "14.03.2026",
-        "size": "107.56 MB"
+        "date": "02.11.2024",
+        "size": 112783952
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.50.333.g77514274-arm64.exe",
-        "date": "15.03.2026",
-        "size": "100.75 MB"
+        "date": "02.11.2024",
+        "size": 105645656
       }
     }
   },
@@ -1599,25 +1599,25 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.49.439.gfae492c7-x86.exe",
-        "date": "15.03.2026",
-        "size": "99.43 MB"
+        "date": "24.10.2024",
+        "size": 104264896
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.49.439.gfae492c7-x64.exe",
-        "date": "14.03.2026",
-        "size": "107.57 MB"
+        "date": "24.10.2024",
+        "size": 112794096
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.49.439.gfae492c7-arm64.exe",
-        "date": "15.03.2026",
-        "size": "100.72 MB"
+        "date": "24.10.2024",
+        "size": 105613936
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.49.439.gfae492c7-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "136.52 MB"
+        "date": "24.10.2024",
+        "size": 143151582
       }
     }
   },
@@ -1626,25 +1626,25 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.48.405.gf2c48e6f-x86.exe",
-        "date": "15.03.2026",
-        "size": "99.42 MB"
+        "date": "10.10.2024",
+        "size": 104251320
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.48.405.gf2c48e6f-x64.exe",
-        "date": "14.03.2026",
-        "size": "106.72 MB"
+        "date": "10.10.2024",
+        "size": 111899056
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.48.405.gf2c48e6f-arm64.exe",
-        "date": "15.03.2026",
-        "size": "100.87 MB"
+        "date": "10.10.2024",
+        "size": 105769880
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.48.405.gf2c48e6f_amd64.deb",
-        "date": "15.03.2026",
-        "size": "136.75 MB"
+        "date": "10.10.2024",
+        "size": 143394450
       }
     }
   },
@@ -1653,18 +1653,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.48.404.g4bec9359-x86.exe",
-        "date": "15.03.2026",
-        "size": "99.37 MB"
+        "date": "05.10.2024",
+        "size": 104201272
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.48.404.g4bec9359-x64.exe",
-        "date": "14.03.2026",
-        "size": "106.71 MB"
+        "date": "05.10.2024",
+        "size": 111889408
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.48.404.g4bec9359-arm64.exe",
-        "date": "15.03.2026",
-        "size": "100.78 MB"
+        "date": "05.10.2024",
+        "size": 105676424
       }
     }
   },
@@ -1673,18 +1673,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.47.366.g0d3bd570-x86.exe",
-        "date": "15.03.2026",
-        "size": "99.56 MB"
+        "date": "30.09.2024",
+        "size": 104400496
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.47.366.g0d3bd570-x64.exe",
-        "date": "14.03.2026",
-        "size": "106.73 MB"
+        "date": "30.09.2024",
+        "size": 111912560
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.47.366.g0d3bd570-arm64.exe",
-        "date": "15.03.2026",
-        "size": "100.83 MB"
+        "date": "30.09.2024",
+        "size": 105732648
       }
     }
   },
@@ -1693,25 +1693,25 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.47.364.gf06e5cee-x86.exe",
-        "date": "15.03.2026",
-        "size": "99.54 MB"
+        "date": "25.09.2024",
+        "size": 104377280
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.47.364.gf06e5cee-x64.exe",
-        "date": "14.03.2026",
-        "size": "106.62 MB"
+        "date": "25.09.2024",
+        "size": 111801088
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.47.364.gf06e5cee-arm64.exe",
-        "date": "15.03.2026",
-        "size": "100.83 MB"
+        "date": "25.09.2024",
+        "size": 105729048
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.47.364.gf06e5cee_amd64.deb",
-        "date": "15.03.2026",
-        "size": "104.05 MB"
+        "date": "25.09.2024",
+        "size": 109100472
       }
     }
   },
@@ -1720,18 +1720,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.46.462.gf57913e0-x86.exe",
-        "date": "15.03.2026",
-        "size": "95.00 MB"
+        "date": "14.09.2024",
+        "size": 99618584
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.46.462.gf57913e0-x64.exe",
-        "date": "14.03.2026",
-        "size": "102.26 MB"
+        "date": "14.09.2024",
+        "size": 107222440
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.46.462.gf57913e0-arm64.exe",
-        "date": "15.03.2026",
-        "size": "99.20 MB"
+        "date": "14.09.2024",
+        "size": 104015576
       }
     }
   },
@@ -1740,25 +1740,25 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.45.454.gc16ec9f6-x86.exe",
-        "date": "15.03.2026",
-        "size": "95.08 MB"
+        "date": "02.09.2024",
+        "size": 99702968
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.45.454.gc16ec9f6-x64.exe",
-        "date": "14.03.2026",
-        "size": "102.43 MB"
+        "date": "02.09.2024",
+        "size": 107403960
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.45.454.gc16ec9f6-arm64.exe",
-        "date": "15.03.2026",
-        "size": "99.21 MB"
+        "date": "02.09.2024",
+        "size": 104027832
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.45.454.gc16ec9f6_amd64.deb",
-        "date": "15.03.2026",
-        "size": "134.60 MB"
+        "date": "26.08.2024",
+        "size": 141143192
       }
     }
   },
@@ -1767,18 +1767,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.45.451.gac8a666f-x86.exe",
-        "date": "15.03.2026",
-        "size": "95.06 MB"
+        "date": "22.08.2024",
+        "size": 99674616
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.45.451.gac8a666f-x64.exe",
-        "date": "14.03.2026",
-        "size": "102.37 MB"
+        "date": "22.08.2024",
+        "size": 107343240
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.45.451.gac8a666f-arm64.exe",
-        "date": "15.03.2026",
-        "size": "99.06 MB"
+        "date": "22.08.2024",
+        "size": 103872792
       }
     }
   },
@@ -1787,25 +1787,25 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.44.405.g81fd6352-x86.exe",
-        "date": "15.03.2026",
-        "size": "96.54 MB"
+        "date": "11.08.2024",
+        "size": 101229680
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.44.405.g81fd6352-x64.exe",
-        "date": "14.03.2026",
-        "size": "103.91 MB"
+        "date": "11.08.2024",
+        "size": 108961536
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.44.405.g81fd6352-arm64.exe",
-        "date": "15.03.2026",
-        "size": "97.63 MB"
+        "date": "11.08.2024",
+        "size": 102375104
       }
     },
     "mac": {
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.44.405.g81fd6352-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "119.37 MB"
+        "date": "11.08.2024",
+        "size": 125168731
       }
     }
   },
@@ -1814,18 +1814,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.43.420.gc7b23f70-x86.exe",
-        "date": "15.03.2026",
-        "size": "96.57 MB"
+        "date": "30.07.2024",
+        "size": 101261272
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.43.420.gc7b23f70-x64.exe",
-        "date": "14.03.2026",
-        "size": "103.59 MB"
+        "date": "30.07.2024",
+        "size": 108625464
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.43.420.gc7b23f70-arm64.exe",
-        "date": "15.03.2026",
-        "size": "97.56 MB"
+        "date": "30.07.2024",
+        "size": 102294688
       }
     }
   },
@@ -1834,25 +1834,25 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.42.290.g242057a2-x86.exe",
-        "date": "15.03.2026",
-        "size": "96.88 MB"
+        "date": "19.07.2024",
+        "size": 101587072
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.42.290.g242057a2-x64.exe",
-        "date": "14.03.2026",
-        "size": "103.84 MB"
+        "date": "19.07.2024",
+        "size": 108879712
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.42.290.g242057a2-arm64.exe",
-        "date": "15.03.2026",
-        "size": "97.79 MB"
+        "date": "19.07.2024",
+        "size": 102537392
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.42.290.g242057a2_amd64.deb",
-        "date": "15.03.2026",
-        "size": "134.40 MB"
+        "date": "19.07.2024",
+        "size": 140926882
       }
     }
   },
@@ -1861,18 +1861,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.42.288.g204df4d2-x86.exe",
-        "date": "15.03.2026",
-        "size": "96.87 MB"
+        "date": "13.07.2024",
+        "size": 101580128
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.42.288.g204df4d2-x64.exe",
-        "date": "14.03.2026",
-        "size": "103.86 MB"
+        "date": "13.07.2024",
+        "size": 108906088
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.42.288.g204df4d2-arm64.exe",
-        "date": "15.03.2026",
-        "size": "97.81 MB"
+        "date": "13.07.2024",
+        "size": 102565808
       }
     }
   },
@@ -1881,18 +1881,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.41.434.g39a25e2c-x86.exe",
-        "date": "15.03.2026",
-        "size": "96.78 MB"
+        "date": "08.07.2024",
+        "size": 101483744
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.41.434.g39a25e2c-x64.exe",
-        "date": "14.03.2026",
-        "size": "103.83 MB"
+        "date": "08.07.2024",
+        "size": 108877576
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.41.434.g39a25e2c-arm64.exe",
-        "date": "15.03.2026",
-        "size": "97.73 MB"
+        "date": "08.07.2024",
+        "size": 102480624
       }
     }
   },
@@ -1901,25 +1901,25 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.40.599.g606b7f29-x86.exe",
-        "date": "15.03.2026",
-        "size": "97.33 MB"
+        "date": "21.06.2024",
+        "size": 102061808
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.40.599.g606b7f29-x64.exe",
-        "date": "14.03.2026",
-        "size": "104.34 MB"
+        "date": "21.06.2024",
+        "size": 109407136
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.40.599.g606b7f29-arm64.exe",
-        "date": "15.03.2026",
-        "size": "98.24 MB"
+        "date": "21.06.2024",
+        "size": 103011224
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.40.599.g606b7f29_amd64.deb",
-        "date": "15.03.2026",
-        "size": "134.43 MB"
+        "date": "21.06.2024",
+        "size": 140956866
       }
     }
   },
@@ -1928,18 +1928,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.40.592.gb83da72d-x86.exe",
-        "date": "15.03.2026",
-        "size": "97.35 MB"
+        "date": "13.06.2024",
+        "size": 102081256
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.40.592.gb83da72d-x64.exe",
-        "date": "14.03.2026",
-        "size": "104.30 MB"
+        "date": "13.06.2024",
+        "size": 109364864
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.40.592.gb83da72d-arm64.exe",
-        "date": "15.03.2026",
-        "size": "98.23 MB"
+        "date": "13.06.2024",
+        "size": 102999368
       }
     }
   },
@@ -1948,18 +1948,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.39.578.g0ea3f38b-x86.exe",
-        "date": "15.03.2026",
-        "size": "96.27 MB"
+        "date": "04.06.2024",
+        "size": 100948840
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.39.578.g0ea3f38b-x64.exe",
-        "date": "14.03.2026",
-        "size": "103.44 MB"
+        "date": "04.06.2024",
+        "size": 108462864
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.39.578.g0ea3f38b-arm64.exe",
-        "date": "15.03.2026",
-        "size": "97.29 MB"
+        "date": "04.06.2024",
+        "size": 102018288
       }
     }
   },
@@ -1968,18 +1968,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.38.720.ga4a70a0e-x86.exe",
-        "date": "15.03.2026",
-        "size": "96.18 MB"
+        "date": "27.05.2024",
+        "size": 100853432
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.38.720.ga4a70a0e-x64.exe",
-        "date": "14.03.2026",
-        "size": "103.37 MB"
+        "date": "27.05.2024",
+        "size": 108394208
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.38.720.ga4a70a0e-arm64.exe",
-        "date": "15.03.2026",
-        "size": "97.21 MB"
+        "date": "27.05.2024",
+        "size": 101936720
       }
     }
   },
@@ -1988,32 +1988,32 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.37.701.ge66eb7bc-x86.exe",
-        "date": "15.03.2026",
-        "size": "95.95 MB"
+        "date": "16.05.2024",
+        "size": 100614560
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.37.701.ge66eb7bc-x64.exe",
-        "date": "14.03.2026",
-        "size": "102.74 MB"
+        "date": "16.05.2024",
+        "size": 107734840
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.37.701.ge66eb7bc-arm64.exe",
-        "date": "15.03.2026",
-        "size": "90.37 MB"
+        "date": "16.05.2024",
+        "size": 94762392
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.37.701.ge66eb7bc-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "130.46 MB"
+        "date": "16.05.2024",
+        "size": 136794893
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.37.701.ge66eb7bc_amd64.deb",
-        "date": "15.03.2026",
-        "size": "131.42 MB"
+        "date": "16.05.2024",
+        "size": 137805232
       }
     }
   },
@@ -2022,18 +2022,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.36.959.g04bf500c-x86.exe",
-        "date": "15.03.2026",
-        "size": "95.81 MB"
+        "date": "03.05.2024",
+        "size": 100464408
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.36.959.g04bf500c-x64.exe",
-        "date": "14.03.2026",
-        "size": "102.58 MB"
+        "date": "03.05.2024",
+        "size": 107562552
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.36.959.g04bf500c-arm64.exe",
-        "date": "15.03.2026",
-        "size": "90.30 MB"
+        "date": "03.05.2024",
+        "size": 94688312
       }
     }
   },
@@ -2042,18 +2042,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.36.955.gd8cc9372-x86.exe",
-        "date": "15.03.2026",
-        "size": "95.86 MB"
+        "date": "24.04.2024",
+        "size": 100519656
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.36.955.gd8cc9372-x64.exe",
-        "date": "14.03.2026",
-        "size": "102.67 MB"
+        "date": "24.04.2024",
+        "size": 107655616
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.36.955.gd8cc9372-arm64.exe",
-        "date": "15.03.2026",
-        "size": "90.30 MB"
+        "date": "24.04.2024",
+        "size": 94691120
       }
     }
   },
@@ -2062,18 +2062,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.35.663.gb699649e-x86.exe",
-        "date": "15.03.2026",
-        "size": "95.93 MB"
+        "date": "14.04.2024",
+        "size": 100587240
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.35.663.gb699649e-x64.exe",
-        "date": "14.03.2026",
-        "size": "102.73 MB"
+        "date": "14.04.2024",
+        "size": 107717816
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.35.663.gb699649e-arm64.exe",
-        "date": "15.03.2026",
-        "size": "90.40 MB"
+        "date": "14.04.2024",
+        "size": 94790528
       }
     }
   },
@@ -2082,18 +2082,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.34.783.g923721d9-x86.exe",
-        "date": "15.03.2026",
-        "size": "95.80 MB"
+        "date": "05.04.2024",
+        "size": 100457792
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.34.783.g923721d9-x64.exe",
-        "date": "14.03.2026",
-        "size": "102.62 MB"
+        "date": "05.04.2024",
+        "size": 107605568
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.34.783.g923721d9-arm64.exe",
-        "date": "15.03.2026",
-        "size": "90.22 MB"
+        "date": "05.04.2024",
+        "size": 94607224
       }
     }
   },
@@ -2102,18 +2102,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.33.1042.g26c92729-x86.exe",
-        "date": "15.03.2026",
-        "size": "95.55 MB"
+        "date": "27.03.2024",
+        "size": 100190800
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.33.1042.g26c92729-x64.exe",
-        "date": "14.03.2026",
-        "size": "102.60 MB"
+        "date": "27.03.2024",
+        "size": 107587872
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.33.1042.g26c92729-arm64.exe",
-        "date": "15.03.2026",
-        "size": "90.23 MB"
+        "date": "27.03.2024",
+        "size": 94609728
       }
     }
   },
@@ -2122,18 +2122,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.33.1039.g8ddb5918-x86.exe",
-        "date": "15.03.2026",
-        "size": "95.51 MB"
+        "date": "13.03.2024",
+        "size": 100147880
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.33.1039.g8ddb5918-x64.exe",
-        "date": "14.03.2026",
-        "size": "102.44 MB"
+        "date": "13.03.2024",
+        "size": 107416064
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.33.1039.g8ddb5918-arm64.exe",
-        "date": "15.03.2026",
-        "size": "90.21 MB"
+        "date": "13.03.2024",
+        "size": 94591728
       }
     }
   },
@@ -2142,18 +2142,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.32.997.g4c6498b6-x86.exe",
-        "date": "15.03.2026",
-        "size": "94.73 MB"
+        "date": "04.03.2024",
+        "size": 99333536
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.32.997.g4c6498b6-x64.exe",
-        "date": "14.03.2026",
-        "size": "102.79 MB"
+        "date": "04.03.2024",
+        "size": 107785544
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.32.997.g4c6498b6-arm64.exe",
-        "date": "15.03.2026",
-        "size": "89.81 MB"
+        "date": "04.03.2024",
+        "size": 94170080
       }
     }
   },
@@ -2162,18 +2162,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.32.985.g3be2709c-x86.exe",
-        "date": "15.03.2026",
-        "size": "94.54 MB"
+        "date": "23.02.2024",
+        "size": 99127312
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.32.985.g3be2709c-x64.exe",
-        "date": "14.03.2026",
-        "size": "102.73 MB"
+        "date": "23.02.2024",
+        "size": 107723672
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.32.985.g3be2709c-arm64.exe",
-        "date": "15.03.2026",
-        "size": "89.78 MB"
+        "date": "23.02.2024",
+        "size": 94138344
       }
     }
   },
@@ -2182,25 +2182,25 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.31.1205.g4d59ad7c-x86.exe",
-        "date": "15.03.2026",
-        "size": "94.10 MB"
+        "date": "14.02.2024",
+        "size": 98671624
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.31.1205.g4d59ad7c-x64.exe",
-        "date": "14.03.2026",
-        "size": "101.92 MB"
+        "date": "14.02.2024",
+        "size": 106875048
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.31.1205.g4d59ad7c-arm64.exe",
-        "date": "15.03.2026",
-        "size": "89.17 MB"
+        "date": "14.02.2024",
+        "size": 93499832
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.31.1205.g4d59ad7c_amd64.deb",
-        "date": "15.03.2026",
-        "size": "128.96 MB"
+        "date": "14.02.2024",
+        "size": 135223836
       }
     }
   },
@@ -2209,18 +2209,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.30.1135.g02fef27a-x86.exe",
-        "date": "15.03.2026",
-        "size": "87.83 MB"
+        "date": "02.02.2024",
+        "size": 92091600
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.30.1135.g02fef27a-x64.exe",
-        "date": "14.03.2026",
-        "size": "100.68 MB"
+        "date": "02.02.2024",
+        "size": 105572472
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.30.1135.g02fef27a-arm64.exe",
-        "date": "15.03.2026",
-        "size": "88.06 MB"
+        "date": "02.02.2024",
+        "size": 92335280
       }
     }
   },
@@ -2229,18 +2229,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.29.605.g66a43ceb-x86.exe",
-        "date": "15.03.2026",
-        "size": "87.72 MB"
+        "date": "20.01.2024",
+        "size": 91982576
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.29.605.g66a43ceb-x64.exe",
-        "date": "14.03.2026",
-        "size": "100.67 MB"
+        "date": "20.01.2024",
+        "size": 105558152
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.29.605.g66a43ceb-arm64.exe",
-        "date": "15.03.2026",
-        "size": "87.95 MB"
+        "date": "20.01.2024",
+        "size": 92225840
       }
     }
   },
@@ -2249,30 +2249,30 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.28.581.gd0e8a92c-x86.exe",
-        "date": "15.03.2026",
-        "size": "87.76 MB"
+        "date": "06.01.2024",
+        "size": 92025832
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.28.581.gd0e8a92c-x64.exe",
-        "date": "14.03.2026",
-        "size": "100.67 MB"
+        "date": "06.01.2024",
+        "size": 105558464
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.28.581.gd0e8a92c-arm64.exe",
-        "date": "15.03.2026",
-        "size": "87.97 MB"
+        "date": "06.01.2024",
+        "size": 92244312
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.28.581.gd0e8a92c-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "127.67 MB"
+        "date": "06.01.2024",
+        "size": 133873145
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.28.581.gd0e8a92c-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "117.39 MB"
+        "date": "06.01.2024",
+        "size": 123094772
       }
     }
   },
@@ -2281,37 +2281,37 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.26.1187.g36b715a1-x86.exe",
-        "date": "15.03.2026",
-        "size": "95.65 MB"
+        "date": "24.12.2023",
+        "size": 100292928
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.26.1187.g36b715a1-x64.exe",
-        "date": "14.03.2026",
-        "size": "100.84 MB"
+        "date": "24.12.2023",
+        "size": 105743200
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.26.1187.g36b715a1-arm64.exe",
-        "date": "15.03.2026",
-        "size": "87.76 MB"
+        "date": "24.12.2023",
+        "size": 92026016
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.26.1187.g36b715a1-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "127.62 MB"
+        "date": "24.12.2023",
+        "size": 133815224
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.26.1187.g36b715a1-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "116.25 MB"
+        "date": "24.12.2023",
+        "size": 121900031
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.26.1187.g36b715a1_amd64.deb",
-        "date": "15.03.2026",
-        "size": "127.53 MB"
+        "date": "04.12.2023",
+        "size": 133729904
       }
     }
   },
@@ -2320,30 +2320,30 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.26.1180.g6af55bfb-x86.exe",
-        "date": "15.03.2026",
-        "size": "95.67 MB"
+        "date": "10.12.2023",
+        "size": 100314696
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.26.1180.g6af55bfb-x64.exe",
-        "date": "14.03.2026",
-        "size": "100.93 MB"
+        "date": "10.12.2023",
+        "size": 105828376
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.26.1180.g6af55bfb-arm64.exe",
-        "date": "15.03.2026",
-        "size": "87.77 MB"
+        "date": "10.12.2023",
+        "size": 92038536
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.26.1180.g6af55bfb-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "127.67 MB"
+        "date": "10.12.2023",
+        "size": 133868733
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.26.1180.g6af55bfb-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "116.26 MB"
+        "date": "10.12.2023",
+        "size": 121908377
       }
     }
   },
@@ -2352,25 +2352,25 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.25.1011.g0348b2ea-x86.exe",
-        "date": "15.03.2026",
-        "size": "94.79 MB"
+        "date": "27.11.2023",
+        "size": 99389688
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.25.1011.g0348b2ea-x64.exe",
-        "date": "14.03.2026",
-        "size": "99.75 MB"
+        "date": "27.11.2023",
+        "size": 104600016
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.25.1011.g0348b2ea-arm64.exe",
-        "date": "15.03.2026",
-        "size": "86.93 MB"
+        "date": "27.11.2023",
+        "size": 91155208
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.25.1011.g0348b2ea_amd64.deb",
-        "date": "15.03.2026",
-        "size": "126.45 MB"
+        "date": "27.11.2023",
+        "size": 132587766
       }
     }
   },
@@ -2379,37 +2379,37 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.25.1009.g075ce884-x86.exe",
-        "date": "15.03.2026",
-        "size": "94.85 MB"
+        "date": "20.11.2023",
+        "size": 99458600
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.25.1009.g075ce884-x64.exe",
-        "date": "14.03.2026",
-        "size": "99.79 MB"
+        "date": "20.11.2023",
+        "size": 104638720
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.25.1009.g075ce884-arm64.exe",
-        "date": "15.03.2026",
-        "size": "86.94 MB"
+        "date": "20.11.2023",
+        "size": 91163920
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.25.1009.g075ce884-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "124.86 MB"
+        "date": "20.11.2023",
+        "size": 130926762
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.25.1009.g075ce884-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "113.66 MB"
+        "date": "20.11.2023",
+        "size": 119179179
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.25.1009.g075ce884_amd64.deb",
-        "date": "15.03.2026",
-        "size": "126.39 MB"
+        "date": "17.11.2023",
+        "size": 132533054
       }
     }
   },
@@ -2418,30 +2418,30 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.24.756.g7a7fc7f0-x86.exe",
-        "date": "15.03.2026",
-        "size": "90.81 MB"
+        "date": "13.11.2023",
+        "size": 95221912
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.24.756.g7a7fc7f0-x64.exe",
-        "date": "14.03.2026",
-        "size": "98.25 MB"
+        "date": "13.11.2023",
+        "size": 103020488
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.24.756.g7a7fc7f0-arm64.exe",
-        "date": "15.03.2026",
-        "size": "86.87 MB"
+        "date": "13.11.2023",
+        "size": 91088472
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.24.756.g7a7fc7f0-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "122.59 MB"
+        "date": "13.11.2023",
+        "size": 128549164
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.24.756.g7a7fc7f0-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "113.07 MB"
+        "date": "13.11.2023",
+        "size": 118564559
       }
     }
   },
@@ -2450,30 +2450,30 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.24.754.g8c3af7b0-x86.exe",
-        "date": "15.03.2026",
-        "size": "90.81 MB"
+        "date": "10.11.2023",
+        "size": 95221720
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.24.754.g8c3af7b0-x64.exe",
-        "date": "14.03.2026",
-        "size": "98.11 MB"
+        "date": "10.11.2023",
+        "size": 102875520
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.24.754.g8c3af7b0-arm64.exe",
-        "date": "15.03.2026",
-        "size": "86.85 MB"
+        "date": "10.11.2023",
+        "size": 91071656
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.24.754.g8c3af7b0-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "122.71 MB"
+        "date": "10.11.2023",
+        "size": 128675709
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.24.754.g8c3af7b0-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "113.07 MB"
+        "date": "10.11.2023",
+        "size": 118565866
       }
     }
   },
@@ -2482,30 +2482,30 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.23.1125.g920a7ada-x86.exe",
-        "date": "15.03.2026",
-        "size": "89.26 MB"
+        "date": "07.11.2023",
+        "size": 93593824
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.23.1125.g920a7ada-x64.exe",
-        "date": "14.03.2026",
-        "size": "96.70 MB"
+        "date": "07.11.2023",
+        "size": 101393000
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.23.1125.g920a7ada-arm64.exe",
-        "date": "15.03.2026",
-        "size": "85.33 MB"
+        "date": "07.11.2023",
+        "size": 89474504
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.23.1125.g920a7ada-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "121.21 MB"
+        "date": "07.11.2023",
+        "size": 127093324
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.23.1125.g920a7ada-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "111.71 MB"
+        "date": "07.11.2023",
+        "size": 117141151
       }
     }
   },
@@ -2514,30 +2514,30 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.23.1114.g74573b48-x86.exe",
-        "date": "15.03.2026",
-        "size": "89.25 MB"
+        "date": "24.10.2023",
+        "size": 93583472
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.23.1114.g74573b48-x64.exe",
-        "date": "14.03.2026",
-        "size": "96.56 MB"
+        "date": "24.10.2023",
+        "size": 101251440
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.23.1114.g74573b48-arm64.exe",
-        "date": "15.03.2026",
-        "size": "85.28 MB"
+        "date": "24.10.2023",
+        "size": 89418928
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.23.1114.g74573b48-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "121.42 MB"
+        "date": "24.10.2023",
+        "size": 127314492
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.23.1114.g74573b48-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "111.72 MB"
+        "date": "24.10.2023",
+        "size": 117142361
       }
     }
   },
@@ -2546,37 +2546,37 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.22.982.g794acc0a-x86.exe",
-        "date": "15.03.2026",
-        "size": "87.15 MB"
+        "date": "11.10.2023",
+        "size": 91385640
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.22.982.g794acc0a-x64.exe",
-        "date": "14.03.2026",
-        "size": "94.24 MB"
+        "date": "11.10.2023",
+        "size": 98817584
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.22.982.g794acc0a-arm64.exe",
-        "date": "15.03.2026",
-        "size": "83.75 MB"
+        "date": "11.10.2023",
+        "size": 87818712
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.22.982.g794acc0a-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "118.02 MB"
+        "date": "11.10.2023",
+        "size": 123751949
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.22.982.g794acc0a-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "109.24 MB"
+        "date": "11.10.2023",
+        "size": 114544912
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.22.982.g794acc0a_amd64.deb",
-        "date": "15.03.2026",
-        "size": "118.95 MB"
+        "date": "11.10.2023",
+        "size": 124729466
       }
     }
   },
@@ -2585,18 +2585,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.22.980.g8c845482-x86.exe",
-        "date": "15.03.2026",
-        "size": "87.13 MB"
+        "date": "07.10.2023",
+        "size": 91363496
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.22.980.g8c845482-x64.exe",
-        "date": "14.03.2026",
-        "size": "94.09 MB"
+        "date": "07.10.2023",
+        "size": 98658640
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.22.980.g8c845482-arm64.exe",
-        "date": "15.03.2026",
-        "size": "83.75 MB"
+        "date": "07.10.2023",
+        "size": 87813032
       }
     }
   },
@@ -2605,30 +2605,30 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.22.975.gd5c7f59d-x86.exe",
-        "date": "15.03.2026",
-        "size": "86.96 MB"
+        "date": "02.10.2023",
+        "size": 91186400
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.22.975.gd5c7f59d-x64.exe",
-        "date": "14.03.2026",
-        "size": "94.14 MB"
+        "date": "02.10.2023",
+        "size": 98714048
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.22.975.gd5c7f59d-arm64.exe",
-        "date": "15.03.2026",
-        "size": "83.73 MB"
+        "date": "02.10.2023",
+        "size": 87795144
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.22.975.gd5c7f59d-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "118.03 MB"
+        "date": "02.10.2023",
+        "size": 123764953
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.22.975.gd5c7f59d-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "109.25 MB"
+        "date": "02.10.2023",
+        "size": 114557672
       }
     }
   },
@@ -2637,30 +2637,30 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.21.1104.g42cf0a50-x86.exe",
-        "date": "15.03.2026",
-        "size": "87.15 MB"
+        "date": "28.09.2023",
+        "size": 91383296
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.21.1104.g42cf0a50-x64.exe",
-        "date": "14.03.2026",
-        "size": "94.05 MB"
+        "date": "28.09.2023",
+        "size": 98623072
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.21.1104.g42cf0a50-arm64.exe",
-        "date": "15.03.2026",
-        "size": "83.84 MB"
+        "date": "28.09.2023",
+        "size": 87907784
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.21.1104.g42cf0a50-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "118.17 MB"
+        "date": "28.09.2023",
+        "size": 123915060
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.21.1104.g42cf0a50-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "109.28 MB"
+        "date": "28.09.2023",
+        "size": 114591628
       }
     }
   },
@@ -2669,18 +2669,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.20.1218.g02aff7a4-x86.exe",
-        "date": "15.03.2026",
-        "size": "86.35 MB"
+        "date": "22.09.2023",
+        "size": 90540680
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.20.1218.g02aff7a4-x64.exe",
-        "date": "14.03.2026",
-        "size": "93.33 MB"
+        "date": "22.09.2023",
+        "size": 97864728
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.20.1218.g02aff7a4-arm64.exe",
-        "date": "15.03.2026",
-        "size": "81.00 MB"
+        "date": "22.09.2023",
+        "size": 84932448
       }
     }
   },
@@ -2689,30 +2689,30 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.20.1216.ge7a7b92f-x86.exe",
-        "date": "15.03.2026",
-        "size": "86.22 MB"
+        "date": "18.09.2023",
+        "size": 90409472
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.20.1216.ge7a7b92f-x64.exe",
-        "date": "14.03.2026",
-        "size": "93.34 MB"
+        "date": "18.09.2023",
+        "size": 97872320
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.20.1216.ge7a7b92f-arm64.exe",
-        "date": "15.03.2026",
-        "size": "80.95 MB"
+        "date": "18.09.2023",
+        "size": 84886272
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.20.1216.ge7a7b92f-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "116.57 MB"
+        "date": "18.09.2023",
+        "size": 122236766
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.20.1216.ge7a7b92f-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "108.01 MB"
+        "date": "18.09.2023",
+        "size": 113258351
       }
     }
   },
@@ -2721,30 +2721,30 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.20.1214.g009959bd-x86.exe",
-        "date": "15.03.2026",
-        "size": "86.42 MB"
+        "date": "12.09.2023",
+        "size": 90614480
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.20.1214.g009959bd-x64.exe",
-        "date": "14.03.2026",
-        "size": "93.28 MB"
+        "date": "12.09.2023",
+        "size": 97815072
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.20.1214.g009959bd-arm64.exe",
-        "date": "15.03.2026",
-        "size": "80.94 MB"
+        "date": "12.09.2023",
+        "size": 84866848
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.20.1214.g009959bd-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "116.53 MB"
+        "date": "12.09.2023",
+        "size": 122190235
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.20.1214.g009959bd-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "108.03 MB"
+        "date": "12.09.2023",
+        "size": 113280359
       }
     }
   },
@@ -2753,37 +2753,37 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.20.1210.g2a8a8a57-x86.exe",
-        "date": "15.03.2026",
-        "size": "86.40 MB"
+        "date": "06.09.2023",
+        "size": 90595808
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.20.1210.g2a8a8a57-x64.exe",
-        "date": "14.03.2026",
-        "size": "93.35 MB"
+        "date": "06.09.2023",
+        "size": 97885336
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.20.1210.g2a8a8a57-arm64.exe",
-        "date": "15.03.2026",
-        "size": "80.95 MB"
+        "date": "06.09.2023",
+        "size": 84880560
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.20.1210.g2a8a8a57-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "116.59 MB"
+        "date": "06.09.2023",
+        "size": 122251684
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.20.1210.g2a8a8a57-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "108.03 MB"
+        "date": "06.09.2023",
+        "size": 113275019
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.20.1210.g2a8a8a57_amd64.deb",
-        "date": "15.03.2026",
-        "size": "118.43 MB"
+        "date": "08.09.2023",
+        "size": 124183006
       }
     }
   },
@@ -2792,30 +2792,30 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.19.941.gbf202593-x86.exe",
-        "date": "15.03.2026",
-        "size": "85.91 MB"
+        "date": "31.08.2023",
+        "size": 90082424
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.19.941.gbf202593-x64.exe",
-        "date": "14.03.2026",
-        "size": "92.48 MB"
+        "date": "31.08.2023",
+        "size": 96976344
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.19.941.gbf202593-arm64.exe",
-        "date": "15.03.2026",
-        "size": "80.58 MB"
+        "date": "31.08.2023",
+        "size": 84495296
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.19.941.gbf202593-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "115.47 MB"
+        "date": "31.08.2023",
+        "size": 121084155
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.19.941.gbf202593-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "106.73 MB"
+        "date": "31.08.2023",
+        "size": 111912410
       }
     }
   },
@@ -2824,18 +2824,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.19.937.gf6e7cff9-x86.exe",
-        "date": "15.03.2026",
-        "size": "85.91 MB"
+        "date": "27.08.2023",
+        "size": 90081736
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.19.937.gf6e7cff9-x64.exe",
-        "date": "14.03.2026",
-        "size": "92.62 MB"
+        "date": "27.08.2023",
+        "size": 97121944
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.19.937.gf6e7cff9-arm64.exe",
-        "date": "15.03.2026",
-        "size": "80.57 MB"
+        "date": "27.08.2023",
+        "size": 84484632
       }
     }
   },
@@ -2844,25 +2844,25 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.18.999.g9b38fc27-x86.exe",
-        "date": "15.03.2026",
-        "size": "85.27 MB"
+        "date": "24.08.2023",
+        "size": 89413440
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.18.999.g9b38fc27-x64.exe",
-        "date": "14.03.2026",
-        "size": "92.08 MB"
+        "date": "24.08.2023",
+        "size": 96553344
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.18.999.g9b38fc27-arm64.exe",
-        "date": "15.03.2026",
-        "size": "80.15 MB"
+        "date": "24.08.2023",
+        "size": 84042248
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.18.999.g9b38fc27_amd64.deb",
-        "date": "15.03.2026",
-        "size": "116.72 MB"
+        "date": "14.08.2023",
+        "size": 122391766
       }
     }
   },
@@ -2871,18 +2871,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.18.997.g167085cf-x86.exe",
-        "date": "15.03.2026",
-        "size": "85.32 MB"
+        "date": "20.08.2023",
+        "size": 89463640
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.18.997.g167085cf-x64.exe",
-        "date": "14.03.2026",
-        "size": "92.06 MB"
+        "date": "20.08.2023",
+        "size": 96530848
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.18.997.g167085cf-arm64.exe",
-        "date": "15.03.2026",
-        "size": "80.15 MB"
+        "date": "20.08.2023",
+        "size": 84041728
       }
     }
   },
@@ -2891,18 +2891,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.17.834.g26ee1129-x86.exe",
-        "date": "15.03.2026",
-        "size": "85.07 MB"
+        "date": "17.08.2023",
+        "size": 89199760
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.17.834.g26ee1129-x64.exe",
-        "date": "14.03.2026",
-        "size": "91.78 MB"
+        "date": "17.08.2023",
+        "size": 96242408
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.17.834.g26ee1129-arm64.exe",
-        "date": "15.03.2026",
-        "size": "79.84 MB"
+        "date": "17.08.2023",
+        "size": 83720736
       }
     }
   },
@@ -2911,18 +2911,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.17.832.g15fa351e-x86.exe",
-        "date": "15.03.2026",
-        "size": "85.02 MB"
+        "date": "04.08.2023",
+        "size": 89155000
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.17.832.g15fa351e-x64.exe",
-        "date": "14.03.2026",
-        "size": "91.82 MB"
+        "date": "04.08.2023",
+        "size": 96281224
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.17.832.g15fa351e-arm64.exe",
-        "date": "15.03.2026",
-        "size": "79.85 MB"
+        "date": "04.08.2023",
+        "size": 83725368
       }
     }
   },
@@ -2931,18 +2931,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.16.947.gcfbaa410-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.78 MB"
+        "date": "23.07.2023",
+        "size": 88893048
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.16.947.gcfbaa410-x64.exe",
-        "date": "14.03.2026",
-        "size": "91.51 MB"
+        "date": "23.07.2023",
+        "size": 95951080
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.16.947.gcfbaa410-arm64.exe",
-        "date": "15.03.2026",
-        "size": "79.78 MB"
+        "date": "23.07.2023",
+        "size": 83658000
       }
     }
   },
@@ -2951,18 +2951,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.15.828.g79f41970-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.70 MB"
+        "date": "10.07.2023",
+        "size": 88815656
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.15.828.g79f41970-x64.exe",
-        "date": "14.03.2026",
-        "size": "91.31 MB"
+        "date": "10.07.2023",
+        "size": 95744000
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.15.828.g79f41970-arm64.exe",
-        "date": "15.03.2026",
-        "size": "79.50 MB"
+        "date": "10.07.2023",
+        "size": 83366792
       }
     }
   },
@@ -2971,18 +2971,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.15.826.g633ad967-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.69 MB"
+        "date": "01.07.2023",
+        "size": 88806640
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.15.826.g633ad967-x64.exe",
-        "date": "14.03.2026",
-        "size": "91.29 MB"
+        "date": "01.07.2023",
+        "size": 95728192
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.15.826.g633ad967-arm64.exe",
-        "date": "15.03.2026",
-        "size": "79.45 MB"
+        "date": "01.07.2023",
+        "size": 83312120
       }
     }
   },
@@ -2991,18 +2991,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.14.1149.ga3ae422d-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.60 MB"
+        "date": "22.06.2023",
+        "size": 88707752
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.14.1149.ga3ae422d-x64.exe",
-        "date": "14.03.2026",
-        "size": "91.51 MB"
+        "date": "22.06.2023",
+        "size": 95951232
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.14.1149.ga3ae422d-arm64.exe",
-        "date": "15.03.2026",
-        "size": "79.54 MB"
+        "date": "22.06.2023",
+        "size": 83401720
       }
     }
   },
@@ -3011,18 +3011,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.14.1141.gaab16bfe-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.72 MB"
+        "date": "17.06.2023",
+        "size": 88835408
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.14.1141.gaab16bfe-x64.exe",
-        "date": "14.03.2026",
-        "size": "91.27 MB"
+        "date": "17.06.2023",
+        "size": 95703824
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.14.1141.gaab16bfe-arm64.exe",
-        "date": "15.03.2026",
-        "size": "79.53 MB"
+        "date": "17.06.2023",
+        "size": 83391816
       }
     }
   },
@@ -3031,37 +3031,37 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.13.661.ga588f749-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.95 MB"
+        "date": "12.06.2023",
+        "size": 89074728
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.13.661.ga588f749-x64.exe",
-        "date": "14.03.2026",
-        "size": "91.60 MB"
+        "date": "12.06.2023",
+        "size": 96045176
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.13.661.ga588f749-arm64.exe",
-        "date": "15.03.2026",
-        "size": "79.76 MB"
+        "date": "12.06.2023",
+        "size": 83629920
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.13.661.ga588f749-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "114.43 MB"
+        "date": "12.06.2023",
+        "size": 119992815
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.13.661.ga588f749-arm64.tbz",
-        "date": "16.03.2026",
-        "size": "105.78 MB"
+        "date": "12.06.2023",
+        "size": 110916871
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.13.661.ga588f749_amd64.deb",
-        "date": "15.03.2026",
-        "size": "116.15 MB"
+        "date": "12.06.2023",
+        "size": 121793588
       }
     }
   },
@@ -3070,18 +3070,18 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.13.656.gd13f2059-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.82 MB"
+        "date": "03.06.2023",
+        "size": 88936856
       },
       "x64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.13.656.gd13f2059-x64.exe",
-        "date": "14.03.2026",
-        "size": "91.58 MB"
+        "date": "03.06.2023",
+        "size": 96028968
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.13.656.gd13f2059-arm64.exe",
-        "date": "15.03.2026",
-        "size": "79.74 MB"
+        "date": "03.06.2023",
+        "size": 83610008
       }
     }
   },
@@ -3090,13 +3090,13 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.12.902.g1924b088-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.43 MB"
+        "date": "25.05.2023",
+        "size": 88527048
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.12.902.g1924b088-arm64.exe",
-        "date": "15.03.2026",
-        "size": "78.38 MB"
+        "date": "25.05.2023",
+        "size": 82190032
       }
     }
   },
@@ -3105,20 +3105,20 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.11.916.geb595a67-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.33 MB"
+        "date": "16.05.2023",
+        "size": 88423592
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.11.916.geb595a67-arm64.exe",
-        "date": "15.03.2026",
-        "size": "78.40 MB"
+        "date": "16.05.2023",
+        "size": 82213560
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.11.916.geb595a67_amd64.deb",
-        "date": "15.03.2026",
-        "size": "115.45 MB"
+        "date": "16.05.2023",
+        "size": 121053308
       }
     }
   },
@@ -3127,13 +3127,13 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.11.914.gd3175972-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.30 MB"
+        "date": "12.05.2023",
+        "size": 88400096
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.11.914.gd3175972-arm64.exe",
-        "date": "15.03.2026",
-        "size": "78.40 MB"
+        "date": "12.05.2023",
+        "size": 82211384
       }
     }
   },
@@ -3142,13 +3142,13 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.11.911.ga041e113-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.30 MB"
+        "date": "07.05.2023",
+        "size": 88398576
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.11.911.ga041e113-arm64.exe",
-        "date": "15.03.2026",
-        "size": "78.40 MB"
+        "date": "07.05.2023",
+        "size": 82209808
       }
     }
   },
@@ -3157,13 +3157,13 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.10.760.g52970952-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.07 MB"
+        "date": "03.05.2023",
+        "size": 88153896
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.10.760.g52970952-arm64.exe",
-        "date": "15.03.2026",
-        "size": "78.54 MB"
+        "date": "03.05.2023",
+        "size": 82355048
       }
     }
   },
@@ -3172,13 +3172,13 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.10.751.g9ce1ecb2-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.18 MB"
+        "date": "27.04.2023",
+        "size": 88265368
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.10.751.g9ce1ecb2-arm64.exe",
-        "date": "15.03.2026",
-        "size": "78.52 MB"
+        "date": "27.04.2023",
+        "size": 82339064
       }
     }
   },
@@ -3187,8 +3187,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.9.746.gbc57b7ae-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.14 MB"
+        "date": "22.04.2023",
+        "size": 88222488
       }
     }
   },
@@ -3197,13 +3197,13 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.9.743.g85d9593d-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.02 MB"
+        "date": "16.04.2023",
+        "size": 88099488
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.9.743.g85d9593d-arm64.exe",
-        "date": "15.03.2026",
-        "size": "78.49 MB"
+        "date": "16.04.2023",
+        "size": 82302688
       }
     }
   },
@@ -3212,13 +3212,13 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.9.741.gb72a2f3b-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.17 MB"
+        "date": "11.04.2023",
+        "size": 88255688
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.9.741.gb72a2f3b-arm64.exe",
-        "date": "15.03.2026",
-        "size": "78.48 MB"
+        "date": "11.04.2023",
+        "size": 82297152
       }
     }
   },
@@ -3227,13 +3227,13 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.9.739.g0da2e75a-x86.exe",
-        "date": "15.03.2026",
-        "size": "83.98 MB"
+        "date": "05.04.2023",
+        "size": 88058384
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.9.739.g0da2e75a-arm64.exe",
-        "date": "15.03.2026",
-        "size": "78.49 MB"
+        "date": "05.04.2023",
+        "size": 82306936
       }
     }
   },
@@ -3242,20 +3242,20 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.8.923.g4f94bf0d-x86.exe",
-        "date": "15.03.2026",
-        "size": "83.68 MB"
+        "date": "31.03.2023",
+        "size": 87744904
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.8.923.g4f94bf0d-arm64.exe",
-        "date": "15.03.2026",
-        "size": "78.12 MB"
+        "date": "31.03.2023",
+        "size": 81915040
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.2.8.923.g4f94bf0d_amd64.deb",
-        "date": "15.03.2026",
-        "size": "114.29 MB"
+        "date": "31.03.2023",
+        "size": 119841576
       }
     }
   },
@@ -3264,13 +3264,13 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.8.913.g6ef350af-x86.exe",
-        "date": "15.03.2026",
-        "size": "83.66 MB"
+        "date": "26.03.2023",
+        "size": 87724872
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.8.913.g6ef350af-arm64.exe",
-        "date": "15.03.2026",
-        "size": "78.11 MB"
+        "date": "26.03.2023",
+        "size": 81906416
       }
     }
   },
@@ -3279,13 +3279,13 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.8.907.g36fbeacc-x86.exe",
-        "date": "15.03.2026",
-        "size": "83.27 MB"
+        "date": "22.03.2023",
+        "size": 87309952
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.8.907.g36fbeacc-arm64.exe",
-        "date": "15.03.2026",
-        "size": "77.75 MB"
+        "date": "22.03.2023",
+        "size": 81525424
       }
     }
   },
@@ -3294,20 +3294,20 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.7.1277.g2b3ce637-x86.exe",
-        "date": "15.03.2026",
-        "size": "83.50 MB"
+        "date": "17.03.2023",
+        "size": 87553472
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.7.1277.g2b3ce637-arm64.exe",
-        "date": "15.03.2026",
-        "size": "77.83 MB"
+        "date": "17.03.2023",
+        "size": 81614768
       }
     },
     "mac": {
       "intel": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.7.1277.g2b3ce637-x86_64.tbz",
-        "date": "15.03.2026",
-        "size": "112.69 MB"
+        "date": "17.03.2023",
+        "size": 118169268
       }
     }
   },
@@ -3316,13 +3316,13 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.7.1275.g586348e7-x86.exe",
-        "date": "15.03.2026",
-        "size": "83.51 MB"
+        "date": "12.03.2023",
+        "size": 87568736
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.7.1275.g586348e7-arm64.exe",
-        "date": "15.03.2026",
-        "size": "77.82 MB"
+        "date": "12.03.2023",
+        "size": 81600176
       }
     }
   },
@@ -3331,13 +3331,13 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.7.1264.ge86bd157-x86.exe",
-        "date": "15.03.2026",
-        "size": "83.67 MB"
+        "date": "07.03.2023",
+        "size": 87737456
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.7.1264.ge86bd157-arm64.exe",
-        "date": "15.03.2026",
-        "size": "77.82 MB"
+        "date": "07.03.2023",
+        "size": 81596512
       }
     }
   },
@@ -3346,13 +3346,13 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.6.863.ge7902f05-x86.exe",
-        "date": "15.03.2026",
-        "size": "83.73 MB"
+        "date": "02.03.2023",
+        "size": 87792752
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.6.863.ge7902f05-arm64.exe",
-        "date": "15.03.2026",
-        "size": "77.80 MB"
+        "date": "02.03.2023",
+        "size": 81581904
       }
     }
   },
@@ -3361,13 +3361,13 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.6.861.g9440c6cf-x86.exe",
-        "date": "15.03.2026",
-        "size": "83.60 MB"
+        "date": "25.02.2023",
+        "size": 87658144
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.6.861.g9440c6cf-arm64.exe",
-        "date": "15.03.2026",
-        "size": "77.71 MB"
+        "date": "25.02.2023",
+        "size": 81486600
       }
     }
   },
@@ -3376,13 +3376,13 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.5.1006.g22820f93-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.18 MB"
+        "date": "20.02.2023",
+        "size": 88270696
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.5.1006.g22820f93-arm64.exe",
-        "date": "15.03.2026",
-        "size": "78.00 MB"
+        "date": "20.02.2023",
+        "size": 81786216
       }
     }
   },
@@ -3391,13 +3391,13 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.5.954.gf42f9f0a-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.16 MB"
+        "date": "15.02.2023",
+        "size": 88244128
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.5.954.gf42f9f0a-arm64.exe",
-        "date": "15.03.2026",
-        "size": "78.01 MB"
+        "date": "15.02.2023",
+        "size": 81798160
       }
     }
   },
@@ -3406,13 +3406,13 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.4.912.g949d5fd0-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.15 MB"
+        "date": "09.02.2023",
+        "size": 88238608
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.4.912.g949d5fd0-arm64.exe",
-        "date": "15.03.2026",
-        "size": "78.00 MB"
+        "date": "09.02.2023",
+        "size": 81788160
       }
     }
   },
@@ -3421,13 +3421,13 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.4.907.g126451d5-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.02 MB"
+        "date": "04.02.2023",
+        "size": 88097800
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.4.907.g126451d5-arm64.exe",
-        "date": "15.03.2026",
-        "size": "77.99 MB"
+        "date": "04.02.2023",
+        "size": 81779280
       }
     }
   },
@@ -3436,13 +3436,13 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.4.905.gaf3b1e64-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.10 MB"
+        "date": "30.01.2023",
+        "size": 88184672
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.4.905.gaf3b1e64-arm64.exe",
-        "date": "15.03.2026",
-        "size": "77.99 MB"
+        "date": "30.01.2023",
+        "size": 81778320
       }
     }
   },
@@ -3451,13 +3451,13 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.4.893.gc9aee263-x86.exe",
-        "date": "15.03.2026",
-        "size": "84.10 MB"
+        "date": "24.01.2023",
+        "size": 88186024
       },
       "arm64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.4.893.gc9aee263-arm64.exe",
-        "date": "15.03.2026",
-        "size": "77.96 MB"
+        "date": "24.01.2023",
+        "size": 81750440
       }
     }
   },
@@ -3466,8 +3466,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.3.1115.gd61a8f5c-x86.exe",
-        "date": "15.03.2026",
-        "size": "76.80 MB"
+        "date": "19.01.2023",
+        "size": 80535064
       }
     }
   },
@@ -3476,8 +3476,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.2.582.gfae9c59b-x86.exe",
-        "date": "15.03.2026",
-        "size": "76.76 MB"
+        "date": "08.01.2023",
+        "size": 80491664
       }
     }
   },
@@ -3486,8 +3486,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.1.968.g21027577-x86.exe",
-        "date": "15.03.2026",
-        "size": "76.71 MB"
+        "date": "28.12.2022",
+        "size": 80438616
       }
     }
   },
@@ -3496,8 +3496,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.1.958.g6881e214-x86.exe",
-        "date": "15.03.2026",
-        "size": "76.79 MB"
+        "date": "16.12.2022",
+        "size": 80520240
       }
     }
   },
@@ -3506,8 +3506,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.0.1165.gabf054ab-x86.exe",
-        "date": "15.03.2026",
-        "size": "76.68 MB"
+        "date": "05.12.2022",
+        "size": 80405280
       }
     }
   },
@@ -3516,8 +3516,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.1.99.878.g1e4ccc6e-x86.exe",
-        "date": "15.03.2026",
-        "size": "76.67 MB"
+        "date": "24.11.2022",
+        "size": 80396040
       }
     }
   },
@@ -3526,8 +3526,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.1.97.962.g24733a46-x86.exe",
-        "date": "15.03.2026",
-        "size": "76.28 MB"
+        "date": "31.10.2022",
+        "size": 79984024
       }
     }
   },
@@ -3536,8 +3536,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.1.94.870.gf994cb0b-x86.exe",
-        "date": "15.03.2026",
-        "size": "75.80 MB"
+        "date": "19.09.2022",
+        "size": 79486056
       }
     }
   },
@@ -3546,8 +3546,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.1.93.896.g3ae3b4f3-x86.exe",
-        "date": "15.03.2026",
-        "size": "75.78 MB"
+        "date": "27.08.2022",
+        "size": 79465360
       }
     }
   },
@@ -3556,8 +3556,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.1.90.859.gf1bb1e36-x86.exe",
-        "date": "15.03.2026",
-        "size": "74.49 MB"
+        "date": "25.07.2022",
+        "size": 78106424
       }
     }
   },
@@ -3566,8 +3566,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.1.90.855.ga73cc2ce-x86.exe",
-        "date": "15.03.2026",
-        "size": "74.43 MB"
+        "date": "18.07.2022",
+        "size": 78044112
       }
     }
   },
@@ -3576,8 +3576,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.1.87.612.gf8d110e2-x86.exe",
-        "date": "15.03.2026",
-        "size": "74.00 MB"
+        "date": "09.06.2022",
+        "size": 77593248
       }
     }
   },
@@ -3586,15 +3586,15 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.1.84.716.gc5f8b819-x86.exe",
-        "date": "15.03.2026",
-        "size": "72.90 MB"
+        "date": "28.04.2022",
+        "size": 76445000
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.1.84.716.gc5f8b819_amd64.deb",
-        "date": "15.03.2026",
-        "size": "113.73 MB"
+        "date": "28.04.2022",
+        "size": 119258436
       }
     }
   },
@@ -3603,8 +3603,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.1.80.699.gc3dac750-x86.exe",
-        "date": "15.03.2026",
-        "size": "72.97 MB"
+        "date": "03.03.2022",
+        "size": 76512424
       }
     }
   },
@@ -3613,8 +3613,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.1.78.765.g5ea20b00-x86.exe",
-        "date": "15.03.2026",
-        "size": "71.95 MB"
+        "date": "08.02.2022",
+        "size": 75447288
       }
     }
   },
@@ -3623,8 +3623,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.1.77.643.g3c4c6fc6-x86.exe",
-        "date": "15.03.2026",
-        "size": "70.77 MB"
+        "date": "20.01.2022",
+        "size": 74210136
       }
     }
   },
@@ -3633,8 +3633,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.1.76.447.g11f432d8-x86.exe",
-        "date": "15.03.2026",
-        "size": "70.74 MB"
+        "date": "10.01.2022",
+        "size": 74181496
       }
     }
   },
@@ -3643,8 +3643,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.1.74.631.g0b24d9ad-x86.exe",
-        "date": "15.03.2026",
-        "size": "70.00 MB"
+        "date": "13.12.2021",
+        "size": 73404768
       }
     }
   },
@@ -3653,8 +3653,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.1.73.517.gbef50fdb-x86.exe",
-        "date": "15.03.2026",
-        "size": "70.64 MB"
+        "date": "29.11.2021",
+        "size": 74072720
       }
     }
   },
@@ -3663,15 +3663,15 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.1.72.439.gc253025e-x86.exe",
-        "date": "15.03.2026",
-        "size": "70.61 MB"
+        "date": "15.11.2021",
+        "size": 74045104
       }
     },
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.1.72.439.gc253025e_amd64.deb",
-        "date": "15.03.2026",
-        "size": "112.35 MB"
+        "date": "15.11.2021",
+        "size": 117803268
       }
     }
   },
@@ -3680,8 +3680,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.1.69.612.gb7409abc-x86.exe",
-        "date": "15.03.2026",
-        "size": "66.98 MB"
+        "date": "04.10.2021",
+        "size": 70233944
       }
     }
   },
@@ -3690,8 +3690,8 @@
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.1.68.632.g2b11de83_amd64.deb",
-        "date": "15.03.2026",
-        "size": "107.37 MB"
+        "date": "20.09.2021",
+        "size": 112586002
       }
     }
   },
@@ -3700,8 +3700,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.1.68.628.geb44bd66-x86.exe",
-        "date": "15.03.2026",
-        "size": "68.46 MB"
+        "date": "20.09.2021",
+        "size": 71782840
       }
     }
   },
@@ -3710,8 +3710,8 @@
     "linux": {
       "amd64": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-client_1.1.67.586.gbb5ef64e_amd64.deb",
-        "date": "15.03.2026",
-        "size": "113.43 MB"
+        "date": "31.08.2021",
+        "size": 118938508
       }
     }
   },
@@ -3720,8 +3720,8 @@
     "win": {
       "x86": {
         "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.1.59.710.g134abcca-x86.exe",
-        "date": "15.03.2026",
-        "size": "76.02 MB"
+        "date": "10.05.2021",
+        "size": 79716960
       }
     }
   }
