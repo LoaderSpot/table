@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Official Spotify full installers</title>
-  <meta name="description" content="Download official Spotify full offline installers for Windows, macOS, and Linux. Archive of old and new versions directly from Spotify servers">
+  <title>Spotify full installers for desktop</title>
+  <meta name="description" content="Download official Spotify full installers for Windows, macOS, and Linux">
   <meta name="google-site-verification" content="dZPtbcIZb0eyy8HzugWp_5DwcDgyBkfU0AdN6wEicMs" />
   <link type="image/png" rel="icon" href="favicon.png">
   <link rel="preconnect" href="https://upgrade.scdn.co" crossorigin>
@@ -101,14 +101,6 @@
                 <input type="search" id="versionSearch" placeholder="Search by version" style="font-size: 13px;">
                 <span class="clear-search"></span>
               </div>
-              <!-- кнопка плюс -->
-              <button class="plus-button" id="plusButton" title="Add new version">
-                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                  <rect x="9.25" y="4" width="3.5" height="14" rx="1.5" fill="currentColor" />
-                  <rect x="18" y="9.25" width="3.5" height="14" rx="1.5" transform="rotate(90 18 9.25)"
-                    fill="currentColor" />
-                </svg>
-              </button>
             </div>
           </td>
         </tr>
@@ -146,8 +138,6 @@
       </tbody>
     </table>
   </div>
-  <div id="blurOverlay" style="display:none;"></div>
-  <div id="microFormContainer" style="display:none;"></div>
   <div class="toast-notification" id="toast">Copied to clipboard</div>
   <script defer src="js/main.js"></script>
   <script defer src="js/snow.js"></script>
@@ -184,32 +174,6 @@
         </div>
       </div>
     </div>
-  </template>
-
-  <template id="micro-form-template">
-    <form id="microForm" autocomplete="off" class="micro-form-vertical micro-form-with-close">
-      <div class="micro-form-title">Add New Version</div>
-      <div class="micro-form-subtext">
-        This form is for adding new versions. You can also add outdated versions if they are missing from the table.
-        After sending, the version will be automatically checked within the next hour and, if successful, will be immediately added to the table.
-      </div>
-      <div class="micro-form-close-wrap">
-        <button type="button" class="close-micro-form" title="Close">&times;</button>
-      </div>
-      <div class="micro-form-field">
-        <label for="microFormInput" class="micro-form-label">Version</label>
-        <input type="text" id="microFormInput" class="micro-form-input micro-form-input-wide" placeholder="e.g. 1.2.62.580.gb27ad23e" maxlength="100" required />
-      </div>
-      <div id="microFormInputError"></div>
-      <div id="descBlock" class="micro-form-field">
-        <label for="microFormDesc" class="micro-form-label" id="descLabel" style="display:none;">Description</label>
-        <button type="button" id="showDescBtn" class="micro-form-desc-btn">Add description</button>
-        <textarea id="microFormDesc" class="micro-form-input micro-form-desc-textarea" placeholder="any useful information about the version" maxlength="300" style="display:none;resize:vertical;min-height:38px;"></textarea>
-      </div>
-      <div class="micro-form-actions">
-        <button type="submit" class="micro-form-send">Send</button>
-      </div>
-    </form>
   </template>
 </body>
 

@@ -368,53 +368,41 @@ async function copyTextToClipboard(text, successMessage = 'Copied to clipboard')
     }
 }
 
-// глобальный кэш для результатов HEAD-запросов
-const headCache = new Map();
+// кэш метаданных ссылок на скачивание: дата и размер
+const linkMetaCache = new Map();
 
-// флаг для отслеживания необходимости отложить HEAD-запросы
-let headRequestsStarted = false;
+// до инициализации данных обновления ячеек складываем в очередь
+let linkMetaQueueStarted = false;
 
-// таймер для начала HEAD-запросов даже если Worker не ответил
-let headRequestsTimer = null;
+// очередь отложенных обновлений ячеек с метаданными
+const pendingLinkMetaUpdates = [];
 
-// очередь HEAD-запросов
-const pendingHeadRequests = [];
+// применяем все накопленные обновления после инициализации данных
+function flushPendingLinkMetaUpdates() {
+    if (linkMetaQueueStarted) return;
 
-// функция для выполнения отложенных HEAD-запросов
-function startHeadRequests() {
-    if (headRequestsStarted) return; // Если запросы уже запущены, не запускаем снова
+    linkMetaQueueStarted = true;
 
-    headRequestsStarted = true;
-    // отменяем таймер, если он был установлен
-    if (headRequestsTimer) {
-        clearTimeout(headRequestsTimer);
-        headRequestsTimer = null;
+    for (const request of pendingLinkMetaUpdates) {
+        applyCachedLinkMeta(request.dateCell, request.sizeCell, request.url);
     }
-
-    // выполняем все HEAD-запросы из очереди
-    for (const request of pendingHeadRequests) {
-        executeHeadRequest(request.dateCell, request.sizeCell, request.url);
-    }
-    pendingHeadRequests.length = 0; // Очищаем очередь
+    pendingLinkMetaUpdates.length = 0;
 }
 
-// функция updateLinkInfo с использованием очереди
+// обновляем ячейки даты и размера сразу или откладываем до готовности данных
 function updateLinkInfo(dateCell, sizeCell, url, isVisible = true) {
     if (!isVisible) {
         return;
     }
 
-    // Добавляем запрос в очередь
-    pendingHeadRequests.push({ dateCell, sizeCell, url });
+    pendingLinkMetaUpdates.push({ dateCell, sizeCell, url });
 
-    // если запросы уже запущены, выполняем немедленно
-    if (headRequestsStarted) {
-        executeHeadRequest(dateCell, sizeCell, url);
-        // и удаляем из очереди
-        const index = pendingHeadRequests.findIndex(req =>
+    if (linkMetaQueueStarted) {
+        applyCachedLinkMeta(dateCell, sizeCell, url);
+        const index = pendingLinkMetaUpdates.findIndex(req =>
             req.dateCell === dateCell && req.sizeCell === sizeCell && req.url === url);
         if (index > -1) {
-            pendingHeadRequests.splice(index, 1);
+            pendingLinkMetaUpdates.splice(index, 1);
         }
     }
 }
@@ -551,7 +539,7 @@ function getLinkMeta(versionData, os, arch) {
 }
 
 function primeMetadataCache(data) {
-    headCache.clear();
+    linkMetaCache.clear();
 
     Object.values(data).forEach(versionData => {
         if (!versionData?.links) return;
@@ -561,7 +549,7 @@ function primeMetadataCache(data) {
 
             getOrderedArchEntries(os, archMap).forEach(([arch, link]) => {
                 if (!link) return;
-                headCache.set(link, getLinkMeta(versionData, os, arch));
+                linkMetaCache.set(link, getLinkMeta(versionData, os, arch));
             });
         });
     });
@@ -594,45 +582,22 @@ function buildLinuxVersionsData(data) {
         .filter(version => version.architectures.length > 0);
 }
 
-// функция для выполнения HEAD-запроса
-async function executeHeadRequest(dateCell, sizeCell, url) {
-
+// применяем закэшированные метаданные ссылки к ячейкам таблицы
+function applyCachedLinkMeta(dateCell, sizeCell, url) {
     const dateCellTarget = dateCell.querySelector('.cell-wrapper') || dateCell;
     const sizeCellTarget = sizeCell.querySelector('.cell-wrapper') || sizeCell;
 
-    const cached = headCache.get(url) || { date: '—', size: '—' };
-    if (!headCache.has(url)) {
-        headCache.set(url, cached);
+    const cached = linkMetaCache.get(url) || { date: '—', size: '—' };
+    if (!linkMetaCache.has(url)) {
+        linkMetaCache.set(url, cached);
     }
 
     dateCellTarget.textContent = cached.date;
     sizeCellTarget.textContent = cached.size;
 }
 
-function preventScroll(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    return false;
-}
-
-function disableScroll() {
-    document.body.style.overflow = 'hidden';
-    document.addEventListener('wheel', preventScroll, { passive: false });
-    document.addEventListener('touchmove', preventScroll, { passive: false });
-    document.addEventListener('keydown', (e) => {
-        if ([32, 33, 34, 35, 36, 37, 38, 39, 40].includes(e.keyCode)) {
-            e.preventDefault();
-        }
-    });
-}
-
-function enableScroll() {
-    document.body.style.overflow = '';
-    document.removeEventListener('wheel', preventScroll, { passive: false });
-    document.removeEventListener('touchmove', preventScroll, { passive: false });
-}
 async function preloadSizesForSorting(dataSource) {
-    const linksToFetch = [];
+    const linksToPrime = [];
 
     dataSource.forEach(([versionKey, versionData]) => {
         if (!versionData.links[currentOS]) return;
@@ -641,16 +606,16 @@ async function preloadSizesForSorting(dataSource) {
             if (currentArch !== 'all' && arch !== currentArch) return;
 
             const link = versionData.links[currentOS][arch];
-            if (link && !headCache.has(link)) {
-                linksToFetch.push(link);
+            if (link && !linkMetaCache.has(link)) {
+                linksToPrime.push(link);
             }
         });
     });
 
-    if (linksToFetch.length === 0) return;
+    if (linksToPrime.length === 0) return;
 
-    linksToFetch.forEach(link => {
-        headCache.set(link, { date: '—', size: '—' });
+    linksToPrime.forEach(link => {
+        linkMetaCache.set(link, { date: '—', size: '—' });
     });
 }
 
@@ -723,7 +688,7 @@ async function loadAllData(forceUpdate = false, commentsOnly = false) {
                     });
                     pendingCounterElements.clear();
 
-                    startHeadRequests();
+                    flushPendingLinkMetaUpdates();
                 }
 
                 if (data.comments && Array.isArray(data.comments)) {
@@ -752,7 +717,7 @@ async function loadAllData(forceUpdate = false, commentsOnly = false) {
         // помечаем счетчики как загруженные, чтобы избежать повторных запросов
         if (!commentsOnly) {
             countersLoaded = true;
-            startHeadRequests(); // запускаем HEAD-запросы даже при ошибке загрузки данных
+            flushPendingLinkMetaUpdates(); // показываем кэшированные метаданные даже при ошибке загрузки данных
         }
         commentCountsLoaded = true;
 
@@ -1161,7 +1126,7 @@ function reRenderVersions() {
     if (tableContainer) {
         tableContainer.style.overflow = '';
     }
-    enableScroll();
+    document.body.style.overflow = '';
 
     setTimeout(() => {
         if (currentSearchTerm !== "") {
@@ -1397,36 +1362,12 @@ function getVersionSize(versionData, os = currentOS) {
             const archs = getOrderedArchKeys(os, versionData.links[os]);
             if (archs.length > 0) {
                 const link = versionData.links[os][archs[0]];
-                if (headCache.has(link)) {
-                    return headCache.get(link).size;
+                if (linkMetaCache.has(link)) {
+                    return linkMetaCache.get(link).size;
                 }
             }
         }
         return '—';
-    }
-}
-
-function sortAllVersionsFlat(versions, os = currentOS) {
-    if (os === 'linux') {
-        return versions.sort((a, b) => {
-            if (currentSortColumn === 'size') {
-                const sizeA = getVersionSize(a, os);
-                const sizeB = getVersionSize(b, os);
-                const sizeComp = sizeCompare(sizeA, sizeB);
-                return sizeComp !== 0 ? sizeComp : versionCompare(a.version.short, b.version.short);
-            }
-            return versionCompare(a.version.short, b.version.short);
-        });
-    } else {
-        return versions.sort((a, b) => {
-            if (currentSortColumn === 'size') {
-                const sizeA = getVersionSize(a[1], os);
-                const sizeB = getVersionSize(b[1], os);
-                const sizeComp = sizeCompare(sizeA, sizeB);
-                return sizeComp !== 0 ? sizeComp : versionCompare(a[0], b[0]);
-            }
-            return versionCompare(a[0], b[0]);
-        });
     }
 }
 
@@ -1684,8 +1625,8 @@ function loadMoreWinMacRows() {
                 if (link) {
                     let size = '—';
                     let date = '—';
-                    if (headCache.has(link)) {
-                        const cached = headCache.get(link);
+                    if (linkMetaCache.has(link)) {
+                        const cached = linkMetaCache.get(link);
                         size = cached.size;
                         date = cached.date;
                     }
@@ -1752,7 +1693,7 @@ function loadMoreWinMacRows() {
             downloadCell.setAttribute('data-download-url', item.link);
             row.appendChild(downloadCell);
 
-            if (!headCache.has(item.link)) {
+            if (!linkMetaCache.has(item.link)) {
                 updateLinkInfo(dateCell, sizeCell, item.link, true);
             }
 
@@ -1893,9 +1834,8 @@ function toggleSpoiler(groupKey) {
                         const dateCellWrapper = dateCell.querySelector('.cell-wrapper');
                         const sizeCellWrapper = sizeCell.querySelector('.cell-wrapper');
 
-                        if (headCache.has(url)) {
-
-                            const cached = headCache.get(url);
+                        if (linkMetaCache.has(url)) {
+                            const cached = linkMetaCache.get(url);
                             if (dateCellWrapper) dateCellWrapper.textContent = cached.date;
                             if (sizeCellWrapper) sizeCellWrapper.textContent = cached.size;
                         } else {
@@ -2482,7 +2422,7 @@ async function loadVersionsApp() {
 
         // запускаем загрузку всех данных
         loadAllData().catch(err => console.error('Data fetch error:', err));
-        startHeadRequests();
+        flushPendingLinkMetaUpdates();
 
         // отображаем первую партию данных для текущей ОС, только если это не markdown страница
         if (currentSearchTerm) {
@@ -2659,7 +2599,7 @@ document.querySelectorAll('.filter-button').forEach(button => {
             if (tableContainer) {
                 tableContainer.style.overflow = '';
             }
-            enableScroll();
+            document.body.style.overflow = '';
         }
 
         // сброс фильтра архитектуры при необходимости
@@ -3308,213 +3248,3 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Кнопка плюс и микроформа
-const plusButton = document.getElementById('plusButton');
-const microFormContainer = document.getElementById('microFormContainer');
-const blurOverlay = document.getElementById('blurOverlay');
-let microFormScrollPosition = 0;
-
-// управления размытием
-function showBlurOverlay() {
-    if (blurOverlay.style.display === 'block') return;
-    blurOverlay.style.display = 'block';
-    blurOverlay.style.opacity = "0";
-    setTimeout(() => {
-        blurOverlay.style.opacity = "1";
-    }, 10);
-}
-
-function hideBlurOverlay() {
-    blurOverlay.style.opacity = "0";
-    setTimeout(() => {
-        blurOverlay.style.display = 'none';
-    }, 350);
-}
-
-function showMicroForm() {
-    if (microFormContainer.style.display === 'block') return;
-
-    const template = document.getElementById('micro-form-template');
-    if (!template) return;
-
-    microFormContainer.innerHTML = ''; // Clear previous content
-    const formClone = template.content.cloneNode(true);
-    microFormContainer.appendChild(formClone);
-
-    microFormContainer.style.display = 'block';
-    microFormContainer.style.overflow = 'hidden';
-    showBlurOverlay();
-    blurOverlay.addEventListener('click', hideMicroForm);
-
-    const form = document.getElementById('microForm');
-    form.classList.add('micro-form-animate-in');
-    setTimeout(() => {
-        form.classList.add('micro-form-animate-visible');
-        setTimeout(() => {
-            if (microFormContainer.style.display === 'block') {
-                microFormContainer.style.overflowY = 'auto';
-                microFormContainer.style.overflowX = 'hidden';
-            }
-        }, 380);
-    }, 10);
-
-    microFormScrollPosition = window.pageYOffset;
-    document.body.classList.add('modal-open');
-    document.body.style.top = `-${microFormScrollPosition}px`;
-    document.body.style.position = 'fixed';
-    document.body.style.width = '100%';
-
-    setTimeout(() => {
-        const input = document.getElementById('microFormInput');
-        if (input) input.focus();
-    }, 100);
-
-    const versionInput = document.getElementById('microFormInput');
-    const errorDiv = document.getElementById('microFormInputError');
-    versionInput.addEventListener('input', function () {
-        errorDiv.textContent = '';
-        errorDiv.style.display = 'none';
-    });
-
-    form.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const value = versionInput.value.trim();
-        const desc = document.getElementById('microFormDesc').value.trim();
-        const regex = /^\d+\.\d+\.\d+\.\d+\.g[0-9a-f]{8}$/;
-
-        if (!regex.test(value)) {
-            errorDiv.textContent = 'version does not match the format: e.g. 1.1.11.111.g12345abc';
-            errorDiv.style.display = 'block';
-            versionInput.focus();
-            return;
-        }
-
-        const parts = value.split('.');
-        let shortVersion = '';
-        if (parts.length >= 3) {
-            shortVersion = parts[0] + '.' + parts[1] + '.' + parts[2];
-        }
-
-        function compareShortVersions(a, b) {
-            const pa = a.split('.').map(Number);
-            const pb = b.split('.').map(Number);
-            for (let i = 0; i < 3; i++) {
-                if ((pa[i] || 0) > (pb[i] || 0)) return 1;
-                if ((pa[i] || 0) < (pb[i] || 0)) return -1;
-            }
-            return 0;
-        }
-
-        if (shortVersion && compareShortVersions(shortVersion, '1.1.58') <= 0) {
-            errorDiv.textContent = 'versions 1.1.58 and below are not accepted as they have been disabled on the server side';
-            errorDiv.style.display = 'block';
-            versionInput.focus();
-            return;
-        }
-
-        let exists = false;
-        if (Array.isArray(allVersions) && allVersions.length > 0) {
-            exists = allVersions.some(([key, data]) => data.fullversion === value);
-        }
-
-        if (exists) {
-            errorDiv.textContent = 'this version already exists in the table';
-            errorDiv.style.display = 'block';
-            versionInput.focus();
-            return;
-        }
-
-        const errorPrefix = 'Version was not sent';
-        try {
-            const response = await fetch('https://broad-pine-bbc0.amd64fox1.workers.dev/submit-version', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    version: value,
-                    desc: desc
-                })
-            });
-            const result = await response.json();
-            if (result.success) {
-                showToast('Version <b>' + value + '</b> has been successfully sent for review', 5000, 'success');
-                hideMicroForm();
-            } else {
-                hideMicroForm();
-                let errorMsg = errorPrefix + '\n' + (result.error || 'Unknown error');
-                if (result.status) {
-                    errorMsg += `: ${result.status}`;
-                }
-                showToast(errorMsg, 5000, 'error');
-            }
-        } catch (err) {
-            hideMicroForm();
-            showToast(errorPrefix + '\n' + err, 5000, 'error');
-        }
-    });
-
-    form.querySelector('.close-micro-form').addEventListener('click', hideMicroForm);
-
-    const showDescBtn = document.getElementById('showDescBtn');
-    const descTextarea = document.getElementById('microFormDesc');
-    const descLabel = document.getElementById('descLabel');
-    showDescBtn.addEventListener('click', function (e) {
-        e.preventDefault();
-        showDescBtn.style.display = 'none';
-        descLabel.style.display = 'block';
-        descTextarea.style.display = 'block';
-        descTextarea.focus();
-    });
-
-    setTimeout(() => {
-        document.addEventListener('mousedown', handleOutsideClick);
-    }, 0);
-}
-
-// функция скрытия микроформы
-function hideMicroForm() {
-    const form = document.getElementById('microForm');
-    microFormContainer.style.overflow = 'hidden';
-    if (form) {
-        form.classList.remove('micro-form-animate-visible');
-        form.classList.remove('micro-form-animate-in');
-        form.classList.add('micro-form-animate-out');
-        setTimeout(() => {
-            microFormContainer.style.display = 'none';
-            microFormContainer.innerHTML = '';
-        }, 320);
-    } else {
-        microFormContainer.style.display = 'none';
-        microFormContainer.innerHTML = '';
-    }
-    hideBlurOverlay();
-    blurOverlay.removeEventListener('click', hideMicroForm);
-    document.body.classList.remove('modal-open');
-    document.body.style.top = '';
-    document.body.style.position = '';
-    document.body.style.width = '';
-    window.scrollTo(0, microFormScrollPosition);
-    document.removeEventListener('mousedown', handleOutsideClick);
-}
-
-// обработка клика вне микроформы
-function handleOutsideClick(e) {
-    if (
-        !microFormContainer.contains(e.target) &&
-        e.target !== plusButton &&
-        !blurOverlay.contains(e.target)
-    ) {
-        hideMicroForm();
-    }
-}
-
-// обработчик нажатия на плюс
-plusButton.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (microFormContainer.style.display === 'block') {
-        hideMicroForm();
-    } else {
-        showMicroForm();
-    }
-});
