@@ -1,4 +1,31 @@
 {
+  "1.2.86.502": {
+    "fullversion": "1.2.86.502.g8cd7fb22",
+    "win": {
+      "x64": {
+        "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.86.502.g8cd7fb22-x64.exe",
+        "date": "25.03.2026",
+        "size": 127765976
+      },
+      "arm64": {
+        "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify_installer-1.2.86.502.g8cd7fb22-arm64.exe",
+        "date": "25.03.2026",
+        "size": 117466376
+      }
+    },
+    "mac": {
+      "intel": {
+        "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.86.502.g8cd7fb22-x86_64.tbz",
+        "date": "25.03.2026",
+        "size": 158113294
+      },
+      "arm64": {
+        "url": "https://broad-pine-bbc0.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.86.502.g8cd7fb22-arm64.tbz",
+        "date": "25.03.2026",
+        "size": 145111977
+      }
+    }
+  },
   "1.2.85.519": {
     "fullversion": "1.2.85.519.g549a528b",
     "win": {
