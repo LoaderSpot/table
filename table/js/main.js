@@ -630,13 +630,53 @@ let commentCountsLoaded = false;
 const pendingCounterElements = new Map();
 const MIN_UPDATE_INTERVAL = 10000; // минимальный интервал между обновлениями (10 секунд)
 let lastDataUpdate = 0;
+const ALL_DATA_BACKGROUND_RETRY_DELAY_MS = 5000;
+let allDataBackgroundRetryTimeoutId = null;
 
 function buildVersionCommentKey(version) {
     return `spotify-version-${version}`;
 }
 
+function clearAllDataBackgroundRetry() {
+    if (allDataBackgroundRetryTimeoutId) {
+        clearTimeout(allDataBackgroundRetryTimeoutId);
+        allDataBackgroundRetryTimeoutId = null;
+    }
+}
+
+function scheduleAllDataBackgroundRetry() {
+    clearAllDataBackgroundRetry();
+    allDataBackgroundRetryTimeoutId = setTimeout(() => {
+        allDataBackgroundRetryTimeoutId = null;
+        loadAllData(true, false).catch(err => {
+            console.warn('Background all-data retry failed:', err);
+        });
+    }, ALL_DATA_BACKGROUND_RETRY_DELAY_MS);
+}
+
+function getAllDataResponseState(response, data, commentsOnly) {
+    const rawErrors = data && typeof data === 'object' && data.errors && typeof data.errors === 'object'
+        ? data.errors
+        : null;
+    const xError = String(response?.headers?.get?.('X-Error') || '').trim().toLowerCase();
+    const headerIndicatesPartial = xError === 'partial' || xError === 'timeout';
+    const hasExplicitDownloadsFlag = Boolean(rawErrors && Object.prototype.hasOwnProperty.call(rawErrors, 'downloads'));
+    const hasExplicitCommentsFlag = Boolean(rawErrors && Object.prototype.hasOwnProperty.call(rawErrors, 'comments'));
+    const downloadsFailed = !commentsOnly && (hasExplicitDownloadsFlag ? Boolean(rawErrors.downloads) : headerIndicatesPartial);
+    const commentsFailed = hasExplicitCommentsFlag ? Boolean(rawErrors.comments) : headerIndicatesPartial;
+
+    return {
+        downloadsFailed,
+        commentsFailed
+    };
+}
+
 // функция для получения всех данных одним запросом
 async function loadAllData(forceUpdate = false, commentsOnly = false) {
+    const requestedDataLoaded = commentsOnly
+        ? commentCountsLoaded
+        : (countersLoaded && commentCountsLoaded);
+
     // если запрашиваются только комментарии, проверяем только флаг загрузки комментариев
     if (commentsOnly && commentCountsLoaded && !forceUpdate) {
         return { comments: commentCountCache };
@@ -644,6 +684,7 @@ async function loadAllData(forceUpdate = false, commentsOnly = false) {
 
     // для полного запроса проверяем оба флага
     if (!commentsOnly && countersLoaded && commentCountsLoaded && !forceUpdate) {
+        clearAllDataBackgroundRetry();
         return { downloads: allDownloadCounters, comments: commentCountCache };
     }
 
@@ -653,7 +694,6 @@ async function loadAllData(forceUpdate = false, commentsOnly = false) {
             return commentsOnly ? { comments: commentCountCache } :
                 { downloads: allDownloadCounters, comments: commentCountCache };
         }
-
         lastDataUpdate = now;
 
         // добавляем параметр для запроса только комментариев при необходимости
@@ -676,8 +716,18 @@ async function loadAllData(forceUpdate = false, commentsOnly = false) {
                 }
 
                 const data = await response.json();
+                const responseState = getAllDataResponseState(response, data, commentsOnly);
+                const downloadsPayloadValid = !commentsOnly && data && data.downloads && typeof data.downloads === 'object';
+                const commentsPayloadValid = data && Array.isArray(data.comments);
+                const downloadsSucceeded = commentsOnly
+                    ? false
+                    : (!responseState.downloadsFailed && downloadsPayloadValid);
+                const commentsSucceeded = !responseState.commentsFailed && commentsPayloadValid;
+                const requestedSectionFailed = commentsOnly
+                    ? !commentsSucceeded
+                    : (!downloadsSucceeded || !commentsSucceeded);
 
-                if (!commentsOnly && data.downloads) {
+                if (!commentsOnly && downloadsSucceeded) {
                     allDownloadCounters = data.downloads;
                     countersLoaded = true;
 
@@ -691,10 +741,18 @@ async function loadAllData(forceUpdate = false, commentsOnly = false) {
                     flushPendingLinkMetaUpdates();
                 }
 
-                if (data.comments && Array.isArray(data.comments)) {
+                if (commentsSucceeded) {
                     processDiscussionData(data.comments);
                     commentCountsLoaded = true;
                     updateExistingCommentButtons();
+                }
+
+                if (!commentsOnly) {
+                    if (requestedSectionFailed) {
+                        scheduleAllDataBackgroundRetry();
+                    } else {
+                        clearAllDataBackgroundRetry();
+                    }
                 }
 
                 return commentsOnly ? { comments: commentCountCache } :
@@ -713,13 +771,9 @@ async function loadAllData(forceUpdate = false, commentsOnly = false) {
         throw lastError;
     } catch (err) {
         console.error('Error loading data from worker:', err);
-
-        // помечаем счетчики как загруженные, чтобы избежать повторных запросов
-        if (!commentsOnly) {
-            countersLoaded = true;
-            flushPendingLinkMetaUpdates(); // показываем кэшированные метаданные даже при ошибке загрузки данных
+        if (!commentsOnly && requestedDataLoaded) {
+            clearAllDataBackgroundRetry();
         }
-        commentCountsLoaded = true;
 
         return commentsOnly ? { comments: commentCountCache } :
             { downloads: allDownloadCounters, comments: commentCountCache };
