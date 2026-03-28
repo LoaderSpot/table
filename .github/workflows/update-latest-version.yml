@@ -42,7 +42,7 @@ jobs:
           PYTHONUTF8: "1"
         run: |
           set -euo pipefail
-          python - <<'PY' 
+          python - <<'PY'
           import json
           import re
           from pathlib import Path
@@ -77,12 +77,22 @@ jobs:
               "data": latest_entry,
           }
 
-          serialized = json.dumps(output, ensure_ascii=False, indent=2) + "\n"
+          serialized = json.dumps(output, ensure_ascii=False, separators=(",", ":"))
           temp_path.write_text(
               serialized,
               encoding="utf-8",
           )
-          json.loads(temp_path.read_text(encoding="utf-8"))
+          parsed_output = json.loads(temp_path.read_text(encoding="utf-8"))
+          if not isinstance(parsed_output, dict):
+              raise SystemExit("Generated latest.json must be a JSON object")
+          if parsed_output["version"] != latest_version:
+              raise SystemExit("Generated latest.json version does not match selected latest version")
+          if parsed_output["fullversion"] != output["fullversion"]:
+              raise SystemExit("Generated latest.json fullversion does not match source data")
+          if not isinstance(parsed_output["data"], dict):
+              raise SystemExit("Generated latest.json data must be a JSON object")
+          if parsed_output["data"] != latest_entry:
+              raise SystemExit("Generated latest.json data does not match source entry")
           temp_path.replace(latest_path)
           print(f"Updated latest.json -> {latest_version}")
           PY
