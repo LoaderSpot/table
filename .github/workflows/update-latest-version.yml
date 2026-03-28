@@ -1,0 +1,102 @@
+name: Update Latest Version
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - table/versions.json
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-latest-version-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  update-latest-version:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14.3"
+          check-latest: false
+
+      - name: Generate latest.json
+        env:
+          PYTHONUTF8: "1"
+        run: |
+          set -euo pipefail
+          python - <<'PY' 
+          import json
+          import re
+          from pathlib import Path
+
+          versions_path = Path("table/versions.json")
+          latest_path = Path("latest.json")
+          temp_path = latest_path.with_suffix(".json.tmp")
+
+          versions = json.loads(versions_path.read_text(encoding="utf-8"))
+          if not isinstance(versions, dict) or not versions:
+              raise SystemExit("table/versions.json must contain a non-empty JSON object")
+
+          version_pattern = re.compile(r"^\d+(?:\.\d+)*$")
+
+          def version_key(value: str):
+              normalized = value.strip()
+              if not version_pattern.fullmatch(normalized):
+                  raise SystemExit(f"Unsupported version key format: {value!r}")
+              parts = [int(part) for part in normalized.split(".")]
+              while parts and parts[-1] == 0:
+                  parts.pop()
+              return tuple(parts or [0])
+
+          latest_version = max(versions.keys(), key=version_key)
+          latest_entry = versions[latest_version]
+          if not isinstance(latest_entry, dict):
+              raise SystemExit(f"Entry for {latest_version!r} must be a JSON object")
+
+          output = {
+              "version": latest_version,
+              "fullversion": latest_entry.get("fullversion", ""),
+              "data": latest_entry,
+          }
+
+          serialized = json.dumps(output, ensure_ascii=False, indent=2) + "\n"
+          temp_path.write_text(
+              serialized,
+              encoding="utf-8",
+          )
+          json.loads(temp_path.read_text(encoding="utf-8"))
+          temp_path.replace(latest_path)
+          print(f"Updated latest.json -> {latest_version}")
+          PY
+
+      - name: Commit latest.json if changed
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- latest.json; then
+            echo "No changes in latest.json"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add latest.json
+          git commit -m "chore: update latest.json [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
