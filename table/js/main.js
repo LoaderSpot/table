@@ -697,7 +697,7 @@ async function loadAllData(forceUpdate = false, commentsOnly = false) {
         lastDataUpdate = now;
 
         // добавляем параметр для запроса только комментариев при необходимости
-        const workerUrl = `https://broad-pine-bbc0.amd64fox1.workers.dev/all-data${commentsOnly ? '?comments-only=1' : ''}`;
+        const workerUrl = `https://loadspot.amd64fox1.workers.dev/all-data${commentsOnly ? '?comments-only=1' : ''}`;
 
         let lastError;
         for (let attempt = 1; attempt <= 2; attempt++) {
