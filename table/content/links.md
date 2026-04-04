@@ -17,7 +17,6 @@
 ## Github
 - <a href="https://github.com/LoaderSpot/table" target="_blank">Repository</a> of this site
 - Create an <a href="https://github.com/LoaderSpot/table/issues" target="_blank">issue</a>
-- <a href="https://github.com/LoaderSpot/LoaderSpot/releases/latest" target="_blank">Tool</a> for searching new versions by ranges
 - <a href="https://raw.githubusercontent.com/LoaderSpot/table/refs/heads/main/table/versions.json" target="_blank">versions.json</a> - Unified Windows/macOS/Linux download index
 
 ## Ad blockers
