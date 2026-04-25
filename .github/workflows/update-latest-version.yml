@@ -5,6 +5,8 @@ on:
     branches:
       - main
     paths:
+      - .github/workflows/update-latest-version.yml
+      - scripts/update_latest_version.py
       - table/versions.json
   workflow_dispatch:
 
@@ -42,60 +44,7 @@ jobs:
           PYTHONUTF8: "1"
         run: |
           set -euo pipefail
-          python - <<'PY'
-          import json
-          import re
-          from pathlib import Path
-
-          versions_path = Path("table/versions.json")
-          latest_path = Path("latest.json")
-          temp_path = latest_path.with_suffix(".json.tmp")
-
-          versions = json.loads(versions_path.read_text(encoding="utf-8"))
-          if not isinstance(versions, dict) or not versions:
-              raise SystemExit("table/versions.json must contain a non-empty JSON object")
-
-          version_pattern = re.compile(r"^\d+(?:\.\d+)*$")
-
-          def version_key(value: str):
-              normalized = value.strip()
-              if not version_pattern.fullmatch(normalized):
-                  raise SystemExit(f"Unsupported version key format: {value!r}")
-              parts = [int(part) for part in normalized.split(".")]
-              while parts and parts[-1] == 0:
-                  parts.pop()
-              return tuple(parts or [0])
-
-          latest_version = max(versions.keys(), key=version_key)
-          latest_entry = versions[latest_version]
-          if not isinstance(latest_entry, dict):
-              raise SystemExit(f"Entry for {latest_version!r} must be a JSON object")
-
-          output = {
-              "version": latest_version,
-              "fullversion": latest_entry.get("fullversion", ""),
-              "data": latest_entry,
-          }
-
-          serialized = json.dumps(output, ensure_ascii=False, separators=(",", ":"))
-          temp_path.write_text(
-              serialized,
-              encoding="utf-8",
-          )
-          parsed_output = json.loads(temp_path.read_text(encoding="utf-8"))
-          if not isinstance(parsed_output, dict):
-              raise SystemExit("Generated latest.json must be a JSON object")
-          if parsed_output["version"] != latest_version:
-              raise SystemExit("Generated latest.json version does not match selected latest version")
-          if parsed_output["fullversion"] != output["fullversion"]:
-              raise SystemExit("Generated latest.json fullversion does not match source data")
-          if not isinstance(parsed_output["data"], dict):
-              raise SystemExit("Generated latest.json data must be a JSON object")
-          if parsed_output["data"] != latest_entry:
-              raise SystemExit("Generated latest.json data does not match source entry")
-          temp_path.replace(latest_path)
-          print(f"Updated latest.json -> {latest_version}")
-          PY
+          python scripts/update_latest_version.py
 
       - name: Commit latest.json if changed
         run: |

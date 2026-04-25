@@ -1,2 +1,14 @@
 .cloudflare/
 .vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+.env
+.env.local
+.env.*.local
+*.log
+__pycache__/
+*.py[cod]
+table/dist/
+table/node_modules/
+table/.wrangler/

@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "include": [
+    "/faq",
+    "/faq/",
+    "/links",
+    "/links/",
+    "/versions",
+    "/versions/"
+  ],
+  "exclude": [
+    "/assets/*",
+    "/css/*",
+    "/js/*",
+    "/fonts/*",
+    "/content/*",
+    "/versions.json",
+    "/latest.json",
+    "/favicon.png",
+    "/index.html"
+  ]
+}
