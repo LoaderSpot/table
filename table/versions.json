@@ -1,4 +1,31 @@
 {
+  "1.2.90.443": {
+    "fullversion": "1.2.90.443.gab375d74",
+    "mac": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.90.443.gab375d74-arm64.tbz",
+        "date": "15.05.2026",
+        "size": 153911319
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.90.443.gab375d74-x86_64.tbz",
+        "date": "15.05.2026",
+        "size": 172825532
+      }
+    },
+    "win": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.2.90.443.gab375d74-arm64.exe",
+        "date": "15.05.2026",
+        "size": 126201112
+      },
+      "x64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.2.90.443.gab375d74-x64.exe",
+        "date": "15.05.2026",
+        "size": 142113376
+      }
+    }
+  },
   "1.2.89.539": {
     "fullversion": "1.2.89.539.gfb3c63a3",
     "mac": {
