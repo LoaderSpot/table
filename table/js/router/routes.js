@@ -2,8 +2,7 @@ import { state } from '../state.js';
 
 export const ROUTE_PATHS = {
     versions: '/versions',
-    faq: '/faq',
-    links: '/links'
+    faq: '/faq'
 };
 
 const VERSIONS_ROUTE_STATE_KEY = 'loadspot:last-versions-search';
@@ -21,12 +20,10 @@ export function normalizePathname(pathname = window.location.pathname) {
 export function getCurrentPageKey() {
     const hash = window.location.hash;
     if (hash === '#faq') return 'faq';
-    if (hash === '#links') return 'links';
     if (hash === '#versions') return 'versions';
 
     const pathname = normalizePathname();
     if (pathname === ROUTE_PATHS.faq) return 'faq';
-    if (pathname === ROUTE_PATHS.links) return 'links';
     return 'versions';
 }
 
@@ -102,9 +99,6 @@ export function migrateLegacyRoute() {
     if (hash === '#faq') {
         if (window.location.search) rememberVersionsSearch(window.location.search);
         navigateToPage('faq', true);
-    } else if (hash === '#links') {
-        if (window.location.search) rememberVersionsSearch(window.location.search);
-        navigateToPage('links', true);
     } else if (hash === '#versions') {
         navigateToPage('versions', true);
     } else if (getCurrentPageKey() === 'versions' && normalizePathname() !== ROUTE_PATHS.versions) {

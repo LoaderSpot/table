@@ -64,11 +64,11 @@ export function loadMarkdownPage() {
     const mdContainer = document.getElementById('markdownContainer');
     const tableContainer = document.getElementById('tableContainer');
 
-    if (pageKey === 'faq' || pageKey === 'links') {
+    if (pageKey === 'faq') {
         tableContainer.style.display = 'none';
         mdContainer.style.display = 'block';
 
-        const mdFile = pageKey === 'faq' ? 'content/faq.md' : 'content/links.md';
+        const mdFile = 'content/faq.md';
         const currentToken = ++markdownNavigationToken;
 
         loadMarkdownContent(mdFile)

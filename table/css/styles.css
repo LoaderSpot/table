@@ -82,33 +82,6 @@ html {
   display: none;
 }
 
-.markdown-content[data-page="links"] {
-  text-align: center;
-}
-
-.markdown-content[data-page="links"] ul {
-  list-style: disc;
-  display: inline-block;
-  text-align: left;
-  width: 460px;
-  margin: 0 auto;
-  padding-left: 40px;
-}
-
-.markdown-content[data-page="links"] h1,
-.markdown-content[data-page="links"] h2 {
-  margin: var(--spacing-lg) 0;
-}
-
-.markdown-content[data-page="links"] h2 {
-  display: block;
-  width: 425px;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: left;
-  padding-left: 0;
-}
-
 body {
   font-family: 'Spotify UI', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   background: var(--color-background);
