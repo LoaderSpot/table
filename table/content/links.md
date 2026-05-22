@@ -20,8 +20,6 @@
 - <a href="https://raw.githubusercontent.com/LoaderSpot/table/refs/heads/main/table/versions.json" target="_blank">versions.json</a> - Unified Windows/macOS/Linux download index
 
 ## Ad blockers
-- <a href="https://github.com/SpotX-Official/SpotX" target="_blank">SpotX</a> for Windows
-- <a href="https://github.com/SpotX-Official/SpotX-Bash" target="_blank">SpotX-Bash</a> for Linux & Mac
 - <a href="https://t.me/SpotilifeIPAs" target="_blank">EeveeSpotify</a> for iOS
 - <a href="https://github.com/revanced/revanced-manager/releases/latest" target="_blank">Revanced manager</a> for Android
 - xManager <a href="https://t.me/xManagerSupport" target="_blank">Telegram</a> | <a href="https://discord.gg/rWn6dbP8" target="_blank">Discord</a> for Android
