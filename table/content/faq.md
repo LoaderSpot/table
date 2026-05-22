@@ -5,7 +5,7 @@
 <div class="faq">
 
   <div class="faq-item">
-    <div class="question">Am I definitely downloading the official installer?</div>
+    <div class="question">Am I definitely downloading a legitimate installer?</div>
     <div class="answer">
     Yes, you can verify the signature of every installer downloaded from this website
   </div>
