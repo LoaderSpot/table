@@ -210,7 +210,7 @@ export function buildVersionBacklink(version, os) {
         mac: 'macVersion',
         linux: 'linuxVersion'
     };
-    const origin = window.location.origin || 'https://loadspot.pages.dev';
+    const origin = window.location.origin || 'https://loadspot.vercel.app';
     const url = new URL(`${origin}${ROUTE_PATHS.versions}`);
     url.searchParams.set('os', os);
 
