@@ -11,4 +11,5 @@ __pycache__/
 *.py[cod]
 table/dist/
 table/node_modules/
+table/.vercel/
 table/.wrangler/
