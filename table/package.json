@@ -13,5 +13,8 @@
   },
   "devDependencies": {
     "vite": "^8.0.10"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
   }
 }

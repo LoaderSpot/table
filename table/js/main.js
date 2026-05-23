@@ -1,3 +1,4 @@
+import { inject } from '@vercel/analytics';
 import { initAppCallbacks, initializeApp, ensureVersionsAppInitialized, loadLinuxPackages } from './app.js';
 import { initRouter, migrateLegacyRoute, setRouteChangeHandler } from './router/routes.js';
 import { loadMarkdownPage, setVersionsAppInitializer } from './router/markdown.js';
@@ -7,6 +8,8 @@ import { initOsVersionFilters, initPlatformTabs, setPlatformCallbacks } from './
 import { initSearchControls, performSearch } from './ui/search.js';
 import { initSortControls, setRenderCallback } from './ui/sort.js';
 import { reRenderVersions } from './ui/table.js';
+
+inject();
 
 function initApp() {
     initAppCallbacks();
