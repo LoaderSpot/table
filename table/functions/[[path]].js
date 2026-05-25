@@ -4,7 +4,7 @@ export async function onRequest(context) {
 
   if (pathname === '/faq' || pathname === '/versions') {
     const rewrittenUrl = new URL(context.request.url);
-    rewrittenUrl.pathname = '/index.html';
+    rewrittenUrl.pathname = '/';
     return context.next(new Request(rewrittenUrl.toString(), context.request));
   }
 
