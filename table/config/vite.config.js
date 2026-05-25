@@ -10,6 +10,8 @@ const outDir = resolve(rootDir, 'dist');
 const staticEntries = [
     ['versions.json', 'versions.json'],
     ['content', 'content'],
+    ['config/pages/_routes.json', '_routes.json'],
+    ['config/pages/_headers', '_headers'],
     ['favicon.png', 'favicon.png'],
     ['../latest.json', 'latest.json', true]
 ];
@@ -29,9 +31,9 @@ async function copyIfExists(source, target, optional = false) {
     await cp(sourcePath, targetPath, { recursive: true });
 }
 
-function copyStaticAssets() {
+function copyPagesStatic() {
     return {
-        name: 'copy-static-assets',
+        name: 'copy-pages-static',
         apply: 'build',
         async closeBundle() {
             await Promise.all(staticEntries.map(entry => copyIfExists(...entry)));
@@ -51,5 +53,5 @@ export default defineConfig({
             input: resolve(rootDir, 'index.html')
         }
     },
-    plugins: [copyStaticAssets()]
+    plugins: [copyPagesStatic()]
 });
