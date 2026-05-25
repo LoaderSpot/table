@@ -9,7 +9,9 @@ import { initSearchControls, performSearch } from './ui/search.js';
 import { initSortControls, setRenderCallback } from './ui/sort.js';
 import { reRenderVersions } from './ui/table.js';
 
-inject();
+if (window.location.hostname === 'loadspot.vercel.app') {
+    inject();
+}
 
 function initApp() {
     initAppCallbacks();
