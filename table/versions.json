@@ -2637,6 +2637,18 @@
         "date": "26.03.2025",
         "size": 144421884
       }
+    },
+    "mac": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.60.564.gcc6305cb-arm64.tbz",
+        "date": "26.03.2025",
+        "size": 133186188
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.60.564.gcc6305cb-x86_64.tbz",
+        "date": "26.03.2025",
+        "size": 139642400
+      }
     }
   },
   "1.2.59.518": {
