@@ -2522,6 +2522,18 @@
         "date": "16.04.2025",
         "size": 107537712
       }
+    },
+    "mac": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.61.443.gc51c574b-arm64.tbz",
+        "date": "16.04.2025",
+        "size": 132943567
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.61.443.gc51c574b-x86_64.tbz",
+        "date": "16.04.2025",
+        "size": 139419691
+      }
     }
   },
   "1.2.61.431": {
