@@ -2414,6 +2414,16 @@
       }
     }
   },
+  "1.2.76.268": {
+    "fullversion": "1.2.76.268.g83d1f263",
+    "win": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.2.76.268.g83d1f263-arm64.exe",
+        "date": "27.10.2025",
+        "size": 114594456
+      }
+    }
+  },
   "1.2.75.510": {
     "fullversion": "1.2.75.510.g8f748905",
     "win": {
