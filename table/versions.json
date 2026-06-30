@@ -3644,6 +3644,18 @@
         "date": "22.08.2024",
         "size": 103872792
       }
+    },
+    "mac": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.45.451.gac8a666f-arm64.tbz",
+        "date": "22.08.2024",
+        "size": 128855860
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.45.451.gac8a666f-x86_64.tbz",
+        "date": "22.08.2024",
+        "size": 140448902
+      }
     }
   },
   "1.2.44.405": {
