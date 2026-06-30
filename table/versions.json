@@ -1921,6 +1921,18 @@
         "date": "04.08.2025",
         "size": 109045608
       }
+    },
+    "mac": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.69.449.gfda8591a-arm64.tbz",
+        "date": "04.08.2025",
+        "size": 135356302
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.69.449.gfda8591a-x86_64.tbz",
+        "date": "04.08.2025",
+        "size": 145672582
+      }
     }
   },
   "1.2.69.448": {
