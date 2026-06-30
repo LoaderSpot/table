@@ -986,6 +986,11 @@
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.2.79.427.g80eb4a07-x64.exe",
         "date": "19.12.2025",
         "size": 126027248
+      },
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.2.79.427.g80eb4a07-arm64.exe",
+        "date": "19.12.2025",
+        "size": 115856544
       }
     },
     "linux": {
@@ -993,6 +998,18 @@
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-client_1.2.79.427.g80eb4a07_amd64.deb",
         "date": "19.12.2025",
         "size": 155456648
+      }
+    },
+    "mac": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.79.427.g80eb4a07-arm64.tbz",
+        "date": "19.12.2025",
+        "size": 143329394
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.79.427.g80eb4a07-x86_64.tbz",
+        "date": "19.12.2025",
+        "size": 156483679
       }
     }
   },
