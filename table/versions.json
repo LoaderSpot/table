@@ -3231,6 +3231,11 @@
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.52.442.g01893f92-arm64.tbz",
         "date": "10.12.2024",
         "size": 131871334
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.52.442.g01893f92-x86_64.tbz",
+        "date": "10.12.2024",
+        "size": 141827890
       }
     },
     "linux": {
