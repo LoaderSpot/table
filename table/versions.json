@@ -3128,6 +3128,11 @@
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.53.440.g7b2f582a-x86_64.tbz",
         "date": "10.02.2025",
         "size": 138589167
+      },
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.53.440.g7b2f582a-arm64.tbz",
+        "date": "10.02.2025",
+        "size": 132055140
       }
     },
     "linux": {
