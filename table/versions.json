@@ -1265,18 +1265,6 @@
         "date": "17.10.2025",
         "size": 114631056
       }
-    },
-    "mac": {
-      "arm64": {
-        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.75.507.gee6e6c93-arm64.tbz",
-        "date": "17.10.2025",
-        "size": 141919239
-      },
-      "intel": {
-        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.75.507.gee6e6c93-x86_64.tbz",
-        "date": "17.10.2025",
-        "size": 154840017
-      }
     }
   },
   "1.2.75.506": {
@@ -1292,18 +1280,6 @@
         "date": "14.10.2025",
         "size": 114617824
       }
-    },
-    "mac": {
-      "arm64": {
-        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.75.506.g38295b74-arm64.tbz",
-        "date": "14.10.2025",
-        "size": 141911067
-      },
-      "intel": {
-        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.75.506.g38295b74-x86_64.tbz",
-        "date": "14.10.2025",
-        "size": 154865769
-      }
     }
   },
   "1.2.75.499": {
@@ -1318,6 +1294,18 @@
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.2.75.499.g0c61121f-arm64.exe",
         "date": "10.10.2025",
         "size": 114652512
+      }
+    },
+    "mac": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.75.499.g0c61121f-arm64.tbz",
+        "date": "10.10.2025",
+        "size": 141930352
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.75.499.g0c61121f-x86_64.tbz",
+        "date": "10.10.2025",
+        "size": 155146857
       }
     }
   },
