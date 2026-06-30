@@ -5490,6 +5490,13 @@
         "date": "16.04.2023",
         "size": 82302688
       }
+    },
+    "linux": {
+      "amd64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-client_1.2.9.743.g85d9593d_amd64.deb",
+        "date": "16.04.2023",
+        "size": 120295708
+      }
     }
   },
   "1.2.9.741": {
