@@ -910,6 +910,11 @@
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.82.428.g0ac8be2b-x86_64.tbz",
         "date": "27.01.2026",
         "size": 156888301
+      },
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.82.428.g0ac8be2b-arm64.tbz",
+        "date": "27.01.2026",
+        "size": 144346461
       }
     },
     "linux": {
