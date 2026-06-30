@@ -1054,6 +1054,23 @@
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.2.78.418.gaeeb5ebd-x64.exe",
         "date": "03.12.2025",
         "size": 126029976
+      },
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.2.78.418.gaeeb5ebd-arm64.exe",
+        "date": "03.12.2025",
+        "size": 115743464
+      }
+    },
+    "mac": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.78.418.gaeeb5ebd-arm64.tbz",
+        "date": "03.12.2025",
+        "size": 143235266
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.78.418.gaeeb5ebd-x86_64.tbz",
+        "date": "03.12.2025",
+        "size": 156282465
       }
     }
   },
