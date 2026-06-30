@@ -5277,6 +5277,18 @@
         "date": "22.06.2023",
         "size": 83401720
       }
+    },
+    "mac": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.14.1149.ga3ae422d-arm64.tbz",
+        "date": "22.06.2023",
+        "size": 110605858
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.14.1149.ga3ae422d-x86_64.tbz",
+        "date": "22.06.2023",
+        "size": 119590679
+      }
     }
   },
   "1.2.14.1141": {
