@@ -3682,6 +3682,11 @@
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.44.405.g81fd6352-arm64.tbz",
         "date": "11.08.2024",
         "size": 125168731
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.44.405.g81fd6352-x86_64.tbz",
+        "date": "11.08.2024",
+        "size": 136367272
       }
     }
   },
