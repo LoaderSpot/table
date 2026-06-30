@@ -2019,6 +2019,16 @@
       }
     }
   },
+  "1.2.78.174": {
+    "fullversion": "1.2.78.174.g0ea26501",
+    "mac": {
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.78.174.g0ea26501-x86_64.tbz",
+        "date": "21.11.2025",
+        "size": 155964843
+      }
+    }
+  },
   "1.2.77.358": {
     "fullversion": "1.2.77.358.g4339a634",
     "win": {
