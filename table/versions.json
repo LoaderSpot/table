@@ -3850,6 +3850,18 @@
         "date": "21.06.2024",
         "size": 140956866
       }
+    },
+    "mac": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.40.599.g606b7f29-arm64.tbz",
+        "date": "21.06.2024",
+        "size": 127083932
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.40.599.g606b7f29-x86_64.tbz",
+        "date": "21.06.2024",
+        "size": 138006213
+      }
     }
   },
   "1.2.40.592": {
