@@ -1792,6 +1792,11 @@
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.71.421.g794ff5e5-x86_64.tbz",
         "date": "22.08.2025",
         "size": 152335453
+      },
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.71.421.g794ff5e5-arm64.tbz",
+        "date": "22.08.2025",
+        "size": 140288157
       }
     }
   },
