@@ -3405,6 +3405,11 @@
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.49.439.gfae492c7-x86_64.tbz",
         "date": "24.10.2024",
         "size": 143151582
+      },
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.49.439.gfae492c7-arm64.tbz",
+        "date": "24.10.2024",
+        "size": 131499866
       }
     }
   },
