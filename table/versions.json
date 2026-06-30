@@ -3270,6 +3270,11 @@
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.51.345.gcc39d911-x86_64.tbz",
         "date": "01.12.2024",
         "size": 141938851
+      },
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.51.345.gcc39d911-arm64.tbz",
+        "date": "01.12.2024",
+        "size": 131943921
       }
     }
   },
