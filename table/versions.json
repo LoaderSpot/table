@@ -3470,6 +3470,18 @@
         "date": "05.10.2024",
         "size": 105676424
       }
+    },
+    "mac": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.48.404.g4bec9359-arm64.tbz",
+        "date": "05.10.2024",
+        "size": 131536360
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.48.404.g4bec9359-x86_64.tbz",
+        "date": "05.10.2024",
+        "size": 142282218
+      }
     }
   },
   "1.2.47.366": {
