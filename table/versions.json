@@ -3167,6 +3167,11 @@
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.53.438.g246d60c9-arm64.tbz",
         "date": "20.01.2025",
         "size": 132057875
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.53.438.g246d60c9-x86_64.tbz",
+        "date": "20.01.2025",
+        "size": 138529400
       }
     }
   },
