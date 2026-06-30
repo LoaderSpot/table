@@ -2975,6 +2975,18 @@
         "date": "12.02.2025",
         "size": 106486320
       }
+    },
+    "mac": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.57.460.gf31c26a7-arm64.tbz",
+        "date": "12.02.2025",
+        "size": 131811667
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.57.460.gf31c26a7-x86_64.tbz",
+        "date": "12.02.2025",
+        "size": 138260030
+      }
     }
   },
   "1.2.56.502": {
