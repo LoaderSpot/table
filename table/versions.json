@@ -3618,6 +3618,11 @@
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.45.454.gc16ec9f6-arm64.tbz",
         "date": "02.09.2024",
         "size": 128850763
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.45.454.gc16ec9f6-x86_64.tbz",
+        "date": "02.09.2024",
+        "size": 140408473
       }
     }
   },
