@@ -3335,6 +3335,18 @@
         "date": "12.11.2024",
         "size": 105662304
       }
+    },
+    "mac": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.50.334.g0bd5c2a4-arm64.tbz",
+        "date": "12.11.2024",
+        "size": 131509995
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.50.334.g0bd5c2a4-x86_64.tbz",
+        "date": "12.11.2024",
+        "size": 143043761
+      }
     }
   },
   "1.2.50.333": {
