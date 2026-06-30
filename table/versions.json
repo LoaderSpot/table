@@ -2603,6 +2603,18 @@
         "date": "31.03.2025",
         "size": 107544896
       }
+    },
+    "mac": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.61.427.g5b75eb06-arm64.tbz",
+        "date": "31.03.2025",
+        "size": 132941948
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.61.427.g5b75eb06-x86_64.tbz",
+        "date": "31.03.2025",
+        "size": 139339443
+      }
     }
   },
   "1.2.60.564": {
