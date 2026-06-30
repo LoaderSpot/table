@@ -1452,6 +1452,18 @@
         "date": "19.09.2025",
         "size": 113061808
       }
+    },
+    "mac": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.73.474.g7b30bb2b-arm64.tbz",
+        "date": "19.09.2025",
+        "size": 140672796
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.73.474.g7b30bb2b-x86_64.tbz",
+        "date": "19.09.2025",
+        "size": 153881233
+      }
     }
   },
   "1.2.73.468": {
