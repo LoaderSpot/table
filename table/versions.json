@@ -3708,6 +3708,18 @@
         "date": "30.07.2024",
         "size": 102294688
       }
+    },
+    "mac": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.43.420.gc7b23f70-arm64.tbz",
+        "date": "30.07.2024",
+        "size": 125027670
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.43.420.gc7b23f70-x86_64.tbz",
+        "date": "30.07.2024",
+        "size": 135975859
+      }
     }
   },
   "1.2.42.290": {
