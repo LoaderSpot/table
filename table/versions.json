@@ -5014,6 +5014,18 @@
         "date": "27.08.2023",
         "size": 84484632
       }
+    },
+    "mac": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.19.937.gf6e7cff9-arm64.tbz",
+        "date": "27.08.2023",
+        "size": 111891212
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.19.937.gf6e7cff9-x86_64.tbz",
+        "date": "27.08.2023",
+        "size": 121076642
+      }
     }
   },
   "1.2.18.999": {
