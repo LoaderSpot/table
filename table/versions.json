@@ -2495,6 +2495,18 @@
         "date": "22.04.2025",
         "size": 108791872
       }
+    },
+    "mac": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.62.575.ge8b4160e-arm64.tbz",
+        "date": "22.04.2025",
+        "size": 134787602
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.62.575.ge8b4160e-x86_64.tbz",
+        "date": "22.04.2025",
+        "size": 144962670
+      }
     }
   },
   "1.2.61.443": {
