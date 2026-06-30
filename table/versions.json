@@ -1025,24 +1025,24 @@
     "mac": {
       "arm64": {
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.79.425.g1d0fcf61-arm64.tbz",
-        "date": "16.12.2025",
+        "date": "15.12.2025",
         "size": 143260968
       },
       "intel": {
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.79.425.g1d0fcf61-x86_64.tbz",
-        "date": "16.12.2025",
+        "date": "15.12.2025",
         "size": 156457749
       }
     },
     "win": {
       "arm64": {
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.2.79.425.g1d0fcf61-arm64.exe",
-        "date": "16.12.2025",
+        "date": "15.12.2025",
         "size": 115827984
       },
       "x64": {
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.2.79.425.g1d0fcf61-x64.exe",
-        "date": "16.12.2025",
+        "date": "15.12.2025",
         "size": 126053472
       }
     }
