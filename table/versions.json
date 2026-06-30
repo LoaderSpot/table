@@ -4177,6 +4177,18 @@
         "date": "13.03.2024",
         "size": 94591728
       }
+    },
+    "mac": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.33.1039.g8ddb5918-arm64.tbz",
+        "date": "13.03.2024",
+        "size": 125620678
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.33.1039.g8ddb5918-x86_64.tbz",
+        "date": "13.03.2024",
+        "size": 136025887
+      }
     }
   },
   "1.2.32.997": {
