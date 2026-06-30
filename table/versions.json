@@ -3984,6 +3984,11 @@
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.37.701.ge66eb7bc-x86_64.tbz",
         "date": "16.05.2024",
         "size": 136794893
+      },
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.37.701.ge66eb7bc-arm64.tbz",
+        "date": "16.05.2024",
+        "size": 126318286
       }
     },
     "linux": {
