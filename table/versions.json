@@ -1763,6 +1763,11 @@
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.2.79.417.g0e9f05fc-x64.exe",
         "date": "13.12.2025",
         "size": 125963488
+      },
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.2.79.417.g0e9f05fc-arm64.exe",
+        "date": "13.12.2025",
+        "size": 115850760
       }
     }
   },
