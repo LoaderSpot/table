@@ -1886,6 +1886,23 @@
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.79.206.g6a84c90c-x86_64.tbz",
         "date": "05.12.2025",
         "size": 156164603
+      },
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.79.206.g6a84c90c-arm64.tbz",
+        "date": "05.12.2025",
+        "size": 143009349
+      }
+    },
+    "win": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.2.79.206.g6a84c90c-arm64.exe",
+        "date": "05.12.2025",
+        "size": 115643328
+      },
+      "x64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.2.79.206.g6a84c90c-x64.exe",
+        "date": "05.12.2025",
+        "size": 125970328
       }
     }
   },
