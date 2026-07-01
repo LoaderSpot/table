@@ -867,6 +867,16 @@
       }
     }
   },
+  "1.2.84.477": {
+    "fullversion": "1.2.84.477.gcfdf84e8",
+    "win": {
+      "x64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.2.84.477.gcfdf84e8-x64.exe",
+        "date": "25.02.2026",
+        "size": 127385512
+      }
+    }
+  },
   "1.2.84.476": {
     "fullversion": "1.2.84.476.ga1ff6607",
     "win": {
