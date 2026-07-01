@@ -2048,6 +2048,23 @@
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.78.174.g0ea26501-x86_64.tbz",
         "date": "21.11.2025",
         "size": 155964843
+      },
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.78.174.g0ea26501-arm64.tbz",
+        "date": "21.11.2025",
+        "size": 142936130
+      }
+    },
+    "win": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.2.78.174.g0ea26501-arm64.exe",
+        "date": "21.11.2025",
+        "size": 115593016
+      },
+      "x64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.2.78.174.g0ea26501-x64.exe",
+        "date": "21.11.2025",
+        "size": 125965048
       }
     }
   },
