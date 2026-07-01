@@ -7390,6 +7390,13 @@
         "date": "31.08.2021",
         "size": 118938508
       }
+    },
+    "win": {
+      "x86": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.1.67.586.gbb5ef64e-x86.exe",
+        "date": "31.08.2021",
+        "size": 75917128
+      }
     }
   },
   "1.1.66.580": {
