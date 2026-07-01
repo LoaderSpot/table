@@ -2325,6 +2325,11 @@
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.77.158.g41a657be-x86_64.tbz",
         "date": "07.11.2025",
         "size": 155222818
+      },
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.77.158.g41a657be-arm64.tbz",
+        "date": "07.11.2025",
+        "size": 141824716
       }
     },
     "win": {
