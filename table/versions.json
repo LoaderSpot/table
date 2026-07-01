@@ -896,6 +896,11 @@
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.84.476.ga1ff6607-arm64.tbz",
         "date": "25.02.2026",
         "size": 144909395
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.84.476.ga1ff6607-x86_64.tbz",
+        "date": "25.02.2026",
+        "size": 157989715
       }
     },
     "linux": {
