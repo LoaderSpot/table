@@ -2455,6 +2455,11 @@
         "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.2.76.274.g749ee04a-arm64.exe",
         "date": "28.10.2025",
         "size": 114587376
+      },
+      "x64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.2.76.274.g749ee04a-x64.exe",
+        "date": "28.10.2025",
+        "size": 124723696
       }
     }
   },
