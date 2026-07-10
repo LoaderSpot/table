@@ -1,4 +1,31 @@
 {
+  "1.2.94.569": {
+    "fullversion": "1.2.94.569.ge980d670",
+    "mac": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.94.569.ge980d670-arm64.tbz",
+        "date": "10.07.2026",
+        "size": 161112725
+      },
+      "intel": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify-autoupdate-1.2.94.569.ge980d670-x86_64.tbz",
+        "date": "10.07.2026",
+        "size": 177173601
+      }
+    },
+    "win": {
+      "arm64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.2.94.569.ge980d670-arm64.exe",
+        "date": "10.07.2026",
+        "size": 132602584
+      },
+      "x64": {
+        "url": "https://loadspot.amd64fox1.workers.dev/download/spotify_installer-1.2.94.569.ge980d670-x64.exe",
+        "date": "10.07.2026",
+        "size": 146131152
+      }
+    }
+  },
   "1.2.93.667": {
     "fullversion": "1.2.93.667.g7b5cc0ce",
     "mac": {
