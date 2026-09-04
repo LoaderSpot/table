@@ -20,9 +20,9 @@ export const state = {
     currentArch: urlParams.get('arch') || 'all',
     currentOS: urlParams.get('os') || 'win',
     currentSearchTerm: urlParams.get('search') || '',
-    currentWinVersionFilter: urlParams.get('winVersion') || null,
-    currentMacVersionFilter: urlParams.get('macVersion') || null,
-    currentLinuxVersionFilter: urlParams.get('linuxVersion') || null,
+    currentWinVersionFilter: normalizeVersionFilter(urlParams.get('winVersion')),
+    currentMacVersionFilter: normalizeVersionFilter(urlParams.get('macVersion')),
+    currentLinuxVersionFilter: normalizeVersionFilter(urlParams.get('linuxVersion')),
     sortVersionAscending: urlParams.get('sortVersion') === 'asc' || (urlParams.get('sortVersion') === null && urlParams.get('sort') === 'asc'),
     sortSizeAscending: urlParams.get('sortSize') === 'asc',
     currentSortColumn: urlParams.get('sortSize') !== null ? 'size' : 'version',
@@ -50,6 +50,10 @@ export function isOsTemporarilyUnavailable(os) {
     return temporarilyUnavailableOs.has(os);
 }
 
+function normalizeVersionFilter(value) {
+    return typeof value === 'string' && /^\d+\.\d+\.\d+(?:\.\d+)?$/.test(value) ? value : null;
+}
+
 export function getCurrentVersionFilter(os = state.currentOS) {
     if (os === 'win') return state.currentWinVersionFilter;
     if (os === 'mac') return state.currentMacVersionFilter;
@@ -58,6 +62,7 @@ export function getCurrentVersionFilter(os = state.currentOS) {
 }
 
 export function setCurrentVersionFilter(os, value) {
+    value = normalizeVersionFilter(value);
     if (os === 'win') {
         state.currentWinVersionFilter = value;
     } else if (os === 'mac') {

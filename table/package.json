@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test": "node --experimental-vm-modules --test tests/*.test.mjs",
     "dev": "vite --config config/vite.config.js --host 127.0.0.1",
     "build": "vite build --config config/vite.config.js",
     "preview": "vite preview --config config/vite.config.js --host 127.0.0.1"
@@ -15,6 +16,7 @@
     "vite": "^8.0.10"
   },
   "dependencies": {
-    "@vercel/analytics": "^2.0.1"
+    "@vercel/analytics": "^2.0.1",
+    "marked": "15.0.12"
   }
 }

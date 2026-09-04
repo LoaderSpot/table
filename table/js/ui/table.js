@@ -53,6 +53,7 @@ function createBuildRow({
     isVisible = true
 }) {
     const row = document.createElement('tr');
+    row.className = 'build-row';
 
     if (includeVersionCell) {
         const versionContentNode = versionContent || (() => {
@@ -67,12 +68,16 @@ function createBuildRow({
         row.appendChild(createVersionCell(versionContentNode, versionRowSpan, versionCellClassName));
     }
 
-    row.appendChild(createTextCell(arch));
+    const archCell = createTextCell(arch);
+    archCell.className = 'arch-cell';
+    row.appendChild(archCell);
 
     const dateCell = createTextCell(date);
+    dateCell.className = 'date-cell';
     row.appendChild(dateCell);
 
     const sizeCell = createTextCell(size);
+    sizeCell.className = 'size-cell';
     row.appendChild(sizeCell);
 
     const downloadCell = createDownloadCell(link, versionKey, os, arch);
@@ -111,7 +116,7 @@ function applySpoilerRowState(row, groupKey, hiddenIndex, shouldExpand) {
     decorateSpoilerRow(row, hiddenIndex);
 
     if (shouldExpand) {
-        row.style.display = 'table-row';
+        row.style.display = '';
         row.classList.add('visible');
         wrapSpoilerCells(row);
         return;

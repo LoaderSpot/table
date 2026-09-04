@@ -2,6 +2,7 @@ import { cp, mkdir, stat } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
+import { inlineIcons } from './icons.js';
 
 const configDir = dirname(fileURLToPath(import.meta.url));
 const rootDir = resolve(configDir, '..');
@@ -53,5 +54,5 @@ export default defineConfig({
             input: resolve(rootDir, 'index.html')
         }
     },
-    plugins: [copyPagesStatic()]
+    plugins: [inlineIcons(resolve(rootDir, 'icons')), copyPagesStatic()]
 });

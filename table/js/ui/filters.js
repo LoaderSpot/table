@@ -90,14 +90,27 @@ export function toggleOsVersionFilter(os, version, label, listItem) {
 }
 
 export function updateVersionLabel(versionLabel, label, os) {
-    versionLabel.innerHTML = `${label}<button class="os-version-label-close" title="Remove filter">×</button>`;
-
-    const closeBtn = versionLabel.querySelector('.os-version-label-close');
+    versionLabel.textContent = '';
+    const parts = label.split('/');
+    parts.forEach((part, index) => {
+        const text = document.createElement('span');
+        const hasNext = index < parts.length - 1;
+        text.textContent = part + (hasNext ? '/' : '');
+        versionLabel.appendChild(text);
+        if (hasNext) versionLabel.appendChild(document.createElement('wbr'));
+    });
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'os-version-label-close';
+    closeBtn.title = 'Remove filter';
+    closeBtn.setAttribute('aria-label', 'Remove filter');
+    closeBtn.textContent = '×';
     closeBtn.addEventListener('click', e => {
         e.stopPropagation();
         e.preventDefault();
         clearOsVersionFilter(os);
     });
+    versionLabel.appendChild(closeBtn);
 }
 
 export function clearOsVersionFilter(os) {

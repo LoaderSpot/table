@@ -1,4 +1,4 @@
-import { state } from '../state.js';
+import { isOsTemporarilyUnavailable, state } from '../state.js';
 import { syncUrlWithState } from '../router/routes.js';
 import { compareSearchMatch } from '../utils/version.js';
 import { updateSortUI } from './sort.js';
@@ -9,9 +9,9 @@ import {
     startLazyLoading,
     sentinel
 } from './table.js';
-import { isOsTemporarilyUnavailable } from '../state.js';
 
 let linuxLoader = null;
+let searchTimer = null;
 
 export function setLinuxLoader(loader) {
     linuxLoader = loader;
@@ -36,64 +36,82 @@ export function sortLinuxSearchResults(filtered, term) {
 }
 
 export function performSearch(term) {
+    clearTimeout(searchTimer);
+    searchTimer = null;
     const container = document.getElementById('versions-container');
     term = term.trim().toLowerCase();
-    container.style.opacity = '0';
     state.currentSearchTerm = term;
     observer.unobserve(sentinel);
 
     updateSortUI();
     syncUrlWithState();
 
-    setTimeout(() => {
-        if (term === '') {
-            state.currentSearchResults = null;
-            startLazyLoading();
-            return;
-        }
-
-        container.innerHTML = '';
-        state.currentIndex = 0;
-
-        if (isOsTemporarilyUnavailable(state.currentOS)) {
-            state.currentSearchResults = null;
-            showTemporarilyUnavailableNotice(state.currentOS);
-            return;
-        }
-
-        if (state.currentOS === 'linux' && !state.linuxDataLoaded) {
-            linuxLoader?.();
-            return;
-        }
-
-        if (state.currentOS === 'linux') {
-            state.currentSearchResults = sortLinuxSearchResults(
-                state.linuxVersionsData.filter(version =>
-                    version.version.short.toLowerCase().includes(term) ||
-                    version.version.full.toLowerCase().includes(term)
-                ),
-                term
-            );
-        } else {
-            const filtered = state.allVersions.filter(([versionKey, data]) => {
-                return (versionKey.toLowerCase().includes(term) ||
-                    data.fullversion.toLowerCase().includes(term)) &&
-                    data.links[state.currentOS] &&
-                    (state.currentArch === 'all' || data.links[state.currentOS].hasOwnProperty(state.currentArch));
-            });
-
-            const unique = new Map();
-            filtered.forEach(([versionKey, data]) => {
-                if (!unique.has(versionKey)) {
-                    unique.set(versionKey, data);
-                }
-            });
-
-            state.currentSearchResults = sortSearchResults(Array.from(unique.entries()), term);
-        }
-
+    if (term === '') {
+        state.currentSearchResults = null;
         startLazyLoading();
-    }, 300);
+        return;
+    }
+
+    container.innerHTML = '';
+    state.currentIndex = 0;
+
+    if (isOsTemporarilyUnavailable(state.currentOS)) {
+        state.currentSearchResults = null;
+        showTemporarilyUnavailableNotice(state.currentOS);
+        return;
+    }
+
+    if (state.currentOS === 'linux' && !state.linuxDataLoaded) {
+        linuxLoader?.();
+        return;
+    }
+
+    if (state.currentOS === 'linux') {
+        state.currentSearchResults = sortLinuxSearchResults(
+            state.linuxVersionsData.filter(version =>
+                version.version.short.toLowerCase().includes(term) ||
+                version.version.full.toLowerCase().includes(term)
+            ),
+            term
+        );
+    } else {
+        const filtered = state.allVersions.filter(([versionKey, data]) => {
+            return (versionKey.toLowerCase().includes(term) ||
+                data.fullversion.toLowerCase().includes(term)) &&
+                data.links[state.currentOS] &&
+                (state.currentArch === 'all' || data.links[state.currentOS].hasOwnProperty(state.currentArch));
+        });
+
+        const unique = new Map();
+        filtered.forEach(([versionKey, data]) => {
+            if (!unique.has(versionKey)) {
+                unique.set(versionKey, data);
+            }
+        });
+
+        state.currentSearchResults = sortSearchResults(Array.from(unique.entries()), term);
+    }
+
+    startLazyLoading();
+}
+
+function scheduleSearch(term) {
+    clearTimeout(searchTimer);
+    if (term === '') {
+        performSearch('');
+        return;
+    }
+
+    state.currentSearchTerm = term;
+    observer.unobserve(sentinel);
+    updateSortUI();
+    syncUrlWithState();
+
+    searchTimer = setTimeout(() => {
+        if (state.currentSearchTerm === term) {
+            performSearch(term);
+        }
+    }, 200);
 }
 
 export function toggleSearch() {
@@ -125,7 +143,7 @@ export function initSearchControls() {
         } else {
             searchContainer.classList.remove('show-clear');
         }
-        performSearch(term);
+        scheduleSearch(term);
     });
 
     clearSearchBtn.addEventListener('click', () => {

@@ -2,6 +2,7 @@ import { renderDownloadCounter } from '../utils/format.js';
 import { flushPendingLinkMetaUpdates } from './meta.js';
 
 let allDownloadCounters = {};
+let downloadCountersRevision = 0;
 let commentCountCache = {};
 let countersLoaded = false;
 let commentCountsLoaded = false;
@@ -30,6 +31,10 @@ export function registerCommentHandlers(handlers) {
 
 export function getDownloadCounter(counterKey) {
     return allDownloadCounters[counterKey] || '0';
+}
+
+export function getDownloadCountersRevision() {
+    return downloadCountersRevision;
 }
 
 export function setDownloadCounter(counterKey, value) {
@@ -142,6 +147,7 @@ export async function loadAllData(forceUpdate = false, commentsOnly = false) {
 
                 if (!commentsOnly && downloadsSucceeded) {
                     allDownloadCounters = data.downloads;
+                    downloadCountersRevision++;
                     countersLoaded = true;
 
                     pendingCounterElements.forEach((counterInfo, counterKey) => {

@@ -4,6 +4,9 @@ import { copyTextToClipboard } from '../utils/clipboard.js';
 import { highlight } from '../utils/version.js';
 import { createCommentButton } from './comments.js';
 
+const spoilerAnimations = new WeakMap();
+const collapsedCellFrame = { height: '0px', opacity: '0', paddingTop: '0px', paddingBottom: '0px' };
+
 export function createVersionContainer(versionText) {
     const versionContainer = document.createElement('div');
     versionContainer.className = 'version-container';
@@ -78,68 +81,82 @@ export function createVersionPart(text, searchTerm, className, toastMessage) {
 }
 
 export function toggleSpoiler(groupKey) {
-    const spoilerRows = document.querySelectorAll(`tr.spoiler-content-row[data-spoiler-for="${groupKey}"]`);
+    const spoilerRows = [...document.querySelectorAll(`tr.spoiler-content-row[data-spoiler-for="${groupKey}"]`)];
     const toggleButton = document.querySelector(`.spoiler-toggle[data-group-key="${groupKey}"]`);
 
     if (spoilerRows.length === 0 || !toggleButton) return;
 
-    const isHidden = !toggleButton.classList.contains('expanded');
+    const expanded = !toggleButton.classList.contains('expanded');
+    const previousAnimations = spoilerAnimations.get(toggleButton);
 
-    if (isHidden) {
-        toggleButton.classList.add('expanded');
+    spoilerRows.forEach(wrapSpoilerCells);
+    const cells = spoilerRows.flatMap(row => [...row.querySelectorAll('.cell-wrapper')].map(wrapper => ({
+        wrapper,
+        from: row.style.display === 'none' ? collapsedCellFrame : readCellFrame(wrapper)
+    })));
 
-        spoilerRows.forEach((row, index) => {
-            row.style.display = 'table-row';
+    // Capture the current frame before cancelling an interrupted animation
+    previousAnimations?.forEach(animation => animation.cancel());
+    spoilerAnimations.delete(toggleButton);
+    toggleButton.classList.toggle('expanded', expanded);
 
-            const cells = row.querySelectorAll('td');
-            wrapSpoilerCells(row);
+    spoilerRows.forEach(row => {
+        row.style.display = '';
+        row.classList.toggle('visible', expanded);
+        if (expanded) updateSpoilerMetadata(row);
+    });
 
-            let dateCell;
-            let sizeCell;
-            let downloadCell;
-            const versionCell = row.querySelector('.version-cell');
-            if (versionCell) {
-                dateCell = cells[2];
-                sizeCell = cells[3];
-                downloadCell = cells[4];
-            } else {
-                dateCell = cells[1];
-                sizeCell = cells[2];
-                downloadCell = cells[3];
-            }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || cells.some(({ wrapper }) => !wrapper.animate)) {
+        spoilerRows.forEach(row => { row.style.display = expanded ? '' : 'none'; });
+        return;
+    }
 
-            if (dateCell && sizeCell && downloadCell) {
-                const url = downloadCell.getAttribute('data-download-url');
-                if (url) {
-                    const dateCellWrapper = dateCell.querySelector('.cell-wrapper');
-                    const sizeCellWrapper = sizeCell.querySelector('.cell-wrapper');
+    const frames = cells.map(({ wrapper, from }) => ({
+        wrapper,
+        from,
+        to: expanded ? readCellFrame(wrapper) : collapsedCellFrame
+    }));
+    const animations = frames.map(({ wrapper, from, to }) => wrapper.animate([from, to], {
+        duration: 260,
+        easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        fill: 'both'
+    }));
 
-                    if (linkMetaCache.has(url)) {
-                        const cached = linkMetaCache.get(url);
-                        if (dateCellWrapper) dateCellWrapper.textContent = cached.date;
-                        if (sizeCellWrapper) sizeCellWrapper.textContent = cached.size;
-                    } else {
-                        updateLinkInfo(dateCell, sizeCell, url, true);
-                    }
-                }
-            }
+    spoilerAnimations.set(toggleButton, animations);
+    Promise.allSettled(animations.map(animation => animation.finished)).then(() => {
+        if (spoilerAnimations.get(toggleButton) !== animations) return;
 
-            setTimeout(() => {
-                row.classList.add('visible');
-            }, index * 30);
-        });
+        spoilerRows.forEach(row => { row.style.display = expanded ? '' : 'none'; });
+        animations.forEach(animation => animation.cancel());
+        spoilerAnimations.delete(toggleButton);
+    });
+}
+
+function readCellFrame(wrapper) {
+    const style = getComputedStyle(wrapper);
+    return {
+        height: `${wrapper.getBoundingClientRect().height}px`,
+        opacity: style.opacity,
+        paddingTop: style.paddingTop,
+        paddingBottom: style.paddingBottom
+    };
+}
+
+function updateSpoilerMetadata(row) {
+    const cells = row.querySelectorAll('td');
+    const offset = row.querySelector('.version-cell') ? 1 : 0;
+    const dateCell = cells[offset + 1];
+    const sizeCell = cells[offset + 2];
+    const downloadCell = cells[offset + 3];
+    const url = downloadCell?.getAttribute('data-download-url');
+    if (!dateCell || !sizeCell || !url) return;
+
+    if (linkMetaCache.has(url)) {
+        const cached = linkMetaCache.get(url);
+        dateCell.querySelector('.cell-wrapper').textContent = cached.date;
+        sizeCell.querySelector('.cell-wrapper').textContent = cached.size;
     } else {
-        toggleButton.classList.remove('expanded');
-
-        spoilerRows.forEach((row, index) => {
-            setTimeout(() => {
-                row.classList.remove('visible');
-            }, index * 20);
-
-            setTimeout(() => {
-                row.style.display = 'none';
-            }, 400 + (index * 20));
-        });
+        updateLinkInfo(dateCell, sizeCell, url, true);
     }
 }
 

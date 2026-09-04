@@ -9,10 +9,7 @@ export function setVersionsAppInitializer(initializer) {
     versionsAppInitializer = initializer;
 }
 
-export function processMarkdownSpacing(mdText) {
-    const marked = window.marked;
-    if (!marked) return mdText;
-
+export function processMarkdownSpacing(mdText, marked) {
     return mdText.replace(/(<div class="answer">\s*)(.*?)(\s*<\/div>)/gs, (match, start, content, end) => {
         const lines = content.trim().split(/\n\s*\n/);
         const processedLines = lines.map(line => marked.parse(line.trim()));
@@ -27,21 +24,21 @@ export function processMarkdownSpacing(mdText) {
 }
 
 export function loadMarkdownContent(mdFile) {
-    const marked = window.marked;
-
     if (markdownPageCache.has(mdFile)) {
         return Promise.resolve(markdownPageCache.get(mdFile));
     }
 
     if (!markdownPageRequests.has(mdFile)) {
-        const request = fetch(mdFile)
-            .then(response => {
+        const request = Promise.all([
+            import('marked'),
+            fetch(mdFile).then(response => {
                 if (!response.ok) throw new Error(`Error loading ${mdFile}`);
                 return response.text();
             })
-            .then(mdText => {
-                const processedMd = processMarkdownSpacing(mdText);
-                const html = marked ? marked.parse(processedMd) : processedMd;
+        ])
+            .then(([{ marked }, mdText]) => {
+                const processedMd = processMarkdownSpacing(mdText, marked);
+                const html = marked.parse(processedMd);
                 markdownPageCache.set(mdFile, html);
                 markdownPageRequests.delete(mdFile);
                 return html;

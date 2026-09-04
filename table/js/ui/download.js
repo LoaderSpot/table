@@ -2,6 +2,7 @@ import {
     areCountersLoaded,
     generateCounterKey,
     getDownloadCounter,
+    getDownloadCountersRevision,
     registerPendingCounterElement,
     setDownloadCounter
 } from '../data/api.js';
@@ -10,12 +11,12 @@ import { escapeToastText, renderDownloadCounter } from '../utils/format.js';
 
 const downloadCooldowns = new WeakSet();
 const pendingDownloadRequests = new Map();
-const DOWNLOAD_IFRAME_SETTLE_MS = 15000;
 let downloadRequestSeq = 0;
 let downloadMessageListenerInstalled = false;
 
 export function updateDownloadCount(fileUrl, countElement, version, os, arch) {
     const counterKey = generateCounterKey(version, os, arch);
+    countElement.dataset.counterKey = counterKey;
 
     if (areCountersLoaded()) {
         const count = getDownloadCounter(counterKey);
@@ -68,13 +69,23 @@ export function createDownloadErrorMessage(status, message, fileName) {
     return `Download failed for ${safeFileName}`;
 }
 
-export function rollbackDownloadCounter(counterKey, previousCount, countElement) {
-    const safePreviousCount = Math.max(0, Number(previousCount) || 0);
-    setDownloadCounter(counterKey, String(safePreviousCount));
+export function rollbackDownloadCounter(counterKey, countElement, counterRevision) {
+    let count = Math.max(0, Number(getDownloadCounter(counterKey)) || 0);
+    // Server snapshots replace optimistic increments from older revisions
+    if (counterRevision === getDownloadCountersRevision()) {
+        count = Math.max(0, count - 1);
+        setDownloadCounter(counterKey, String(count));
+    }
 
     if (countElement) {
-        countElement.innerHTML = renderDownloadCounter(String(safePreviousCount));
+        countElement.innerHTML = renderDownloadCounter(String(count));
     }
+
+    document.querySelectorAll('.download-count-slot').forEach(element => {
+        if (element !== countElement && element.dataset.counterKey === counterKey) {
+            element.innerHTML = renderDownloadCounter(String(count));
+        }
+    });
 }
 
 export function cleanupDownloadRequest(requestId, reason = 'done') {
@@ -82,10 +93,6 @@ export function cleanupDownloadRequest(requestId, reason = 'done') {
     if (!pending) return null;
 
     pendingDownloadRequests.delete(requestId);
-
-    if (pending.timeoutId) {
-        clearTimeout(pending.timeoutId);
-    }
 
     if (pending.frame) {
         pending.frame.src = 'about:blank';
@@ -95,7 +102,7 @@ export function cleanupDownloadRequest(requestId, reason = 'done') {
     }
 
     if (reason === 'error') {
-        rollbackDownloadCounter(pending.counterKey, pending.previousCount, pending.countElement);
+        rollbackDownloadCounter(pending.counterKey, pending.countElement, pending.counterRevision);
     }
 
     return pending;
@@ -136,8 +143,7 @@ export async function handleDownload(downloadLink, fileUrl, version, os, arch) {
 
     const countElement = downloadLink.closest('.download-container').querySelector('.download-count-slot');
     const counterKey = generateCounterKey(version, os, arch);
-    const previousCount = parseInt(getDownloadCounter(counterKey), 10);
-    const newCount = (previousCount + 1).toString();
+    const newCount = ((Number(getDownloadCounter(counterKey)) || 0) + 1).toString();
 
     setDownloadCounter(counterKey, newCount);
     countElement.innerHTML = renderDownloadCounter(newCount);
@@ -148,16 +154,12 @@ export async function handleDownload(downloadLink, fileUrl, version, os, arch) {
     const frame = createDownloadFrame(requestId);
     document.body.appendChild(frame);
 
-    const timeoutId = setTimeout(() => {
-        cleanupDownloadRequest(requestId, 'done');
-    }, DOWNLOAD_IFRAME_SETTLE_MS);
-
+    // Attachment responses do not reliably fire load, so keep the frame for late errors
     pendingDownloadRequests.set(requestId, {
         requestId,
         frame,
-        timeoutId,
         counterKey,
-        previousCount,
+        counterRevision: getDownloadCountersRevision(),
         countElement,
         downloadOrigin,
         fileName
