@@ -4,6 +4,7 @@ import { linkMetaCache, preloadSizesForSorting, updateLinkInfo } from '../data/m
 import { compareVersions, getOsDisplayName } from '../utils/version.js';
 import { createDownloadCell } from './download.js';
 import {
+    connectBuildFamily,
     createSpoiler,
     createVersionContainer,
     createVersionElement,
@@ -110,10 +111,12 @@ function decorateSpoilerRow(row, hiddenIndex) {
     row.dataset.spoilerIndex = String(hiddenIndex);
 }
 
-function applySpoilerRowState(row, groupKey, hiddenIndex, shouldExpand) {
+function applySpoilerRowState(row, groupKey, hiddenIndex, shouldExpand, isLastBuild) {
     row.classList.add('spoiler-content-row');
     row.dataset.spoilerFor = groupKey;
     decorateSpoilerRow(row, hiddenIndex);
+    row.classList.toggle('build-branch-last', isLastBuild);
+    row.inert = !shouldExpand;
 
     if (shouldExpand) {
         row.style.display = '';
@@ -131,6 +134,9 @@ function appendSpoilerButton(spoilerSlot, groupKey, hiddenCount, shouldExpand) {
     const spoilerBtn = createSpoiler(groupKey, hiddenCount);
     if (shouldExpand) {
         spoilerBtn.classList.add('expanded');
+        spoilerBtn.setAttribute('aria-expanded', 'true');
+        spoilerBtn.setAttribute('aria-label', 'Hide additional builds');
+        spoilerBtn.title = 'Hide additional builds';
     }
     spoilerSlot.appendChild(spoilerBtn);
     return spoilerBtn;
@@ -398,6 +404,7 @@ export function loadMoreLinuxRows() {
 
         appendSpoilerButton(spoilerSlot, groupKey, hiddenVersions.length, shouldExpand);
 
+        const familyRows = [];
         displayVersion.architectures.forEach((arch, index) => {
             const row = createBuildRow({
                 version: displayVersion.version,
@@ -413,7 +420,10 @@ export function loadMoreLinuxRows() {
                 versionContent: index === 0 ? versionContainer : null
             });
             container.appendChild(row);
+            familyRows.push(row);
         });
+
+        if (hiddenVersions.length > 0) connectBuildFamily(familyRows, groupKey, shouldExpand);
 
         if (hiddenVersions.length > 0) {
             for (let j = 0; j < hiddenVersions.length; j++) {
@@ -442,7 +452,7 @@ export function loadMoreLinuxRows() {
                         versionContent: oldVersionText,
                         wrapVersionContent: false
                     });
-                    applySpoilerRowState(row, groupKey, j, shouldExpand);
+                    applySpoilerRowState(row, groupKey, j, shouldExpand, j === hiddenVersions.length - 1);
                     container.appendChild(row);
                 });
             }
@@ -569,6 +579,7 @@ export function loadMoreWinMacRows() {
             appendSpoilerButton(spoilerControls, groupKey, hiddenVersions.length, shouldExpand);
 
             displayVersionRows.forEach(row => container.appendChild(row));
+            if (hiddenVersions.length > 0) connectBuildFamily(displayVersionRows, groupKey, shouldExpand);
             rowsAdded += displayVersionRows.length;
 
             if (hiddenVersions.length > 0) {
@@ -577,7 +588,7 @@ export function loadMoreWinMacRows() {
                     const olderVersionRows = createVersionRows(versionKey, versionData, state.currentSearchTerm, shouldExpand);
 
                     olderVersionRows.forEach(row => {
-                        applySpoilerRowState(row, groupKey, j, shouldExpand);
+                        applySpoilerRowState(row, groupKey, j, shouldExpand, j === hiddenVersions.length - 1);
                         container.appendChild(row);
                     });
                 }

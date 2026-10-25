@@ -23,9 +23,11 @@
       </ul>
     </div>
   </nav>
+  <div id="headerMorphBackdrop" class="header-morph-backdrop" aria-hidden="true" hidden></div>
 
   <header>
-    <h1>Spotify full installers for desktop</h1>
+    <div id="heroTitleOrigin" class="hero-title-placeholder" aria-hidden="true" hidden></div>
+    <h1 id="heroTitle">Spotify full installers for desktop</h1>
   </header>
 
   <div id="markdownContainer" class="is-initially-hidden"></div>
@@ -63,6 +65,52 @@
         </div>
       </div>
     </div>
+    <div id="tableHeadingStart" class="table-heading-sentinel" aria-hidden="true"></div>
+    <div id="tableHeading" class="table-heading-shell">
+      <div id="tableContextTitle" class="table-context-title" aria-hidden="true"></div>
+      <div class="table-heading-scroll">
+        <table class="version-table column-header-table" id="columnHeadingTable" role="presentation">
+          <colgroup>
+            <col class="col-version">
+            <col class="col-architecture">
+            <col class="col-date">
+            <col class="col-size">
+            <col class="col-action">
+          </colgroup>
+          <thead>
+            <tr class="table-headers">
+              <th>
+                <div id="versionHeader" class="version-header" aria-label="Version column">
+                  <span id="versionSortControl" class="version-sort-control" role="button" tabindex="0" aria-label="Sort by version">
+                    <span class="version-label">Version</span>
+                    <span id="sortArrow" class="sort-arrow">
+                      <svg data-icon="chevron-down"></svg>
+                    </span>
+                  </span>
+                </div>
+              </th>
+              <th>Architecture</th>
+              <th>Date</th>
+              <th>
+                <div id="sizeHeader" class="size-header" aria-label="Size column">
+                  <span id="sizeSortControl" class="size-sort-control" role="button" tabindex="0" aria-label="Sort by size">
+                    <span class="size-label">Size</span>
+                    <span id="sizeSortArrow" class="sort-arrow">
+                      <svg data-icon="chevron-down"></svg>
+                    </span>
+                  </span>
+                  <div id="sizeLoadingIndicator" class="size-loading-indicator">
+                    <div class="loading-spinner"></div>
+                    <span class="loading-text">Loading sizes...</span>
+                  </div>
+                </div>
+              </th>
+              <th> </th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
     <div class="table-scroll">
       <table class="version-table" id="versionsTable">
         <colgroup>
@@ -72,35 +120,13 @@
           <col class="col-size">
           <col class="col-action">
         </colgroup>
-        <thead>
-          <tr class="table-headers">
-            <th>
-              <div id="versionHeader" class="version-header" aria-label="Version column">
-                <span id="versionSortControl" class="version-sort-control" role="button" tabindex="0" aria-label="Sort by version">
-                  <span class="version-label">Version</span>
-                  <span id="sortArrow" class="sort-arrow">
-                    <svg data-icon="chevron-down"></svg>
-                  </span>
-                </span>
-              </div>
-            </th>
-            <th>Architecture</th>
-            <th>Date</th>
-            <th>
-              <div id="sizeHeader" class="size-header" aria-label="Size column">
-                <span id="sizeSortControl" class="size-sort-control" role="button" tabindex="0" aria-label="Sort by size">
-                  <span class="size-label">Size</span>
-                  <span id="sizeSortArrow" class="sort-arrow">
-                    <svg data-icon="chevron-down"></svg>
-                  </span>
-                </span>
-                <div id="sizeLoadingIndicator" class="size-loading-indicator">
-                  <div class="loading-spinner"></div>
-                  <span class="loading-text">Loading sizes...</span>
-                </div>
-              </div>
-            </th>
-            <th> </th>
+        <thead class="table-sizing-head">
+          <tr>
+            <th scope="col">Version</th>
+            <th scope="col">Architecture</th>
+            <th scope="col">Date</th>
+            <th scope="col">Size</th>
+            <th scope="col"><span class="visually-hidden">Download</span></th>
           </tr>
         </thead>
         <tbody id="versions-container">

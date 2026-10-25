@@ -5,7 +5,73 @@ import { highlight } from '../utils/version.js';
 import { createCommentButton } from './comments.js';
 
 const spoilerAnimations = new WeakMap();
-const collapsedCellFrame = { height: '0px', opacity: '0', paddingTop: '0px', paddingBottom: '0px' };
+const collapsedCellFrame = { height: '0px', opacity: '0', paddingTop: '0px', paddingBottom: '0px', transform: 'translateY(-4px)' };
+const familyOrigins = new Set();
+let familyObserver;
+
+export function initBuildHover() {
+    const container = document.getElementById('versions-container');
+    let hoveredCell = null;
+
+    function updateHover(target) {
+        let row = target instanceof Element ? target.closest('tr.build-row') : null;
+        if (!container.contains(row)) row = null;
+        // Architecture rows share the version cell from the first row of their build
+        while (row && !row.querySelector('.version-cell')) row = row.previousElementSibling;
+        const cell = row?.querySelector('.version-cell') || null;
+        if (cell === hoveredCell) return;
+        hoveredCell?.classList.remove('build-hovered');
+        cell?.classList.add('build-hovered');
+        hoveredCell = cell;
+    }
+
+    container.addEventListener('pointerover', event => {
+        if (event.pointerType !== 'touch') updateHover(event.target);
+    });
+    container.addEventListener('pointerout', event => {
+        if (event.pointerType !== 'touch') updateHover(event.relatedTarget);
+    });
+    container.addEventListener('pointerleave', () => updateHover(null));
+}
+
+// Keep both ends of the tree attached to the short labels during layout changes
+function syncFamilyOrigins() {
+    for (const row of familyOrigins) {
+        const short = row.querySelector('.short-version');
+        if (!row.isConnected) {
+            familyObserver.unobserve(row);
+            if (short) familyObserver.unobserve(short);
+            familyOrigins.delete(row);
+            continue;
+        }
+        const cell = row.querySelector('.version-cell');
+        const rect = short.getBoundingClientRect();
+        const center = rect.top + rect.height / 2;
+        row.style.setProperty('--build-root-top', `${center - row.getBoundingClientRect().top}px`);
+        cell.style.setProperty('--build-root-inset', `${center - cell.getBoundingClientRect().top}px`);
+    }
+}
+
+export function connectBuildFamily(rows, groupKey, expanded) {
+    if (!rows.length) return;
+    rows.forEach(row => {
+        row.dataset.buildFamily = groupKey;
+        row.classList.add('build-family-parent');
+        row.classList.toggle('build-family-open', expanded);
+    });
+    observeFamilyOrigin(rows[0]);
+}
+
+function observeFamilyOrigin(row) {
+    if (familyOrigins.has(row)) return;
+    const short = row.querySelector('.short-version');
+    if (!short) return;
+    familyObserver ||= new ResizeObserver(syncFamilyOrigins);
+    familyOrigins.add(row);
+    familyObserver.observe(row);
+    familyObserver.observe(short);
+    requestAnimationFrame(syncFamilyOrigins);
+}
 
 export function createVersionContainer(versionText) {
     const versionContainer = document.createElement('div');
@@ -94,15 +160,26 @@ export function toggleSpoiler(groupKey) {
         wrapper,
         from: row.style.display === 'none' ? collapsedCellFrame : readCellFrame(wrapper)
     })));
+    const branches = spoilerRows.flatMap(row => [...row.querySelectorAll('.build-tree-stem')].map(element => ({
+        element,
+        from: { opacity: row.style.display === 'none' ? '0' : getComputedStyle(element).opacity }
+    })));
 
     // Capture the current frame before cancelling an interrupted animation
     previousAnimations?.forEach(animation => animation.cancel());
     spoilerAnimations.delete(toggleButton);
     toggleButton.classList.toggle('expanded', expanded);
+    toggleButton.setAttribute('aria-expanded', String(expanded));
+    toggleButton.setAttribute('aria-label', expanded ? 'Hide additional builds' : toggleButton.dataset.collapsedLabel);
+    toggleButton.title = expanded ? 'Hide additional builds' : 'Show additional builds';
+    document.querySelectorAll(`tr[data-build-family="${groupKey}"]`).forEach(row => {
+        row.classList.toggle('build-family-open', expanded);
+    });
 
     spoilerRows.forEach(row => {
         row.style.display = '';
         row.classList.toggle('visible', expanded);
+        row.inert = !expanded;
         if (expanded) updateSpoilerMetadata(row);
     });
 
@@ -116,11 +193,15 @@ export function toggleSpoiler(groupKey) {
         from,
         to: expanded ? readCellFrame(wrapper) : collapsedCellFrame
     }));
-    const animations = frames.map(({ wrapper, from, to }) => wrapper.animate([from, to], {
-        duration: 260,
-        easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    const timing = {
+        duration: expanded ? 280 : 220,
+        easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
         fill: 'both'
-    }));
+    };
+    const animations = frames.map(({ wrapper, from, to }) => wrapper.animate([from, to], timing));
+    branches.forEach(({ element, from }) => {
+        animations.push(element.animate([from, { opacity: expanded ? '1' : '0' }], timing));
+    });
 
     spoilerAnimations.set(toggleButton, animations);
     Promise.allSettled(animations.map(animation => animation.finished)).then(() => {
@@ -138,7 +219,8 @@ function readCellFrame(wrapper) {
         height: `${wrapper.getBoundingClientRect().height}px`,
         opacity: style.opacity,
         paddingTop: style.paddingTop,
-        paddingBottom: style.paddingBottom
+        paddingBottom: style.paddingBottom,
+        transform: style.transform
     };
 }
 
@@ -172,15 +254,36 @@ export function wrapSpoilerCells(row) {
             cell.appendChild(wrapper);
         }
     });
+    if (row.querySelector('.build-tree')) return;
+    const versionCell = row.querySelector('.version-cell');
+    const carrier = versionCell || row.querySelector('.arch-cell');
+    if (!carrier) return;
+    const tree = document.createElement('span');
+    tree.className = 'build-tree';
+    tree.setAttribute('aria-hidden', 'true');
+    const stem = document.createElement('span');
+    stem.className = 'build-tree-stem';
+    tree.appendChild(stem);
+    if (versionCell) {
+        const junction = document.createElement('span');
+        junction.className = 'build-tree-junction';
+        junction.setAttribute('aria-hidden', 'true');
+        versionCell.querySelector('.version-line-top').appendChild(junction);
+        if (row.classList.contains('build-branch-last')) observeFamilyOrigin(row);
+    }
+    carrier.appendChild(tree);
 }
 
 export function createSpoiler(groupKey, hiddenCount) {
-    const spoilerBtn = document.createElement('span');
+    const spoilerBtn = document.createElement('button');
+    spoilerBtn.type = 'button';
     spoilerBtn.className = 'spoiler-toggle';
     spoilerBtn.title = (state.currentSortColumn === 'version' && !state.sortVersionAscending) ? 'Show older builds' : 'Show builds';
     spoilerBtn.dataset.groupKey = groupKey;
     spoilerBtn.addEventListener('click', () => toggleSpoiler(groupKey));
-    spoilerBtn.setAttribute('aria-label', hiddenCount === 1 ? 'Show one more build' : `Show ${hiddenCount} more builds`);
+    spoilerBtn.dataset.collapsedLabel = hiddenCount === 1 ? 'Show one more build' : `Show ${hiddenCount} more builds`;
+    spoilerBtn.setAttribute('aria-label', spoilerBtn.dataset.collapsedLabel);
+    spoilerBtn.setAttribute('aria-expanded', 'false');
 
     const counterText = document.createElement('span');
     counterText.className = 'spoiler-counter-text';
@@ -189,6 +292,7 @@ export function createSpoiler(groupKey, hiddenCount) {
     const spoilerIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     spoilerIcon.setAttribute('class', 'spoiler-arrow-icon');
     spoilerIcon.setAttribute('viewBox', '0 0 24 24');
+    spoilerIcon.setAttribute('aria-hidden', 'true');
 
     const spoilerIconPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     spoilerIconPath.setAttribute('d', 'M5.41 7.59L4 9l8 8 8-8-1.41-1.41L12 14.17');
