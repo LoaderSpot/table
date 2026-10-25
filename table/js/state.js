@@ -5,6 +5,7 @@ export const osVersionFilters = {
         { version: '1.2.5.1006', label: '7-8.1', full: 'Windows 7-8.1' }
     ],
     mac: [
+        { version: '1.2.98.301', label: '12.x', full: 'macOS 12' },
         { version: '1.2.66.447', label: '11.x', full: 'macOS 11' },
         { version: '1.2.37.701', label: '10.15', full: 'macOS 10.15' },
         { version: '1.2.20.1218', label: '10.14/10.13', full: 'macOS 10.14 / 10.13' }
