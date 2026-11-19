@@ -67,8 +67,18 @@ async function createFixture() {
         while (frames.length) frames.splice(0).forEach(callback => callback());
     };
     flush();
-    return { state, columns, heading, rootStyle, classes, scroller, headingScroller, frames, flush, backdrop, navigation, title, toolbar, contextTitle, hero, heroOrigin, motion, resize: () => resize(), scroll: () => listeners.get('scroll')(), motionChange: () => motionChange() };
+    return { state, table, columns, heading, rootStyle, classes, scroller, headingScroller, frames, flush, backdrop, navigation, title, toolbar, contextTitle, hero, heroOrigin, motion, resize: (entries = [{ target: heading }]) => resize(entries), scroll: () => listeners.get('scroll')(), motionChange: () => motionChange() };
 }
+
+test('a height-only change during a reveal skips column measurement', async () => {
+    const fixture = await createFixture();
+    const entry = { target: fixture.table, contentRect: { width: 1000, height: 500 } };
+    fixture.resize([entry]);
+    fixture.flush();
+    entry.contentRect.height = 700;
+    fixture.resize([entry]);
+    assert.equal(fixture.frames.length, 0);
+});
 
 test('column widths follow the data table and batch resize updates', async () => {
     const fixture = await createFixture();

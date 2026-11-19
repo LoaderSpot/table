@@ -3,26 +3,23 @@ import {
     generateCounterKey,
     getDownloadCounter,
     getDownloadCountersRevision,
-    registerPendingCounterElement,
     setDownloadCounter
 } from '../data/api.js';
 import { copyTextToClipboard, showToast } from '../utils/clipboard.js';
 import { escapeToastText, renderDownloadCounter } from '../utils/format.js';
 
-const downloadCooldowns = new WeakSet();
+const downloadCooldowns = new WeakMap();
 const pendingDownloadRequests = new Map();
 let downloadRequestSeq = 0;
 let downloadMessageListenerInstalled = false;
 
-export function updateDownloadCount(fileUrl, countElement, version, os, arch) {
+function updateDownloadCount(countElement, version, os, arch) {
     const counterKey = generateCounterKey(version, os, arch);
     countElement.dataset.counterKey = counterKey;
 
-    if (areCountersLoaded()) {
-        const count = getDownloadCounter(counterKey);
+    const count = getDownloadCounter(counterKey);
+    if (areCountersLoaded() || Number(count) > 0) {
         countElement.innerHTML = renderDownloadCounter(count);
-    } else {
-        registerPendingCounterElement(counterKey, countElement, fileUrl);
     }
 }
 
@@ -131,14 +128,15 @@ export function buildDownloadFrameUrl(fileUrl, requestId) {
     return url.toString();
 }
 
-export async function handleDownload(downloadLink, fileUrl, version, os, arch) {
-    if (downloadCooldowns.has(downloadLink)) return;
+export async function handleDownload(downloadLink, file, version, os) {
+    if (downloadCooldowns.has(file)) return;
 
-    downloadCooldowns.add(downloadLink);
+    const { link: fileUrl, arch } = file;
+    downloadCooldowns.set(file, downloadLink);
     downloadLink.classList.add('download-cooldown');
     setTimeout(() => {
-        downloadCooldowns.delete(downloadLink);
-        downloadLink.classList.remove('download-cooldown');
+        downloadCooldowns.get(file).classList.remove('download-cooldown');
+        downloadCooldowns.delete(file);
     }, 5000);
 
     const countElement = downloadLink.closest('.download-container').querySelector('.download-count-slot');
@@ -168,7 +166,8 @@ export async function handleDownload(downloadLink, fileUrl, version, os, arch) {
     frame.src = buildDownloadFrameUrl(fileUrl, requestId);
 }
 
-export function createDownloadCell(link, version, os, arch) {
+export function createDownloadCell(file, version, os) {
+    const { link, arch } = file;
     const actionCell = document.createElement('td');
     actionCell.className = 'action-cell';
 
@@ -177,15 +176,21 @@ export function createDownloadCell(link, version, os, arch) {
 
     const downloadLink = document.createElement('a');
     downloadLink.className = 'download-link';
-    downloadLink.removeAttribute('href');
+    downloadLink.href = link;
+    downloadLink.setAttribute('aria-label', `Download ${version} for ${os} ${arch}`);
+    if (downloadCooldowns.has(file)) {
+        downloadCooldowns.set(file, downloadLink);
+        downloadLink.classList.add('download-cooldown');
+    }
 
     const extensions = { win: '.exe', mac: '.tbz', linux: '.deb' };
     const extension = extensions[os] || '';
     downloadLink.title = `download ${version}-${arch}${extension}`;
 
     downloadLink.addEventListener('click', e => {
+        if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
         e.preventDefault();
-        handleDownload(downloadLink, link, version, os, arch);
+        handleDownload(downloadLink, file, version, os);
     });
 
     const iconTemplate = document.getElementById('download-icon-template');
@@ -219,7 +224,7 @@ export function createDownloadCell(link, version, os, arch) {
     downloadContainer.appendChild(downloadCountSpan);
 
     actionCell.appendChild(downloadContainer);
-    updateDownloadCount(link, downloadCountSpan, version, os, arch);
+    updateDownloadCount(downloadCountSpan, version, os, arch);
 
     return actionCell;
 }

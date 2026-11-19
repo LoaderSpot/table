@@ -40,6 +40,13 @@ test('failed FAQ requests can be retried', async t => {
     assert.equal(attempts, 2);
 });
 
+test('a hosting fallback document cannot become the FAQ', async t => {
+    t.mock.method(globalThis, 'fetch', async () => new Response('<!doctype html><title>Catalog</title>', {
+        headers: { 'Content-Type': 'text/html; charset=utf-8' }
+    }));
+    await assert.rejects(loadMarkdownContent('fallback.md'), /Error loading fallback\.md/);
+});
+
 test('returning to the catalog prevents a delayed FAQ response from changing the page', async t => {
     const markdownContainer = { style: {}, innerHTML: 'Previous content' };
     const tableContainer = { style: {} };
@@ -63,7 +70,8 @@ test('returning to the catalog prevents a delayed FAQ response from changing the
 
     window.location = new URL('https://example.com/faq');
     loadMarkdownPage();
-    const pendingContent = loadMarkdownContent('content/faq.md');
+    assert.equal(fetchMock.mock.calls[0].arguments[0], '/content/faq.md');
+    const pendingContent = loadMarkdownContent('/content/faq.md');
     assert.equal(fetchMock.mock.callCount(), 1);
 
     window.location = new URL('https://example.com/versions');

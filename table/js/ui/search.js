@@ -2,19 +2,22 @@ import { isOsTemporarilyUnavailable, state } from '../state.js';
 import { syncUrlWithState } from '../router/routes.js';
 import { compareSearchMatch } from '../utils/version.js';
 import { updateSortUI } from './sort.js';
-import {
-    observer,
-    setSearchRunner,
-    showTemporarilyUnavailableNotice,
-    startLazyLoading,
-    sentinel
-} from './table.js';
+import { observer, sentinel, startLazyLoading } from './table.js';
 
 let linuxLoader = null;
 let searchTimer = null;
 
 export function setLinuxLoader(loader) {
     linuxLoader = loader;
+}
+
+export function reRenderVersions() {
+    if (state.currentSearchTerm) {
+        performSearch(state.currentSearchTerm);
+    } else {
+        state.currentSearchResults = null;
+        startLazyLoading();
+    }
 }
 
 export function sortSearchResults(filtered, term) {
@@ -38,7 +41,6 @@ export function sortLinuxSearchResults(filtered, term) {
 export function performSearch(term) {
     clearTimeout(searchTimer);
     searchTimer = null;
-    const container = document.getElementById('versions-container');
     term = term.trim().toLowerCase();
     state.currentSearchTerm = term;
     observer.unobserve(sentinel);
@@ -52,12 +54,9 @@ export function performSearch(term) {
         return;
     }
 
-    container.innerHTML = '';
-    state.currentIndex = 0;
-
     if (isOsTemporarilyUnavailable(state.currentOS)) {
         state.currentSearchResults = null;
-        showTemporarilyUnavailableNotice(state.currentOS);
+        startLazyLoading();
         return;
     }
 
@@ -133,8 +132,6 @@ export function initSearchControls() {
     const searchContainer = document.getElementById('searchContainer');
     const clearSearchBtn = document.querySelector('.clear-search');
     const searchIcon = document.getElementById('searchIcon');
-
-    setSearchRunner(performSearch);
 
     versionSearch.addEventListener('input', e => {
         const term = e.target.value.trim().toLowerCase();

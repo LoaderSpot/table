@@ -1,13 +1,12 @@
 import { state } from '../state.js';
-import { linkMetaCache, updateLinkInfo } from '../data/meta.js';
 import { copyTextToClipboard } from '../utils/clipboard.js';
 import { highlight } from '../utils/version.js';
 import { createCommentButton } from './comments.js';
 
-const spoilerAnimations = new WeakMap();
-const collapsedCellFrame = { height: '0px', opacity: '0', paddingTop: '0px', paddingBottom: '0px', transform: 'translateY(-4px)' };
-const familyOrigins = new Set();
+const familyOrigins = new Map();
+const dirtyOrigins = new Set();
 let familyObserver;
+let originFrame = null;
 
 export function initBuildHover() {
     const container = document.getElementById('versions-container');
@@ -34,43 +33,58 @@ export function initBuildHover() {
     container.addEventListener('pointerleave', () => updateHover(null));
 }
 
-// Keep both ends of the tree attached to the short labels during layout changes
 function syncFamilyOrigins() {
-    for (const row of familyOrigins) {
-        const short = row.querySelector('.short-version');
-        if (!row.isConnected) {
-            familyObserver.unobserve(row);
-            if (short) familyObserver.unobserve(short);
-            familyOrigins.delete(row);
-            continue;
-        }
-        const cell = row.querySelector('.version-cell');
-        const rect = short.getBoundingClientRect();
+    originFrame = null;
+    const positions = [];
+    for (const row of dirtyOrigins) {
+        const origin = familyOrigins.get(row);
+        if (!origin || !row.isConnected) continue;
+        const rect = origin.short.getBoundingClientRect();
         const center = rect.top + rect.height / 2;
-        row.style.setProperty('--build-root-top', `${center - row.getBoundingClientRect().top}px`);
-        cell.style.setProperty('--build-root-inset', `${center - cell.getBoundingClientRect().top}px`);
+        positions.push({
+            row, cell: origin.cell,
+            top: center - row.getBoundingClientRect().top,
+            inset: center - origin.cell.getBoundingClientRect().top
+        });
+    }
+    dirtyOrigins.clear();
+    for (const { row, cell, top, inset } of positions) {
+        row.style.setProperty('--build-root-top', `${top}px`);
+        cell.style.setProperty('--build-root-inset', `${inset}px`);
     }
 }
 
-export function connectBuildFamily(rows, groupKey, expanded) {
-    if (!rows.length) return;
-    rows.forEach(row => {
-        row.dataset.buildFamily = groupKey;
-        row.classList.add('build-family-parent');
-        row.classList.toggle('build-family-open', expanded);
-    });
-    observeFamilyOrigin(rows[0]);
-}
-
 function observeFamilyOrigin(row) {
-    if (familyOrigins.has(row)) return;
+    if (!row || familyOrigins.has(row)) return;
     const short = row.querySelector('.short-version');
-    if (!short) return;
-    familyObserver ||= new ResizeObserver(syncFamilyOrigins);
-    familyOrigins.add(row);
+    const cell = row.querySelector('.version-cell');
+    familyOrigins.set(row, { short, cell });
+    familyObserver ??= new ResizeObserver(entries => {
+        for (const { target } of entries) {
+            const owner = target.closest('tr');
+            if (familyOrigins.has(owner)) dirtyOrigins.add(owner);
+        }
+        if (dirtyOrigins.size && originFrame === null) originFrame = requestAnimationFrame(syncFamilyOrigins);
+    });
     familyObserver.observe(row);
     familyObserver.observe(short);
-    requestAnimationFrame(syncFamilyOrigins);
+}
+
+function unobserveFamilyOrigin(row) {
+    const origin = familyOrigins.get(row);
+    if (!origin) return;
+    familyObserver.unobserve(row);
+    familyObserver.unobserve(origin.short);
+    familyOrigins.delete(row);
+    dirtyOrigins.delete(row);
+}
+
+export function resetFamilyOrigins() {
+    familyObserver?.disconnect();
+    familyOrigins.clear();
+    dirtyOrigins.clear();
+    if (originFrame !== null) cancelAnimationFrame(originFrame);
+    originFrame = null;
 }
 
 export function createVersionContainer(versionText) {
@@ -146,118 +160,131 @@ export function createVersionPart(text, searchTerm, className, toastMessage) {
     return element;
 }
 
-export function toggleSpoiler(groupKey) {
-    const spoilerRows = [...document.querySelectorAll(`tr.spoiler-content-row[data-spoiler-for="${groupKey}"]`)];
-    const toggleButton = document.querySelector(`.spoiler-toggle[data-group-key="${groupKey}"]`);
-
-    if (spoilerRows.length === 0 || !toggleButton) return;
-
-    const expanded = !toggleButton.classList.contains('expanded');
-    const previousAnimations = spoilerAnimations.get(toggleButton);
-
-    spoilerRows.forEach(wrapSpoilerCells);
-    const cells = spoilerRows.flatMap(row => [...row.querySelectorAll('.cell-wrapper')].map(wrapper => ({
-        wrapper,
-        from: row.style.display === 'none' ? collapsedCellFrame : readCellFrame(wrapper)
-    })));
-    const branches = spoilerRows.flatMap(row => [...row.querySelectorAll('.build-tree-stem')].map(element => ({
-        element,
-        from: { opacity: row.style.display === 'none' ? '0' : getComputedStyle(element).opacity }
-    })));
-
-    // Capture the current frame before cancelling an interrupted animation
-    previousAnimations?.forEach(animation => animation.cancel());
-    spoilerAnimations.delete(toggleButton);
-    toggleButton.classList.toggle('expanded', expanded);
-    toggleButton.setAttribute('aria-expanded', String(expanded));
-    toggleButton.setAttribute('aria-label', expanded ? 'Hide additional builds' : toggleButton.dataset.collapsedLabel);
-    toggleButton.title = expanded ? 'Hide additional builds' : 'Show additional builds';
-    document.querySelectorAll(`tr[data-build-family="${groupKey}"]`).forEach(row => {
-        row.classList.toggle('build-family-open', expanded);
-    });
-
-    spoilerRows.forEach(row => {
-        row.style.display = '';
-        row.classList.toggle('visible', expanded);
-        row.inert = !expanded;
-        if (expanded) updateSpoilerMetadata(row);
-    });
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || cells.some(({ wrapper }) => !wrapper.animate)) {
-        spoilerRows.forEach(row => { row.style.display = expanded ? '' : 'none'; });
-        return;
-    }
-
-    const frames = cells.map(({ wrapper, from }) => ({
-        wrapper,
-        from,
-        to: expanded ? readCellFrame(wrapper) : collapsedCellFrame
-    }));
-    const timing = {
-        duration: expanded ? 280 : 220,
-        easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
-        fill: 'both'
-    };
-    const animations = frames.map(({ wrapper, from, to }) => wrapper.animate([from, to], timing));
-    branches.forEach(({ element, from }) => {
-        animations.push(element.animate([from, { opacity: expanded ? '1' : '0' }], timing));
-    });
-
-    spoilerAnimations.set(toggleButton, animations);
-    Promise.allSettled(animations.map(animation => animation.finished)).then(() => {
-        if (spoilerAnimations.get(toggleButton) !== animations) return;
-
-        spoilerRows.forEach(row => { row.style.display = expanded ? '' : 'none'; });
-        animations.forEach(animation => animation.cancel());
-        spoilerAnimations.delete(toggleButton);
-    });
-}
-
-function readCellFrame(wrapper) {
-    const style = getComputedStyle(wrapper);
-    return {
-        height: `${wrapper.getBoundingClientRect().height}px`,
-        opacity: style.opacity,
-        paddingTop: style.paddingTop,
-        paddingBottom: style.paddingBottom,
-        transform: style.transform
-    };
-}
-
-function updateSpoilerMetadata(row) {
-    const cells = row.querySelectorAll('td');
-    const offset = row.querySelector('.version-cell') ? 1 : 0;
-    const dateCell = cells[offset + 1];
-    const sizeCell = cells[offset + 2];
-    const downloadCell = cells[offset + 3];
-    const url = downloadCell?.getAttribute('data-download-url');
-    if (!dateCell || !sizeCell || !url) return;
-
-    if (linkMetaCache.has(url)) {
-        const cached = linkMetaCache.get(url);
-        dateCell.querySelector('.cell-wrapper').textContent = cached.date;
-        sizeCell.querySelector('.cell-wrapper').textContent = cached.size;
-    } else {
-        updateLinkInfo(dateCell, sizeCell, url, true);
-    }
-}
-
-export function wrapSpoilerCells(row) {
-    const cells = row.querySelectorAll('td');
-    cells.forEach(cell => {
-        if (!cell.querySelector('.cell-wrapper')) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'cell-wrapper';
-            while (cell.firstChild) {
-                wrapper.appendChild(cell.firstChild);
-            }
-            cell.appendChild(wrapper);
+function createRevealStage(parent, children) {
+    const mainTable = parent.closest('table');
+    const widths = Array.from(mainTable.tHead.rows[0].cells, cell => cell.getBoundingClientRect().width);
+    const total = widths.reduce((sum, width) => sum + width, 0);
+    const table = document.createElement('table');
+    table.className = 'version-table build-reveal-table';
+    if (total) {
+        const columns = document.createElement('colgroup');
+        for (const width of widths) {
+            const col = document.createElement('col');
+            col.style.width = `${width / total * 100}%`;
+            columns.appendChild(col);
         }
+        table.appendChild(columns);
+    }
+    const clip = document.createElement('div');
+    clip.className = 'build-reveal-clip';
+    const content = document.createElement('div');
+    content.className = 'build-reveal-content';
+    content.appendChild(table);
+    clip.appendChild(content);
+    const row = document.createElement('tr');
+    row.className = 'build-reveal-row';
+    const cell = row.insertCell();
+    cell.colSpan = widths.length;
+    cell.appendChild(clip);
+    table.createTBody().append(...children);
+    parent.after(row);
+    return { row, clip };
+}
+
+export function connectBuildFamily(parents, button, key, initiallyExpanded, createChildren) {
+    const lastParent = parents.at(-1);
+    let children = null;
+    let lastOrigin;
+    let stage = null;
+    let animation = null;
+    let expanded = initiallyExpanded;
+
+    function updateControls() {
+        button.classList.toggle('expanded', expanded);
+        button.setAttribute('aria-expanded', String(expanded));
+        button.setAttribute('aria-label', expanded ? 'Hide additional builds' : button.dataset.collapsedLabel);
+        button.title = expanded ? 'Hide additional builds' : button.dataset.collapsedTitle;
+        for (const parent of parents) parent.classList.toggle('build-family-open', expanded);
+    }
+
+    function mountChildren() {
+        if (children) return;
+        children = createChildren();
+        lastOrigin = children.find(row => row.classList.contains('build-branch-last') && row.querySelector('.version-cell'));
+        observeFamilyOrigin(parents[0]);
+        observeFamilyOrigin(lastOrigin);
+    }
+
+    function settle() {
+        if (expanded) {
+            if (stage) {
+                const focused = document.activeElement;
+                const restoreFocus = focused && stage.row.contains(focused);
+                stage.row.replaceWith(...children);
+                if (restoreFocus) focused.focus({ preventScroll: true });
+            } else {
+                lastParent.after(...children);
+            }
+        } else {
+            unobserveFamilyOrigin(parents[0]);
+            unobserveFamilyOrigin(lastOrigin);
+            if (stage) stage.row.remove();
+            else children.forEach(row => row.remove());
+            children = null;
+            lastOrigin = null;
+        }
+        stage = null;
+    }
+
+    for (const parent of parents) {
+        parent.dataset.buildFamily = key;
+        parent.classList.add('build-family-parent');
+    }
+    updateControls();
+    if (expanded) {
+        mountChildren();
+        settle();
+    }
+
+    button.addEventListener('click', () => {
+        expanded = !expanded;
+        updateControls();
+        mountChildren();
+        for (const row of children) row.inert = !expanded;
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reducedMotion || !button.animate) {
+            animation?.cancel();
+            animation = null;
+            settle();
+            return;
+        }
+
+        // Opacity and the grid track use the same easing during a reversal
+        const from = stage ? getComputedStyle(stage.clip).opacity : (expanded ? '0' : '1');
+        animation?.cancel();
+        stage ??= createRevealStage(lastParent, children);
+        const to = expanded ? '1' : '0';
+        const current = stage.clip.animate([
+            { gridTemplateRows: `${from}fr`, opacity: from },
+            { gridTemplateRows: `${to}fr`, opacity: to }
+        ], {
+            duration: expanded ? 280 : 220,
+            easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
+            fill: 'both'
+        });
+        animation = current;
+        current.finished.then(() => {
+            if (current !== animation) return;
+            settle();
+            current.cancel();
+            animation = null;
+        }, () => {});
     });
-    if (row.querySelector('.build-tree')) return;
+}
+
+export function addBuildBranch(row) {
     const versionCell = row.querySelector('.version-cell');
     const carrier = versionCell || row.querySelector('.arch-cell');
-    if (!carrier) return;
     const tree = document.createElement('span');
     tree.className = 'build-tree';
     tree.setAttribute('aria-hidden', 'true');
@@ -265,11 +292,14 @@ export function wrapSpoilerCells(row) {
     stem.className = 'build-tree-stem';
     tree.appendChild(stem);
     if (versionCell) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'cell-wrapper';
+        wrapper.appendChild(versionCell.firstChild);
+        versionCell.appendChild(wrapper);
         const junction = document.createElement('span');
         junction.className = 'build-tree-junction';
         junction.setAttribute('aria-hidden', 'true');
         versionCell.querySelector('.version-line-top').appendChild(junction);
-        if (row.classList.contains('build-branch-last')) observeFamilyOrigin(row);
     }
     carrier.appendChild(tree);
 }
@@ -280,7 +310,7 @@ export function createSpoiler(groupKey, hiddenCount) {
     spoilerBtn.className = 'spoiler-toggle';
     spoilerBtn.title = (state.currentSortColumn === 'version' && !state.sortVersionAscending) ? 'Show older builds' : 'Show builds';
     spoilerBtn.dataset.groupKey = groupKey;
-    spoilerBtn.addEventListener('click', () => toggleSpoiler(groupKey));
+    spoilerBtn.dataset.collapsedTitle = spoilerBtn.title;
     spoilerBtn.dataset.collapsedLabel = hiddenCount === 1 ? 'Show one more build' : `Show ${hiddenCount} more builds`;
     spoilerBtn.setAttribute('aria-label', spoilerBtn.dataset.collapsedLabel);
     spoilerBtn.setAttribute('aria-expanded', 'false');

@@ -2,27 +2,12 @@ import {
     getCurrentVersionFilter,
     isOsTemporarilyUnavailable,
     osVersionFilters,
-    resetSizePreload,
     setCurrentVersionFilter,
     state
 } from '../state.js';
-import { getOrderedArchKeys } from '../data/normalize.js';
+import { architectureOrder } from '../data/normalize.js';
 import { syncUrlWithState } from '../router/routes.js';
-import { reRenderVersions, resetTableLoadingState, startLazyLoading } from './table.js';
-
-let platformCallbacks = {
-    loadLinuxPackages: null,
-    performSearch: null
-};
-
-let platformRenderTimer;
-
-export function setPlatformCallbacks(callbacks) {
-    platformCallbacks = {
-        ...platformCallbacks,
-        ...callbacks
-    };
-}
+import { reRenderVersions } from './search.js';
 
 export function closeAllOsVersionDropdowns() {
     document.querySelectorAll('.os-version-dropdown').forEach(dropdown => {
@@ -289,54 +274,33 @@ export function updateArchFilters() {
     const filterPanel = document.querySelector('.filter-panel');
     const archContainer = document.getElementById('arch-filters');
 
-    if (filterPanel) {
-        filterPanel.classList.add('hidden');
-    }
-
-    setTimeout(() => {
-        if (state.currentOS === 'linux' || isOsTemporarilyUnavailable(state.currentOS)) {
-            archContainer.innerHTML = '';
-            if (filterPanel) {
-                filterPanel.classList.add('hidden');
-            }
-            return;
-        }
-
-        archContainer.innerHTML = '';
-
-        const archSet = new Set();
-        state.allVersions.forEach(([, data]) => {
-            if (data.links[state.currentOS]) {
-                getOrderedArchKeys(state.currentOS, data.links[state.currentOS]).forEach(arch => archSet.add(arch));
-            }
-        });
-
-        let archArr = [];
-        if (state.currentOS === 'win') {
-            archArr = ['x86', 'x64', 'arm64'].filter(arch => archSet.has(arch));
-        } else if (state.currentOS === 'mac') {
-            archArr = ['intel', 'arm64'].filter(arch => archSet.has(arch));
-        } else {
-            archArr = Array.from(archSet).sort();
-        }
-
-        archArr.forEach(arch => {
-            const btn = document.createElement('button');
-            btn.className = 'arch-filter-button' + (state.currentArch === arch ? ' active' : '');
-            btn.textContent = arch;
-            btn.addEventListener('click', () => {
+    const os = state.currentOS;
+    const supported = Object.hasOwn(architectureOrder, os) ? architectureOrder[os] : [];
+    const ordered = os === 'linux' || isOsTemporarilyUnavailable(os) ? []
+        : supported.filter(arch => state.allVersions.some(([, data]) => data.links[os]?.[arch]));
+    const buttons = Array.from(archContainer.children);
+    if (buttons.length !== ordered.length || buttons.some((button, index) => button.textContent !== ordered[index])) {
+        archContainer.replaceChildren();
+        ordered.forEach(arch => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'arch-filter-button';
+            button.textContent = arch;
+            button.addEventListener('click', () => {
                 state.currentArch = state.currentArch === arch ? 'all' : arch;
                 syncUrlWithState();
                 updateArchFilters();
                 reRenderVersions();
             });
-            archContainer.appendChild(btn);
+            archContainer.appendChild(button);
         });
-
-        if (filterPanel) {
-            filterPanel.classList.remove('hidden');
-        }
-    }, 150);
+    }
+    for (const button of archContainer.children) {
+        const active = button.textContent === state.currentArch;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-pressed', String(active));
+    }
+    filterPanel.classList.toggle('hidden', ordered.length === 0);
 }
 
 export function initPlatformTabs() {
@@ -348,50 +312,26 @@ export function initPlatformTabs() {
     });
 }
 
-function activatePlatform(newOS) {
+export function syncPlatformControls() {
     document.querySelectorAll('.filter-button').forEach(button => {
-        const active = button.dataset.os === newOS;
+        const os = button.dataset.os;
+        const active = os === state.currentOS;
         button.classList.toggle('active', active);
         button.setAttribute('aria-pressed', String(active));
         button.closest('.os-filter-container').classList.toggle('active', active);
+        syncVersionFilterUi(os);
     });
-    if (newOS === state.currentOS) return;
+    updateArchFilters();
+}
 
-    if (newOS === 'linux' && state.currentArch !== 'all') {
+function activatePlatform(newOS) {
+    if (newOS === state.currentOS) return;
+    state.currentOS = newOS;
+    if (newOS === 'linux' || !state.allVersions.some(([, data]) => data.links[newOS]?.[state.currentArch])) {
         state.currentArch = 'all';
     }
 
-    state.currentOS = newOS;
-    resetSizePreload();
-    resetTableLoadingState({ resetOverflow: state.currentSortColumn !== 'size' });
-
-    if (state.currentOS !== 'linux') {
-        const availableArch = new Set();
-        state.allVersions.forEach(([, data]) => {
-            if (data.links[state.currentOS]) {
-                getOrderedArchKeys(state.currentOS, data.links[state.currentOS]).forEach(arch => availableArch.add(arch));
-            }
-        });
-        if (!availableArch.has(state.currentArch)) {
-            state.currentArch = 'all';
-        }
-    }
-
-    const container = document.getElementById('versions-container');
-    container.style.opacity = '0';
-
-    updateArchFilters();
+    syncPlatformControls();
     syncUrlWithState();
-
-    clearTimeout(platformRenderTimer);
-    platformRenderTimer = setTimeout(() => {
-        if (state.currentOS === 'linux' && !state.linuxDataLoaded) {
-            platformCallbacks.loadLinuxPackages?.();
-        } else if (state.currentSearchTerm !== '') {
-            platformCallbacks.performSearch?.(state.currentSearchTerm);
-        } else {
-            state.currentSearchResults = null;
-            startLazyLoading();
-        }
-    }, 300);
+    if (state.versionsAppInitialized) reRenderVersions();
 }

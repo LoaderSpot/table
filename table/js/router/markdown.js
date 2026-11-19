@@ -32,7 +32,9 @@ export function loadMarkdownContent(mdFile) {
         const request = Promise.all([
             import('marked'),
             fetch(mdFile).then(response => {
-                if (!response.ok) throw new Error(`Error loading ${mdFile}`);
+                if (!response.ok || response.headers.get('content-type')?.startsWith('text/html')) {
+                    throw new Error(`Error loading ${mdFile}`);
+                }
                 return response.text();
             })
         ])
@@ -65,7 +67,7 @@ export function loadMarkdownPage() {
         tableContainer.style.display = 'none';
         mdContainer.style.display = 'block';
 
-        const mdFile = 'content/faq.md';
+        const mdFile = '/content/faq.md';
         const currentToken = ++markdownNavigationToken;
 
         loadMarkdownContent(mdFile)

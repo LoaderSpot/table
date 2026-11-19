@@ -1,12 +1,10 @@
 import { renderDownloadCounter } from '../utils/format.js';
-import { flushPendingLinkMetaUpdates } from './meta.js';
 
 let allDownloadCounters = {};
 let downloadCountersRevision = 0;
 let commentCountCache = {};
 let countersLoaded = false;
 let commentCountsLoaded = false;
-const pendingCounterElements = new Map();
 const MIN_UPDATE_INTERVAL = 10000;
 const ALL_DATA_BACKGROUND_RETRY_DELAY_MS = 5000;
 let lastDataUpdate = 0;
@@ -43,10 +41,6 @@ export function setDownloadCounter(counterKey, value) {
 
 export function areCountersLoaded() {
     return countersLoaded;
-}
-
-export function registerPendingCounterElement(counterKey, element, url) {
-    pendingCounterElements.set(counterKey, { element, url });
 }
 
 export function getCommentCount(commentKey) {
@@ -150,13 +144,9 @@ export async function loadAllData(forceUpdate = false, commentsOnly = false) {
                     downloadCountersRevision++;
                     countersLoaded = true;
 
-                    pendingCounterElements.forEach((counterInfo, counterKey) => {
-                        const count = allDownloadCounters[counterKey] || '0';
-                        counterInfo.element.innerHTML = renderDownloadCounter(count);
+                    document.querySelectorAll('.download-count-slot').forEach(element => {
+                        element.innerHTML = renderDownloadCounter(getDownloadCounter(element.dataset.counterKey));
                     });
-                    pendingCounterElements.clear();
-
-                    flushPendingLinkMetaUpdates();
                 }
 
                 if (commentsSucceeded) {

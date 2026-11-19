@@ -24,6 +24,7 @@ export function initStickyTableHeader() {
     let contextHeight = 0;
     let heroActive = false;
     let heroMetrics;
+    let observedTableWidth;
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     heroOrigin.textContent = hero.textContent;
 
@@ -110,9 +111,10 @@ export function initStickyTableHeader() {
         visible = width > 0;
         activateHero(visible);
         if (width) {
+            const widths = cells.map(cell => cell.getBoundingClientRect().width);
             heading.style.width = `${width}px`;
-            cells.forEach((cell, index) => {
-                columns[index].style.width = `${cell.getBoundingClientRect().width}px`;
+            widths.forEach((columnWidth, index) => {
+                columns[index].style.width = `${columnWidth}px`;
             });
             syncScroll(scroller, headingScroller);
         } else {
@@ -139,7 +141,12 @@ export function initStickyTableHeader() {
         if (pendingFrame === null) pendingFrame = requestAnimationFrame(updateColumns);
     }
 
-    const resizeObserver = new ResizeObserver(scheduleUpdate);
+    const resizeObserver = new ResizeObserver(entries => {
+        const tableEntry = entries.find(entry => entry.target === table);
+        const widthChanged = tableEntry && tableEntry.contentRect.width !== observedTableWidth;
+        if (tableEntry) observedTableWidth = tableEntry.contentRect.width;
+        if (widthChanged || entries.some(entry => entry.target !== table)) scheduleUpdate();
+    });
     [table, heading, navigation, title, toolbar, contextTitle, heroOrigin, ...cells].forEach(element => resizeObserver.observe(element));
     scroller.addEventListener('scroll', () => syncScroll(scroller, headingScroller), { passive: true });
     headingScroller.addEventListener('scroll', () => syncScroll(headingScroller, scroller), { passive: true });

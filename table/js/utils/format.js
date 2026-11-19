@@ -13,7 +13,7 @@ export function formatSize(sizeInBytes) {
 }
 
 export function normalizeMetaDate(dateValue) {
-    if (!dateValue) return '—';
+    if (!dateValue || dateValue === '—') return '—';
     if (/^\d{2}\.\d{2}\.\d{4}$/.test(String(dateValue))) {
         return String(dateValue);
     }

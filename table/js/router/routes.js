@@ -1,4 +1,4 @@
-import { state } from '../state.js';
+import { readVersionsUrlState, state } from '../state.js';
 
 export const ROUTE_PATHS = {
     versions: '/versions',
@@ -7,6 +7,15 @@ export const ROUTE_PATHS = {
 
 const VERSIONS_ROUTE_STATE_KEY = 'loadspot:last-versions-search';
 let routeChangeHandler = null;
+let appliedVersionsSearch = window.location.search;
+
+export function restoreVersionsUrlState() {
+    const search = window.location.search;
+    if (search === appliedVersionsSearch) return false;
+    Object.assign(state, readVersionsUrlState(search));
+    appliedVersionsSearch = search;
+    return true;
+}
 
 export function setRouteChangeHandler(handler) {
     routeChangeHandler = handler;
@@ -148,6 +157,7 @@ export function syncUrlWithState() {
     });
 
     window.history.replaceState(null, '', url);
+    appliedVersionsSearch = url.search;
 }
 
 export function initRouter() {

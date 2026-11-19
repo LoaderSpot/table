@@ -71,15 +71,11 @@ async function createApp(search = '') {
     const mocks = {
         'router/routes.js': { syncUrlWithState() {} },
         'ui/sort.js': { updateSortUI() {} },
-        'data/normalize.js': { getOrderedArchKeys: (_, links) => Object.keys(links) },
+        'data/normalize.js': { architectureOrder: { win: ['x86', 'x64', 'arm64'], mac: ['intel', 'arm64'] } },
         'ui/table.js': {
             observer: { unobserve() {} },
             sentinel: {},
-            setSearchRunner() {},
-            showTemporarilyUnavailableNotice: render,
-            startLazyLoading: render,
-            reRenderVersions: render,
-            resetTableLoadingState() {}
+            startLazyLoading: render
         }
     };
     const modules = new Map();

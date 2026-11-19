@@ -1,5 +1,3 @@
-const urlParams = new URLSearchParams(window.location.search);
-
 export const osVersionFilters = {
     win: [
         { version: '1.2.5.1006', label: '7-8.1', full: 'Windows 7-8.1' }
@@ -17,35 +15,32 @@ export const temporarilyUnavailableOs = new Set();
 
 export const ITEMS_PER_BATCH = 5;
 
+export function readVersionsUrlState(search) {
+    const params = new URLSearchParams(search);
+    const term = params.get('search') || '';
+    const legacySort = !params.has('sortVersion') && !params.has('sortSize') && params.get('sort') === 'asc';
+    return {
+        currentArch: params.get('arch') || 'all',
+        currentOS: params.get('os') || 'win',
+        currentSearchTerm: term,
+        currentWinVersionFilter: normalizeVersionFilter(params.get('winVersion')),
+        currentMacVersionFilter: normalizeVersionFilter(params.get('macVersion')),
+        currentLinuxVersionFilter: normalizeVersionFilter(params.get('linuxVersion')),
+        sortVersionAscending: legacySort || (!term && (params.get('sortVersion') ?? params.get('sort')) === 'asc'),
+        sortSizeAscending: !term && params.get('sortSize') === 'asc',
+        currentSortColumn: !term && params.has('sortSize') ? 'size' : 'version'
+    };
+}
+
 export const state = {
-    currentArch: urlParams.get('arch') || 'all',
-    currentOS: urlParams.get('os') || 'win',
-    currentSearchTerm: urlParams.get('search') || '',
-    currentWinVersionFilter: normalizeVersionFilter(urlParams.get('winVersion')),
-    currentMacVersionFilter: normalizeVersionFilter(urlParams.get('macVersion')),
-    currentLinuxVersionFilter: normalizeVersionFilter(urlParams.get('linuxVersion')),
-    sortVersionAscending: urlParams.get('sortVersion') === 'asc' || (urlParams.get('sortVersion') === null && urlParams.get('sort') === 'asc'),
-    sortSizeAscending: urlParams.get('sortSize') === 'asc',
-    currentSortColumn: urlParams.get('sortSize') !== null ? 'size' : 'version',
+    ...readVersionsUrlState(window.location.search),
     allVersions: [],
     linuxVersionsData: [],
     linuxDataLoaded: false,
-    currentIndex: 0,
     currentSearchResults: null,
     versionsAppInitialized: false,
-    versionsAppInitPromise: null,
-    sizesPreloaded: false
+    versionsAppInitPromise: null
 };
-
-if (state.currentSearchTerm) {
-    state.sortVersionAscending = false;
-    state.sortSizeAscending = false;
-    state.currentSortColumn = 'version';
-}
-
-if (urlParams.get('sort') && !urlParams.get('sortVersion') && !urlParams.get('sortSize')) {
-    state.sortVersionAscending = urlParams.get('sort') === 'asc';
-}
 
 export function isOsTemporarilyUnavailable(os) {
     return temporarilyUnavailableOs.has(os);
@@ -71,8 +66,4 @@ export function setCurrentVersionFilter(os, value) {
     } else if (os === 'linux') {
         state.currentLinuxVersionFilter = value;
     }
-}
-
-export function resetSizePreload() {
-    state.sizesPreloaded = false;
 }

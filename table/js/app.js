@@ -1,12 +1,11 @@
 import { state } from './state.js';
 import { buildLinuxVersionsData, normalizeVersionsData } from './data/normalize.js';
-import { flushPendingLinkMetaUpdates, primeMetadataCache } from './data/meta.js';
 import { loadAllData } from './data/api.js';
-import { getCurrentPageKey } from './router/routes.js';
-import { updateArchFilters } from './ui/filters.js';
-import { performSearch, setLinuxLoader } from './ui/search.js';
+import { restoreVersionsUrlState } from './router/routes.js';
+import { syncPlatformControls, updateArchFilters } from './ui/filters.js';
+import { performSearch, reRenderVersions, setLinuxLoader } from './ui/search.js';
 import { startLazyLoading } from './ui/table.js';
-import { getSortMultiplier } from './ui/sort.js';
+import { getSortMultiplier, updateSortUI } from './ui/sort.js';
 
 export async function loadLinuxPackages() {
     const container = document.getElementById('versions-container');
@@ -33,11 +32,9 @@ export async function loadLinuxPackages() {
 
 export async function loadVersionsApp() {
     const container = document.getElementById('versions-container');
-    const versionSearch = document.getElementById('versionSearch');
-    const searchContainer = document.getElementById('searchContainer');
 
     try {
-        const response = await fetch('versions.json');
+        const response = await fetch('/versions.json');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -45,32 +42,14 @@ export async function loadVersionsApp() {
         const rawData = await response.json();
         const data = normalizeVersionsData(rawData);
 
-        container.innerHTML = '';
-        primeMetadataCache(data);
         state.allVersions = Object.entries(data);
         state.linuxVersionsData = buildLinuxVersionsData(data);
         state.linuxDataLoaded = true;
 
         loadAllData().catch(err => console.error('Data fetch error:', err));
-        flushPendingLinkMetaUpdates();
-
-        if (state.currentSearchTerm) {
-            versionSearch.value = state.currentSearchTerm;
-            searchContainer.classList.add('show-clear');
-            searchContainer.classList.add('expanded');
-
-            if (state.currentOS !== 'linux') {
-                updateArchFilters();
-            }
-
-            performSearch(state.currentSearchTerm);
-        } else {
-            startLazyLoading();
-            if (state.currentOS !== 'linux') {
-                updateArchFilters();
-            }
-        }
-
+        updateArchFilters();
+        if (state.currentSearchTerm) syncSearchInput();
+        reRenderVersions();
         state.versionsAppInitialized = true;
     } catch (err) {
         state.versionsAppInitialized = false;
@@ -80,7 +59,20 @@ export async function loadVersionsApp() {
     }
 }
 
+function syncSearchInput() {
+    const searchContainer = document.getElementById('searchContainer');
+    document.getElementById('versionSearch').value = state.currentSearchTerm;
+    searchContainer.classList.toggle('show-clear', Boolean(state.currentSearchTerm));
+    searchContainer.classList.toggle('expanded', Boolean(state.currentSearchTerm));
+}
+
 export function ensureVersionsAppInitialized() {
+    if (restoreVersionsUrlState()) {
+        syncPlatformControls();
+        syncSearchInput();
+        updateSortUI();
+        if (state.versionsAppInitialized) reRenderVersions();
+    }
     if (state.versionsAppInitialized) {
         return Promise.resolve();
     }
@@ -94,14 +86,6 @@ export function ensureVersionsAppInitialized() {
     }
 
     return state.versionsAppInitPromise;
-}
-
-export async function initializeApp() {
-    if (getCurrentPageKey() !== 'versions') {
-        return;
-    }
-
-    return ensureVersionsAppInitialized();
 }
 
 export function initAppCallbacks() {

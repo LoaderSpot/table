@@ -38,6 +38,9 @@
   --icon-size-md: 23px;
   --icon-size-sm: 21px;
   --icon-size-lg: 23px;
+  --back-to-top-size: 44px;
+  --back-to-top-bottom: calc(var(--spacing-lg) + env(safe-area-inset-bottom));
+  --back-to-top-clearance: calc(var(--back-to-top-bottom) + var(--back-to-top-size) + var(--spacing-sm));
 
   /* Motion */
   --transition-default: all 0.3s ease;
@@ -260,7 +263,7 @@ header p {
 .container {
   width: 90%;
   max-width: 1000px;
-  margin: 40px auto 40px auto;
+  margin: 40px auto var(--back-to-top-clearance);
   position: relative;
   overflow: visible;
 }
@@ -279,6 +282,8 @@ header p {
 }
 
 table.version-table {
+  --cell-padding: 7px;
+  --version-indent: 24px;
   width: 100%;
   border-collapse: collapse;
   min-width: 600px;
@@ -365,7 +370,7 @@ table.version-table .table-sizing-head th {
 @media (max-width: 640px) {
   .container {
     width: calc(100% - 16px);
-    margin: 24px auto;
+    margin-top: 8px;
   }
 
   table.version-table thead th,
@@ -392,6 +397,12 @@ table.version-table thead th {
   border-bottom: 1px solid var(--color-table-divider);
   font-weight: 700;
   cursor: default;
+}
+
+@media (width > 640px) {
+  .table-headers th:first-child {
+    padding-inline-start: calc(var(--cell-padding) + var(--version-indent));
+  }
 }
 
 .version-header {
@@ -574,7 +585,7 @@ tbody.table-skeleton-overlay::after {
 }
 
 table.version-table tbody td {
-  padding: 7px;
+  padding: var(--cell-padding);
   border-bottom: 1px solid var(--color-border);
   vertical-align: middle;
   font-size: 14px;
@@ -633,13 +644,8 @@ table.version-table tbody td {
   }
 }
 
-table.version-table tbody td:nth-child(2),
-table.version-table tbody td:nth-child(3),
-table.version-table tbody td:nth-child(4),
-table.version-table tbody tr:not(:has(td.version-cell)) td:nth-child(1),
-table.version-table tbody tr:not(:has(td.version-cell)) td:nth-child(2),
-table.version-table tbody tr:not(:has(td.version-cell)) td:nth-child(3) {
-  font-size: 13px;
+.build-row > :is(.arch-cell, .date-cell, .size-cell) {
+  font-size: var(--metadata-font-size, 13px);
 }
 
 table.version-table td:nth-child(5) {
@@ -665,7 +671,7 @@ table.version-table td:nth-child(5) {
 }
 
 .version-cell > .version-container {
-  padding-inline-start: 24px;
+  padding-inline-start: var(--version-indent);
 }
 
 .version-text-wrapper {
@@ -833,8 +839,32 @@ table.version-table td:nth-child(5) {
   font-size: 0.95em;
 }
 
+table.version-table tbody tr.build-reveal-row,
+table.version-table tbody tr.build-reveal-row > td {
+  padding: 0;
+  border: 0;
+}
+
+.build-reveal-clip {
+  display: grid;
+  contain: layout inline-size;
+}
+
+.build-reveal-content {
+  min-height: 0;
+  overflow: hidden;
+}
+
+table.build-reveal-table {
+  min-width: 0;
+  table-layout: fixed;
+}
+
+table.build-reveal-table tbody tr.spoiler-content-row {
+  border: 0;
+}
+
 .spoiler-content-row td {
-  padding: 0 !important;
   overflow: hidden;
   vertical-align: middle;
 }
@@ -968,7 +998,19 @@ table.version-table tr.spoiler-content-row td {
   box-shadow: inset 0 -1px var(--color-border);
 }
 
+#versions-container:has(> .build-row:last-child),
+.build-reveal-row:last-child .build-reveal-table > tbody {
+  /* A version cell spanning several architectures starts above the last row */
+  & > .build-row:last-child,
+  & > .build-row:last-child > td,
+  & > tr:not(:has(~ tr > .version-cell)) > .version-cell {
+    border-bottom: 0;
+    box-shadow: none;
+  }
+}
+
 .spoiler-content-row .version-cell {
+  padding: 0 !important;
   position: relative;
 }
 
@@ -1120,7 +1162,8 @@ table.version-table tr.spoiler-content-row td {
   background: rgb(100 158 119 / 10%);
 }
 
-.spoiler-toggle:focus-visible {
+.spoiler-toggle:focus-visible,
+.download-link:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 3px;
 }
@@ -1413,6 +1456,7 @@ table.version-table thead td {
 
 .toast-notification {
   position: fixed;
+  pointer-events: none;
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
@@ -1432,15 +1476,20 @@ table.version-table thead td {
   opacity: 1;
 }
 
+.back-to-top:not([inert]) + .toast-notification {
+  bottom: var(--back-to-top-clearance);
+}
+
 .back-to-top {
   position: fixed;
-  right: calc(var(--spacing-lg) + env(safe-area-inset-right));
-  bottom: calc(var(--spacing-lg) + env(safe-area-inset-bottom));
+  inset-inline: 0;
+  bottom: var(--back-to-top-bottom);
+  margin-inline: auto;
   z-index: 4;
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: var(--back-to-top-size);
+  height: var(--back-to-top-size);
   border: 1px solid var(--filter-border-color);
   border-radius: 50%;
   background-color: var(--color-background-light);
@@ -1662,7 +1711,7 @@ body.modal-open .table-content {
   color: var(--color-text);
   padding: var(--spacing-xl) var(--spacing-xxl);
   border-radius: var(--radius-md);
-  margin: var(--spacing-xl) auto;
+  margin: var(--spacing-xl) auto var(--back-to-top-clearance);
   max-width: 900px;
   line-height: 1.8;
 }
@@ -2265,10 +2314,6 @@ body.modal-open .table-content {
     margin-bottom: 0;
   }
 
-  .container {
-    margin-top: 8px;
-  }
-
   .versions-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -2321,7 +2366,6 @@ body.modal-open .table-content {
   .versions-toolbar .filter-panel {
     flex-basis: 100%;
     grid-column: 1 / -1;
-    order: 1;
   }
 
   .versions-toolbar .arch-filter-buttons {
@@ -2344,7 +2388,6 @@ body.modal-open .table-content {
   .versions-toolbar .search-container {
     flex-basis: 100%;
     grid-column: 1 / -1;
-    order: 2;
     width: 100%;
     height: 44px;
     padding: 4px 12px 4px 36px;
@@ -2386,17 +2429,20 @@ body.modal-open .table-content {
     display: none;
   }
 
-  .version-table .table-headers {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border-bottom: 1px solid var(--color-table-divider);
+  .version-table {
+    --mobile-table-columns: minmax(48px, 0.6fr) minmax(0, 1fr) minmax(0, 1fr) 100px;
+    --tree-stem-left: 2px;
   }
 
-  .version-table .table-headers::before {
-    content: 'Sort by';
-    padding-left: 7px;
-    font-size: 13px;
+  .version-table .table-headers,
+  .version-table .build-row {
+    display: grid;
+    grid-template-columns: var(--mobile-table-columns);
+    align-items: center;
+  }
+
+  .version-table .table-headers {
+    border-bottom: 1px solid var(--color-table-divider);
   }
 
   .version-table .table-headers th {
@@ -2408,7 +2454,12 @@ body.modal-open .table-content {
   .version-table .table-headers th:nth-child(4) {
     display: block;
     width: auto;
-    padding-block: 0;
+    padding: 0 var(--spacing-xs);
+  }
+
+  .version-table .table-headers th:first-child {
+    grid-column: span 2;
+    padding-inline-start: var(--spacing-sm);
   }
 
   .version-table .version-sort-control,
@@ -2417,10 +2468,7 @@ body.modal-open .table-content {
   }
 
   .version-table .build-row {
-    display: grid;
-    grid-template-columns: minmax(48px, 0.6fr) minmax(0, 1fr) minmax(0, 1fr) 100px;
     grid-template-areas: "arch date size action";
-    align-items: center;
   }
 
   .version-table .build-row:has(.version-cell) {
@@ -2436,7 +2484,6 @@ body.modal-open .table-content {
   table.version-table tr.spoiler-content-row {
     position: relative;
     overflow: hidden;
-    padding-left: 40px;
     box-shadow: inset 0 -1px var(--color-border);
   }
 
@@ -2449,6 +2496,18 @@ body.modal-open .table-content {
     display: none;
   }
 
+  .version-cell > .version-container {
+    padding-inline-start: 0;
+  }
+
+  .version-cell:has(.spoiler-toggle) .version-line-top::before {
+    box-sizing: border-box;
+    left: calc(0px - var(--spacing-sm));
+    width: 6px;
+    height: 6px;
+    margin-top: -3px;
+  }
+
   .version-table .spoiler-content-row .version-cell {
     position: static;
     overflow: visible;
@@ -2458,9 +2517,13 @@ body.modal-open .table-content {
     display: block;
   }
 
+  .build-tree-stem {
+    left: var(--tree-stem-left);
+  }
+
   .build-tree-junction {
-    left: -31px;
-    width: 23px;
+    left: calc(var(--tree-stem-left) - var(--version-indent));
+    width: var(--spacing-lg);
   }
 
   .build-branch-last:not(:has(.version-cell)) .build-tree {
@@ -2469,11 +2532,6 @@ body.modal-open .table-content {
 
   .build-family-parent {
     position: relative;
-    padding-left: 40px;
-  }
-
-  .build-family-parent > .version-cell {
-    margin-left: -40px;
   }
 
   .build-family-parent::before {
@@ -2481,7 +2539,7 @@ body.modal-open .table-content {
     position: absolute;
     top: 0;
     bottom: 0;
-    left: 15px;
+    left: var(--tree-stem-left);
     width: 1.5px;
     background: var(--tree-line);
     opacity: 0;
@@ -2491,11 +2549,6 @@ body.modal-open .table-content {
 
   .build-family-parent:has(.version-cell)::before {
     top: var(--build-root-top, 30px);
-    width: 8px;
-    background: transparent;
-    border: solid var(--tree-line);
-    border-width: 1.5px 0 0 1.5px;
-    border-top-left-radius: 8px;
   }
 
   .build-family-parent.build-family-open::before {
@@ -2511,11 +2564,12 @@ body.modal-open .table-content {
 
   table.version-table .build-row > .version-cell {
     grid-area: version;
-    padding: 8px 4px 5px;
+    padding: 8px 4px 5px var(--spacing-sm);
   }
 
-  .version-table .arch-cell {
+  table.version-table .build-row > .arch-cell {
     grid-area: arch;
+    padding-inline-start: var(--spacing-sm);
   }
 
   .version-table .date-cell {
@@ -2538,7 +2592,7 @@ body.modal-open .table-content {
   }
 
   .version-table .spoiler-content-row .version-cell .cell-wrapper {
-    padding: 8px 4px 5px 6px;
+    padding: 8px 4px 5px var(--version-indent);
   }
 
   .version-table .action-cell {
@@ -2561,11 +2615,8 @@ body.modal-open .table-content {
   .version-table .download-count-slot {
     grid-column: 1 / -1;
     min-width: 0;
+    min-height: 1em;
     text-align: center;
-  }
-
-  .version-table .download-count-slot:empty {
-    display: none;
   }
 
   .version-table .download-counter {
@@ -2607,7 +2658,7 @@ body.modal-open .table-content {
 
   .markdown-content {
     width: calc(100% - 16px);
-    margin: 8px auto 24px;
+    margin-top: 8px;
     padding: 12px 0;
     background: transparent;
     overflow-wrap: anywhere;
@@ -2721,14 +2772,9 @@ body.modal-open .table-content {
 }
 
 @media (max-width: 360px) {
-  .version-table .build-row {
-    grid-template-columns: minmax(34px, 0.5fr) minmax(0, 1fr) minmax(0, 1fr) 92px;
-  }
-
-  table.version-table tbody .build-row > .arch-cell,
-  table.version-table tbody .build-row > .date-cell,
-  table.version-table tbody .build-row > .size-cell {
-    font-size: 11px;
+  .version-table {
+    --metadata-font-size: 11px;
+    --mobile-table-columns: minmax(44px, 0.5fr) minmax(0, 1fr) minmax(0, 1fr) 92px;
   }
 }
 

@@ -4,11 +4,20 @@ import test from 'node:test';
 let moduleSequence = 0;
 
 function createElement() {
+    const classes = new Set();
     return {
         dataset: {},
         style: {},
         innerHTML: '',
-        classList: { add() {}, remove() {} },
+        children: [],
+        listeners: {},
+        classList: {
+            add: name => classes.add(name),
+            remove: name => classes.delete(name),
+            contains: name => classes.has(name)
+        },
+        appendChild(child) { this.children.push(child); },
+        addEventListener(name, listener) { this.listeners[name] = listener; },
         setAttribute() {}
     };
 }
@@ -37,7 +46,7 @@ async function setup(t) {
     };
     globalThis.document = {
         body,
-        createElement: () => ({ ...createElement(), contentWindow: {} }),
+        createElement: tag => ({ ...createElement(), tag, contentWindow: {} }),
         getElementById: id => id === 'toast' ? toast : null,
         querySelectorAll: () => counters
     };
@@ -60,13 +69,21 @@ async function setup(t) {
         return {
             ...createElement(),
             counter,
+            file: { link: 'https://downloads.test/installer.exe', arch: 'x64' },
             closest: () => ({ querySelector: () => counter })
         };
     }
 
+    function renderLink(file) {
+        const cell = downloads.createDownloadCell(file, '1.2.99', 'win');
+        const [link, , counter] = cell.children[0].children;
+        link.closest = () => ({ querySelector: () => counter });
+        return { link, counter };
+    }
+
     return {
-        api, downloads, frames, counters, key, toast, createLink,
-        start: link => downloads.handleDownload(link, 'https://downloads.test/installer.exe', '1.2.99', 'win', 'x64'),
+        api, downloads, frames, counters, key, toast, createLink, renderLink,
+        start: link => downloads.handleDownload(link, link.file, '1.2.99', 'win'),
         error: (frame, overrides = {}) => listeners.get('message')({
             data: { type: 'download-error', status: 403, message: 'Denied' },
             origin: 'https://downloads.test',
@@ -94,6 +111,42 @@ test('slow downloads remain active without a false timeout notification', async 
     assert.equal(env.frames.length, 0);
     assert.equal(env.api.getDownloadCounter(env.key), '10');
     assert.match(env.toast.innerHTML, /Access denied/);
+});
+
+test('the native link handles Enter once and preserves modified clicks', async t => {
+    const env = await setup(t);
+    const url = 'https://downloads.test/installer.exe';
+    const { link } = env.renderLink({ link: url, arch: 'x64' });
+    assert.equal(link.tag, 'a');
+    assert.equal(link.href, url);
+    for (const modifier of ['ctrlKey', 'metaKey', 'shiftKey', 'altKey']) {
+        link.listeners.click({ button: 0, [modifier]: true, preventDefault: () => assert.fail('Native action was cancelled') });
+    }
+    assert.equal(env.frames.length, 0);
+    let prevented = 0;
+    link.listeners.click({ button: 0, detail: 0, preventDefault() { prevented++; } });
+    assert.equal(prevented, 1);
+    assert.equal(env.frames.length, 1);
+    assert.equal(new URL(env.frames[0].src).pathname, '/installer.exe');
+});
+
+test('reopening a build restores its download count and the remaining cooldown', async t => {
+    const env = await setup(t);
+    const file = { link: 'https://downloads.test/installer.exe', arch: 'x64' };
+    const activate = link => link.listeners.click({ button: 0, preventDefault() {} });
+    activate(env.renderLink(file).link);
+    t.mock.timers.tick(4000);
+
+    const { link, counter } = env.renderLink(file);
+    assert.equal(link.classList.contains('download-cooldown'), true);
+    assert.match(counter.innerHTML, /11 downloads/);
+    activate(link);
+    assert.equal(env.frames.length, 1);
+
+    t.mock.timers.tick(1000);
+    assert.equal(link.classList.contains('download-cooldown'), false);
+    activate(link);
+    assert.equal(env.frames.length, 2);
 });
 
 test('late errors remove only their own increment and update rerendered counters', async t => {
