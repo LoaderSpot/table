@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+  fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path class="arrow-up-line" d="M6.5 3.5h11"/>
+  <path class="arrow-up-stroke" d="M6 13.5l6-6 6 6M12 7.5v13"/>
+</svg>

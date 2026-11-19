@@ -2,6 +2,7 @@ import { inject } from '@vercel/analytics';
 import { initAppCallbacks, initializeApp, ensureVersionsAppInitialized, loadLinuxPackages } from './app.js';
 import { initRouter, migrateLegacyRoute, setRouteChangeHandler } from './router/routes.js';
 import { loadMarkdownPage, setVersionsAppInitializer } from './router/markdown.js';
+import { initBackToTop } from './ui/back-to-top.js';
 import { initComments } from './ui/comments.js';
 import { initBuildHover } from './ui/components.js';
 import { initDownloadMessages } from './ui/download.js';
@@ -33,6 +34,7 @@ function initApp() {
     initSearchControls();
     initSortControls();
     initStickyTableHeader();
+    initBackToTop();
     initRouter();
 
     migrateLegacyRoute();
