@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
+    "giscus": "1.6.0",
     "marked": "15.0.12"
   }
 }

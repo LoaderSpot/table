@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Spotify full installers for desktop</title>
   <meta name="description" content="Download Spotify full installers for Windows, macOS, and Linux">
+  <meta name="giscus:backlink" content="">
   <meta name="google-site-verification" content="dZPtbcIZb0eyy8HzugWp_5DwcDgyBkfU0AdN6wEicMs" />
   <link type="image/png" rel="icon" href="/favicon.png">
   <link rel="preconnect" href="https://loadspot.amd64fox1.workers.dev" crossorigin>
@@ -150,18 +151,20 @@
     <svg data-icon="comment"></svg>
   </template>
 
-  <template id="comments-modal-template">
-    <div class="comments-modal" role="dialog" aria-modal="true" aria-labelledby="comments-modal-title">
-      <div class="comments-modal-content">
-        <div class="comments-modal-header">
-          <h3 class="comments-modal-title" id="comments-modal-title">Comments for <span id="comment-version-title"></span></h3>
-          <button class="comments-close-button" aria-label="Close comments">&times;</button>
-        </div>
-        <div class="comments-modal-body" id="comments-container" role="main">
-        </div>
-      </div>
+  <dialog class="comments-modal" id="commentsModal" aria-labelledby="comments-modal-title">
+    <div class="comments-modal-header">
+      <svg data-icon="comment"></svg>
+      <h2 id="comments-modal-title">Comments <span id="comment-version-title"></span></h2>
+      <button class="comments-close-button" type="button" aria-label="Close comments" autofocus>&times;</button>
     </div>
-  </template>
+    <div class="comments-modal-body">
+      <div class="comments-status" hidden>
+        <span role="status"></span>
+        <button type="button">Try again</button>
+      </div>
+      <div id="comments-container"></div>
+    </div>
+  </dialog>
 </body>
 
 </html>

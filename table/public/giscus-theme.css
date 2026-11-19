@@ -1,0 +1,17 @@
+@import url("https://giscus.app/themes/noborder_dark.css");
+
+main {
+  color-scheme: dark;
+  --primary-default: 29, 185, 84;
+  --bg-default: 36, 38, 40;
+  --color-fg-default: #e8e6e3;
+  --color-fg-muted: #b3b3b3;
+  --color-canvas-default: #181a1b;
+  --color-canvas-overlay: #242628;
+  --color-border-default: #474747;
+  --color-accent-fg: #62d989;
+  --color-btn-primary-bg: #1db954;
+  --color-btn-primary-hover-bg: #37cb6a;
+  --color-btn-primary-selected-bg: #19a84a;
+  --color-btn-primary-text: #101612;
+}

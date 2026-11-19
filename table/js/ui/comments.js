@@ -1,173 +1,77 @@
 import { state } from '../state.js';
-import {
-    buildVersionCommentKey,
-    getCommentCount,
-    loadAllData,
-    registerCommentHandlers,
-    setCommentCount
-} from '../data/api.js';
+import { buildVersionCommentKey, getCommentCount, loadAllData, registerCommentHandlers } from '../data/api.js';
 import { formatCommentCount } from '../utils/format.js';
 import { ROUTE_PATHS } from '../router/routes.js';
 
-let commentsModal;
-let giscusLoaded = false;
-let currentCommentKey = '';
-let scrollPosition = 0;
-const commentRefreshTimers = new Map();
-let giscusMessageListenerInstalled = false;
+const widgetOrigin = 'https://giscus.app';
+let activeThread;
+let loadTimer;
+let refreshTimer;
 
-export function ensureCommentsModal() {
-    const existingModal = document.getElementById('commentsModal');
-    if (existingModal) return existingModal;
-
-    const template = document.getElementById('comments-modal-template');
-    if (!template) return null;
-
-    const modalClone = template.content.cloneNode(true);
-    const modalElement = modalClone.querySelector('.comments-modal');
-    modalElement.id = 'commentsModal';
-    document.body.appendChild(modalElement);
-    commentsModal = modalElement;
-
-    modalElement.querySelector('.comments-close-button').addEventListener('click', closeModal);
-    modalElement.addEventListener('click', e => {
-        if (e.target === modalElement) {
-            closeModal();
-        }
-    });
-    document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && commentsModal?.style.display === 'flex') {
-            closeModal();
-        }
-    });
-
-    return modalElement;
+function setRetryMessage(message) {
+    const status = document.querySelector('#commentsModal .comments-status');
+    status.querySelector('[role="status"]').textContent = message;
+    status.hidden = !message;
+    document.getElementById('comments-container').inert = Boolean(message);
 }
 
-export function cleanupGiscus() {
-    const commentsContainer = document.getElementById('comments-container');
-    if (commentsContainer) {
-        commentsContainer.innerHTML = '';
-    }
+async function mountWidget(thread) {
+    clearTimeout(loadTimer);
+    const container = document.getElementById('comments-container');
+    container.replaceChildren();
+    thread.widget = null;
+    setRetryMessage('');
+    loadTimer = setTimeout(() => setRetryMessage('Comments are taking longer to load'), 15000);
 
-    const oldGiscusFrame = document.querySelector('iframe.giscus-frame');
-    if (oldGiscusFrame) {
-        oldGiscusFrame.remove();
-    }
+    try {
+        const { GiscusWidget } = await import('giscus');
+        if (activeThread !== thread || !document.getElementById('commentsModal').open) return;
 
-    const oldGiscusScript = document.getElementById('giscus-comments-script');
-    if (oldGiscusScript) {
-        oldGiscusScript.remove();
+        const widget = new GiscusWidget();
+        Object.assign(widget, {
+            id: `comments-${thread.os}-${thread.version}`,
+            repo: 'LoaderSpot/table',
+            repoId: 'R_kgDOOANMeQ',
+            category: 'Comments',
+            categoryId: 'DIC_kwDOOANMec4Cn2gF',
+            mapping: 'specific',
+            term: buildVersionCommentKey(thread.version),
+            strict: '1',
+            theme: location.protocol === 'https:' ? new URL('/giscus-theme.css', location.origin).href : 'noborder_dark'
+        });
+        thread.widget = widget;
+        container.replaceChildren(widget);
+    } catch {
+        if (activeThread === thread) {
+            clearTimeout(loadTimer);
+            setRetryMessage('Comments could not be loaded');
+        }
     }
 }
 
-export function openModal() {
-    const modal = ensureCommentsModal();
-    if (!modal) return;
-
-    commentsModal = modal;
-    scrollPosition = window.pageYOffset;
-    document.body.classList.add('modal-open');
-    document.body.style.top = `-${scrollPosition}px`;
-    document.body.style.position = 'fixed';
-    document.body.style.width = '100%';
-    commentsModal.style.display = 'flex';
-
-    setTimeout(() => {
-        commentsModal.classList.add('show');
-        const closeButton = commentsModal.querySelector('.comments-close-button');
-        if (closeButton) closeButton.focus();
-    }, 10);
+function openComments(version, os, opener) {
+    const dialog = document.getElementById('commentsModal');
+    activeThread = { version, os, opener };
+    document.getElementById('comment-version-title').textContent = version;
+    document.querySelector('meta[name="giscus:backlink"]').content = buildVersionBacklink(version, os);
+    dialog.showModal();
+    dialog.querySelector('.comments-modal-body').scrollTop = 0;
+    mountWidget(activeThread);
 }
 
-export function closeModal() {
-    if (!commentsModal) return;
-
-    commentsModal.classList.remove('show');
-
-    setTimeout(() => {
-        commentsModal.style.display = 'none';
-        document.body.classList.remove('modal-open');
-        document.body.style.top = '';
-        document.body.style.position = '';
-        document.body.style.width = '';
-        window.scrollTo(0, scrollPosition);
-        cleanupGiscus();
-
-        if (currentCommentKey) {
-            const t = commentRefreshTimers.get(currentCommentKey);
-            if (t) {
-                clearTimeout(t);
-                commentRefreshTimers.delete(currentCommentKey);
-            }
-            refreshCommentCountForKey(currentCommentKey);
-        }
-    }, 300);
+function scheduleCountRefresh() {
+    clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(() => loadAllData(true, true), 500);
 }
 
-export function openComments(target) {
-    ensureCommentsModal();
-    document.getElementById('comment-version-title').textContent = target.modalLabel;
-    const commentsContainer = document.getElementById('comments-container');
-    cleanupGiscus();
-
-    let backlink = document.querySelector('meta[name="giscus:backlink"]');
-    if (!backlink) {
-        backlink = document.createElement('meta');
-        backlink.setAttribute('name', 'giscus:backlink');
-        document.head.appendChild(backlink);
+function handleGiscusMessage(event) {
+    const frame = activeThread?.widget?.iframeRef;
+    if (!frame || event.origin !== widgetOrigin || event.source !== frame.contentWindow) return;
+    if (loadTimer && event.data?.giscus?.resizeHeight > 0) {
+        clearTimeout(loadTimer);
+        loadTimer = null;
+        setRetryMessage('');
     }
-    backlink.setAttribute('content', target.backlink);
-
-    const giscusScript = document.createElement('script');
-    giscusScript.id = 'giscus-comments-script';
-    giscusScript.src = 'https://giscus.app/client.js';
-    giscusScript.setAttribute('data-repo', 'LoaderSpot/table');
-    giscusScript.setAttribute('data-repo-id', 'R_kgDOOANMeQ');
-    giscusScript.setAttribute('data-category', 'Comments');
-    giscusScript.setAttribute('data-category-id', 'DIC_kwDOOANMec4Cn2gF');
-    giscusScript.setAttribute('data-mapping', 'specific');
-    giscusScript.setAttribute('data-term', target.commentKey);
-    giscusScript.setAttribute('data-strict', '0');
-    giscusScript.setAttribute('data-reactions-enabled', '1');
-    giscusScript.setAttribute('data-emit-metadata', '1');
-    giscusScript.setAttribute('data-input-position', 'bottom');
-    giscusScript.setAttribute('data-theme', 'noborder_dark');
-    giscusScript.setAttribute('data-lang', 'en');
-    giscusScript.setAttribute('data-loading', 'lazy');
-    giscusScript.setAttribute('crossorigin', 'anonymous');
-    giscusScript.async = true;
-
-    giscusScript.onerror = function () {
-        commentsContainer.innerHTML = '<div class="giscus-error">Failed to load comments. Please try again later.</div>';
-    };
-
-    commentsContainer.appendChild(giscusScript);
-    currentCommentKey = target.commentKey;
-    giscusLoaded = false;
-
-    openModal();
-}
-
-export function processDiscussionData(discussions) {
-    if (!discussions) return;
-
-    discussions.forEach(discussion => {
-        if (!discussion.title) return;
-
-        const commentKey = discussion.title;
-        const newCount = discussion.commentCount;
-
-        if (getCommentCount(commentKey) !== newCount) {
-            setCommentCount(commentKey, newCount);
-            updateCommentCountForKey(commentKey, newCount);
-        }
-    });
-}
-
-export async function refreshCommentCountForKey(commentKey) {
-    await loadAllData(true, true);
-    updateCommentCountForKey(commentKey, getCommentCount(commentKey) || 0);
 }
 
 export function updateExistingCommentButtons() {
@@ -175,12 +79,6 @@ export function updateExistingCommentButtons() {
         const commentKey = button.dataset.commentKey;
         if (!commentKey) return;
         applyCommentCountToButton(button, getCommentCount(commentKey) || 0);
-    });
-}
-
-export function updateCommentCountForKey(commentKey, count) {
-    document.querySelectorAll(`.comment-button[data-comment-key="${commentKey}"]`).forEach(button => {
-        applyCommentCountToButton(button, count);
     });
 }
 
@@ -195,7 +93,7 @@ export function applyCommentCountToButton(button, count) {
             button.appendChild(badge);
         }
         badge.textContent = formatCommentCount(numeric);
-        badge.title = `${numeric} comments`;
+        badge.title = `${numeric} ${numeric === 1 ? 'comment' : 'comments'}`;
         button.classList.add('has-comments');
         return;
     }
@@ -222,18 +120,15 @@ export function buildVersionBacklink(version, os) {
     return url.toString();
 }
 
-export function createCommentButton(target, options = {}) {
-    const logicalId = String(target);
-    const commentKey = options.commentKey || buildVersionCommentKey(logicalId);
-    const modalLabel = options.modalLabel || `version ${logicalId}`;
-    const backlink = options.backlink || buildVersionBacklink(logicalId, options.os || state.currentOS);
+export function createCommentButton(version, { os = state.currentOS } = {}) {
+    const commentKey = buildVersionCommentKey(version);
     const commentButton = document.createElement('button');
 
     commentButton.className = 'comment-button comment-button-compact';
     commentButton.dataset.commentKey = commentKey;
     commentButton.type = 'button';
-    commentButton.title = `Open comments for ${modalLabel}`;
-    commentButton.setAttribute('aria-label', `Open comments for ${modalLabel}`);
+    commentButton.title = `Open comments for version ${version}`;
+    commentButton.setAttribute('aria-label', `Open comments for version ${version}`);
 
     const commentIconTemplate = document.getElementById('comment-icon-template');
     if (commentIconTemplate) {
@@ -249,49 +144,44 @@ export function createCommentButton(target, options = {}) {
     commentButton.addEventListener('click', e => {
         e.preventDefault();
         e.stopPropagation();
-        openComments({ commentKey, modalLabel, backlink });
+        openComments(version, os, commentButton);
     });
 
     return commentButton;
 }
 
-function handleGiscusMessage(e) {
-    if (e.origin !== 'https://giscus.app') return;
-    if (!e.data || typeof e.data !== 'object') return;
-
-    try {
-        const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
-
-        if (data.giscus) {
-            giscusLoaded = true;
-
-            if (data.giscus.error === null && data.giscus.eventName) {
-                if (data.giscus.eventName === 'comment' || data.giscus.eventName === 'reply') {
-                    if (currentCommentKey) {
-                        const prev = commentRefreshTimers.get(currentCommentKey);
-                        if (prev) clearTimeout(prev);
-                        const timer = setTimeout(() => {
-                            commentRefreshTimers.delete(currentCommentKey);
-                            refreshCommentCountForKey(currentCommentKey);
-                        }, 800);
-                        commentRefreshTimers.set(currentCommentKey, timer);
-                    }
-                }
-            }
-        }
-    } catch (error) {
-        console.log('Error processing giscus message:', error);
-    }
-}
-
 export function initComments() {
-    registerCommentHandlers({
-        processDiscussionData,
-        updateExistingCommentButtons
+    registerCommentHandlers({ updateExistingCommentButtons });
+    const dialog = document.getElementById('commentsModal');
+    dialog.querySelector('.comments-close-button').addEventListener('click', () => dialog.close());
+    dialog.querySelector('.comments-status button').addEventListener('click', () => {
+        const { version, os, opener } = activeThread;
+        openComments(version, os, opener);
+        dialog.querySelector('.comments-close-button').focus({ preventScroll: true });
     });
 
-    if (!giscusMessageListenerInstalled) {
-        window.addEventListener('message', handleGiscusMessage);
-        giscusMessageListenerInstalled = true;
-    }
+    let pressedBackdrop = false;
+    const outside = event => {
+        const rect = dialog.getBoundingClientRect();
+        return event.clientX < rect.left || event.clientX >= rect.right || event.clientY < rect.top || event.clientY >= rect.bottom;
+    };
+    dialog.addEventListener('pointerdown', event => { pressedBackdrop = event.target === dialog && outside(event); });
+    dialog.addEventListener('click', event => {
+        if (pressedBackdrop && event.target === dialog && outside(event)) dialog.close();
+    });
+    dialog.addEventListener('close', () => {
+        if (dialog.open) return;
+        if (activeThread?.widget) scheduleCountRefresh();
+        clearTimeout(loadTimer);
+        document.getElementById('comments-container').replaceChildren();
+        document.querySelector('meta[name="giscus:backlink"]').content = '';
+        activeThread?.opener?.focus({ preventScroll: true });
+        activeThread = null;
+    });
+    window.addEventListener('message', handleGiscusMessage);
+    window.addEventListener('popstate', () => { if (dialog.open) dialog.close(); });
+
+    // Giscus returns from GitHub sign-in with the widget ID in the URL fragment
+    const target = /^#comments-(win|mac|linux)-(\d+\.\d+\.\d+(?:\.\d+)?)$/.exec(location.hash);
+    if (target && new URLSearchParams(location.search).has('giscus')) openComments(target[2], target[1]);
 }

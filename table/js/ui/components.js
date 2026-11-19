@@ -134,11 +134,7 @@ export function createVersionElement(version, searchTerm, commentTarget = null, 
     }
 
     if (commentTarget) {
-        commentSlot.appendChild(createCommentButton(commentTarget, {
-            os: commentOs,
-            modalLabel: `version ${commentTarget}`,
-            backlink: null
-        }));
+        commentSlot.appendChild(createCommentButton(commentTarget, { os: commentOs }));
         topRow.appendChild(controlsSlot);
     }
 

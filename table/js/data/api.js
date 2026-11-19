@@ -3,6 +3,8 @@ import { renderDownloadCounter } from '../utils/format.js';
 let allDownloadCounters = {};
 let downloadCountersRevision = 0;
 let commentCountCache = {};
+let commentRequestId = 0;
+let appliedCommentRequestId = 0;
 let countersLoaded = false;
 let commentCountsLoaded = false;
 const MIN_UPDATE_INTERVAL = 10000;
@@ -10,7 +12,6 @@ const ALL_DATA_BACKGROUND_RETRY_DELAY_MS = 5000;
 let lastDataUpdate = 0;
 let allDataBackgroundRetryTimeoutId = null;
 let commentHandlers = {
-    processDiscussionData: null,
     updateExistingCommentButtons: null
 };
 
@@ -45,10 +46,6 @@ export function areCountersLoaded() {
 
 export function getCommentCount(commentKey) {
     return commentCountCache[commentKey] || 0;
-}
-
-export function setCommentCount(commentKey, count) {
-    commentCountCache[commentKey] = count;
 }
 
 export function clearAllDataBackgroundRetry() {
@@ -108,6 +105,7 @@ export async function loadAllData(forceUpdate = false, commentsOnly = false) {
         }
 
         lastDataUpdate = now;
+        const requestId = ++commentRequestId;
 
         const workerUrl = `https://loadspot.amd64fox1.workers.dev/all-data${commentsOnly ? '?comments-only=1' : ''}`;
         let lastError;
@@ -149,8 +147,11 @@ export async function loadAllData(forceUpdate = false, commentsOnly = false) {
                     });
                 }
 
-                if (commentsSucceeded) {
-                    commentHandlers.processDiscussionData?.(data.comments);
+                if (commentsSucceeded && requestId > appliedCommentRequestId) {
+                    appliedCommentRequestId = requestId;
+                    commentCountCache = Object.fromEntries(data.comments
+                        .filter(item => typeof item?.title === 'string' && Number.isInteger(item.commentCount) && item.commentCount >= 0)
+                        .map(item => [item.title, item.commentCount]));
                     commentCountsLoaded = true;
                     commentHandlers.updateExistingCommentButtons?.();
                 }

@@ -18,5 +18,8 @@
 /content/*
   Cache-Control: public, max-age=300, must-revalidate
 
+/giscus-theme.css
+  Access-Control-Allow-Origin: https://giscus.app
+
 /favicon.png
   Cache-Control: public, max-age=31536000, immutable
